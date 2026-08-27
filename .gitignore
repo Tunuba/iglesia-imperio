@@ -1,0 +1,7 @@
+# artefactos de las pruebas
+herramientas/qr-esperado.json
+herramientas/qr-generado.json
+herramientas/qr-mascaras.json
+herramientas/pruebas/
+node_modules/
+*.log

@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0D14">
+<title>El Imperio y la Iglesia — vivilo en 2 minutos</title>
+<meta name="description" content="Experiencia interactiva: cómo el cristianismo pasó de perseguido a religión oficial del Imperio romano. Claves del Pensamiento 1, Universidad del Istmo.">
+<style>
+:root{
+  --noche:#0B0D14; --piedra:#161A26; --piedra2:#1F2433; --linea:#2C3346;
+  --tinta:#FFF6E2; --tinta2:#C6C2B4; --apagado:#8A8674;
+  --oro:#E8C44A; --oro2:#F5DE93; --purpura:#8E2A6E; --purpura2:#6B1F5C;
+  --sangre:#C0261E; --laurel:#3E8E4A; --agua:#5FB8D8;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"Courier New",monospace;
+  --ease:cubic-bezier(.22,.68,.28,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--noche);color:var(--tinta);font-family:var(--sans);
+  overflow:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased;
+  user-select:none;
+}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;height:100dvh}
+
+/* ── fondo: cielo + polvo ────────────────────────────────────────── */
+#cielo{position:absolute;inset:0;z-index:0;transition:background 1.2s var(--ease)}
+#polvo{position:absolute;inset:0;z-index:1;opacity:.5;pointer-events:none}
+#vineta{position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:radial-gradient(ellipse 90% 70% at 50% 42%,transparent 45%,rgba(0,0,0,.72) 100%)}
+#destello{position:absolute;inset:0;z-index:7;pointer-events:none;background:#FFF6E2;opacity:0}
+
+/* ── barra superior ──────────────────────────────────────────────── */
+header{position:relative;z-index:8;display:flex;align-items:center;gap:10px;
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 8px}
+.marca{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--apagado);
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pasos{margin-left:auto;display:flex;gap:5px;flex:0 0 auto}
+.pip{width:16px;height:3px;border-radius:2px;background:#2C3346;transition:background .4s}
+.pip.on{background:var(--oro)}
+.pip.done{background:#6A5A28}
+
+/* ── escenario ───────────────────────────────────────────────────── */
+main{position:relative;z-index:8;flex:1;display:flex;flex-direction:column;
+  padding:0 clamp(16px,5vw,28px);min-height:0}
+.escena{position:absolute;inset:0;padding:0 clamp(16px,5vw,28px);
+  display:flex;flex-direction:column;justify-content:center;gap:clamp(10px,2.2vh,18px);
+  opacity:0;visibility:hidden;transform:translateY(14px);pointer-events:none;
+  transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s .55s}
+.escena.on{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition-delay:0s}
+
+.ojo{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--oro);display:flex;align-items:center;gap:10px}
+.ojo::before{content:"";width:22px;height:1px;background:currentColor;opacity:.6;flex:0 0 auto}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,8.6vw,52px);line-height:1.02;
+  letter-spacing:-.02em}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(23px,6.6vw,38px);line-height:1.08;
+  letter-spacing:-.015em}
+p{font-size:clamp(14.5px,4vw,17px);line-height:1.5;color:var(--tinta2);max-width:34ch}
+p b,strong{color:var(--tinta);font-weight:600}
+.chico{font-size:clamp(12px,3.3vw,13.5px);line-height:1.45;color:var(--apagado);max-width:38ch}
+.dato{font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--oro2);
+  border-left:2px solid var(--purpura);padding:7px 0 7px 11px;max-width:38ch}
+
+/* ── botones ─────────────────────────────────────────────────────── */
+.acciones{display:flex;flex-direction:column;gap:9px;margin-top:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:15px 18px;border:1px solid var(--linea);border-radius:13px;background:var(--piedra);
+  font-size:15px;font-weight:600;letter-spacing:.01em;
+  transition:transform .12s var(--ease),border-color .3s,background .3s}
+.btn:active{transform:scale(.975)}
+.btn.oro{border-color:var(--oro);background:linear-gradient(180deg,#231D0C,#171308);color:var(--oro2)}
+.btn.sangre{border-color:#5A211C;background:linear-gradient(180deg,#241110,#180B0A)}
+.btn .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--apagado);
+  text-transform:uppercase}
+.btn.lleno::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);
+  background:rgba(232,196,74,.16);border-radius:12px;pointer-events:none;transition:width .1s linear}
+.pista{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--apagado);
+  text-transform:uppercase;text-align:center;padding-top:2px}
+@keyframes lat{0%,100%{opacity:.35}50%{opacity:1}}
+.lat{animation:lat 1.6s ease-in-out infinite}
+
+/* ── lienzo de pixel art ─────────────────────────────────────────── */
+.lienzo{width:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+#cCedula{height:clamp(120px,20vh,170px)}
+#cCamino{height:clamp(110px,17vh,150px)}
+#cAltar,#cLuz{height:clamp(150px,26vh,230px)}
+#cMapa{height:clamp(120px,20vh,170px)}
+#cSala{height:clamp(150px,24vh,210px)}
+
+/* ── cédula ──────────────────────────────────────────────────────── */
+.cedula{border:1px solid var(--linea);border-radius:14px;background:
+  linear-gradient(180deg,rgba(31,36,51,.92),rgba(15,18,27,.92));padding:13px 15px;
+  display:flex;align-items:center;gap:13px}
+.cedula .txt{min-width:0}
+.cedula .nom{font-family:var(--serif);font-size:clamp(18px,5vw,23px);line-height:1.1}
+.cedula .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--apagado);
+  text-transform:uppercase;margin-top:4px}
+.sello{margin-left:auto;flex:0 0 auto;width:44px;height:44px;border-radius:50%;
+  border:1px dashed var(--purpura);display:grid;place-items:center;
+  font-family:var(--serif);font-size:15px;color:var(--purpura)}
+
+/* ── tarjeta del pedazo del Credo ────────────────────────────────── */
+.pedazo{border:1px solid #4A3C14;border-radius:14px;padding:15px 16px;
+  background:linear-gradient(180deg,rgba(40,33,12,.95),rgba(20,17,8,.95));
+  box-shadow:0 0 0 1px rgba(232,196,74,.08),0 14px 34px rgba(0,0,0,.5)}
+.pedazo .n{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--oro);
+  text-transform:uppercase}
+.pedazo .frase{font-family:var(--serif);font-size:clamp(21px,6.2vw,30px);line-height:1.16;
+  color:var(--oro2);margin-top:8px}
+.pedazo .pie{font-size:12.5px;color:var(--apagado);margin-top:10px;line-height:1.4}
+
+/* ── ambiente / modo sala ────────────────────────────────────────── */
+#hoy{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--tinta2);
+  min-height:2.6em;line-height:1.35}
+#hoy b{color:var(--oro2);font-weight:400}
+
+/* ── panel "ver todo" ────────────────────────────────────────────── */
+#mas{position:fixed;inset:0;z-index:20;background:rgba(6,7,11,.97);overflow-y:auto;
+  -webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 18px) 18px
+  calc(env(safe-area-inset-bottom) + 34px);opacity:0;visibility:hidden;transition:opacity .35s}
+#mas.on{opacity:1;visibility:visible}
+#mas h3{font-family:var(--serif);font-weight:400;font-size:24px;margin:26px 0 9px}
+#mas h3:first-of-type{margin-top:12px}
+#mas p,#mas li{font-size:14.5px;line-height:1.55;color:var(--tinta2);max-width:60ch}
+#mas ul{margin:8px 0 0 18px;display:flex;flex-direction:column;gap:6px}
+#mas .fuente{font-size:12px;color:var(--apagado);word-break:break-word;line-height:1.5}
+.cerrar{position:sticky;top:0;float:right;font-family:var(--mono);font-size:11px;
+  letter-spacing:.2em;color:var(--oro);border:1px solid var(--linea);border-radius:9px;
+  padding:8px 12px;background:var(--piedra)}
+.tabla{width:100%;border-collapse:collapse;margin-top:10px;font-size:13.5px}
+.tabla th,.tabla td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--linea);
+  vertical-align:top;color:var(--tinta2)}
+.tabla th{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--oro);font-weight:400}
+
+/* ── sala: lucecita y aviso de "te toca" ────────────────────────── */
+.luzSala{width:7px;height:7px;border-radius:50%;background:#2C3346;flex:0 0 auto;
+  transition:background .4s}
+.luzSala.ok{background:var(--laurel);box-shadow:0 0 8px var(--laurel)}
+.luzSala.busca{background:var(--oro);opacity:.5}
+#tuyo{position:fixed;inset:0;z-index:24;display:none;place-items:center;text-align:center;
+  padding:8vw 7vw;background:radial-gradient(ellipse 90% 70% at 50% 40%,#3A2C08 0%,#0B0D14 78%)}
+#tuyo.on{display:grid;animation:entraTuyo .5s var(--ease)}
+@keyframes entraTuyo{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+#tuyo .n{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--oro);
+  text-transform:uppercase}
+#tuyo .frase{font-family:var(--serif);font-size:clamp(28px,8.4vw,52px);line-height:1.12;
+  color:var(--oro2);margin-top:18px}
+#tuyo .pie{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--tinta);
+  margin-top:22px;animation:lat 1.2s ease-in-out infinite}
+
+/* ── pie ─────────────────────────────────────────────────────────── */
+footer{position:relative;z-index:8;display:flex;align-items:center;gap:12px;
+  padding:8px 16px calc(env(safe-area-inset-bottom) + 12px)}
+footer button{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--apagado);
+  text-transform:uppercase;padding:7px 10px;border:1px solid var(--linea);border-radius:9px}
+footer .sep{margin-left:auto}
+
+@media (prefers-reduced-motion:reduce){
+  .escena,#cielo{transition-duration:.01ms!important}
+  .lat{animation:none;opacity:1}
+}
+@media (min-height:760px){ p{font-size:17px} }
+@media (max-height:700px){
+  .escena{gap:8px}
+  h1{font-size:clamp(26px,7.6vw,40px)}
+  h2{font-size:clamp(20px,5.8vw,30px)}
+  p{font-size:14px;line-height:1.42}
+  .dato{font-size:10.5px;padding:5px 0 5px 9px}
+  .btn{padding:12px 16px;font-size:14px}
+  #cCedula{height:104px} #cCamino{height:92px}
+  #cAltar,#cLuz{height:130px} #cMapa{height:104px} #cSala{height:126px}
+  .pedazo{padding:12px 13px} .pedazo .frase{font-size:clamp(18px,5.4vw,24px)}
+  .cedula{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="cielo"></div>
+  <canvas id="polvo"></canvas>
+
+  <header>
+    <div class="marca" id="marca">Claves del Pensamiento 1 · Universidad del Istmo</div>
+    <span class="luzSala" id="luzSala" title="conexión con la sala"></span>
+    <div class="pasos" id="pasos"></div>
+  </header>
+
+  <main>
+    <!-- ══ 0 · PORTADA ═════════════════════════════════════════════ -->
+    <section class="escena on" data-e="0">
+      <div class="ojo">Imperio romano · siglos I al IV</div>
+      <h1>El Imperio<br>y la Iglesia</h1>
+      <p>Tres siglos en <b>dos minutos</b>, desde tu teléfono.<br>
+         Vas a ser alguien que vivió esto.</p>
+      <div class="acciones">
+        <button class="btn oro" id="bEmpezar">DAME MI PERSONAJE</button>
+      </div>
+      <div class="pista lat">nosotros explicamos · vos solo tocá</div>
+    </section>
+
+    <!-- ══ 1 · CÉDULA ══════════════════════════════════════════════ -->
+    <section class="escena" data-e="1">
+      <div class="ojo">Tu personaje</div>
+      <canvas id="cCedula" class="lienzo" width="360" height="170"></canvas>
+      <div class="cedula">
+        <div class="txt">
+          <div class="nom" id="perNombre">—</div>
+          <div class="sub" id="perLugar">—</div>
+        </div>
+        <div class="sello">SPQR</div>
+      </div>
+      <p>Sos una persona común del Imperio. <b>Nadie te preguntó tu religión</b>
+         hasta que empezó a importar.</p>
+      <div class="acciones">
+        <button class="btn" id="bCamino">EMPEZAR ›</button>
+      </div>
+    </section>
+
+    <!-- ══ 2 · EL CAMINO ═══════════════════════════════════════════ -->
+    <section class="escena" data-e="2">
+      <div class="ojo">Año 33 · la noticia se mueve</div>
+      <h2 id="tCamino">Un maestro muere<br>en una provincia chica</h2>
+      <canvas id="cCamino" class="lienzo" width="360" height="150"></canvas>
+      <p id="pCamino">Sus seguidores dicen que <b>volvió a vivir</b>. Y salen a contarlo
+         por las mismas carreteras que Roma construyó para sus ejércitos.</p>
+      <div class="acciones">
+        <button class="btn" id="bPaso">TOCÁ PARA MOVER LA NOTICIA</button>
+      </div>
+      <div class="dato" id="dCamino">katholikós, en griego, es «universal». La primera vez que
+        alguien escribe «Iglesia católica» es Ignacio de Antioquía, hacia el año 107.</div>
+    </section>
+
+    <!-- ══ 3 · LA PRUEBA ═══════════════════════════════════════════ -->
+    <section class="escena" data-e="3">
+      <div class="ojo" id="ojoAltar">Año 250 · el decreto de Decio</div>
+      <h2 id="tAltar">Un grano de incienso</h2>
+      <canvas id="cAltar" class="lienzo" width="360" height="230"></canvas>
+      <p id="pAltar">Todos en el Imperio deben sacrificar al emperador y recoger un
+         <b>certificado</b> que lo pruebe. Vos creés en un solo Dios.</p>
+      <div class="acciones" id="accAltar">
+        <button class="btn" id="bIncienso">OFREZCO EL INCIENSO<span class="k">vivís</span></button>
+        <button class="btn sangre" id="bNiego">ME NIEGO<span class="k">no vivís</span></button>
+      </div>
+      <div class="acciones" id="accAltar2" style="display:none">
+        <button class="btn" id="bTrasAltar">›</button>
+      </div>
+    </section>
+
+    <!-- ══ 4 · BAJA LA LUZ ═════════════════════════════════════════ -->
+    <section class="escena" data-e="4">
+      <div class="ojo" id="ojoLuz">El corazón del mundo</div>
+      <h2 id="tLuz">Y entonces baja</h2>
+      <canvas id="cLuz" class="lienzo" width="360" height="230"></canvas>
+      <p id="pLuz">Ese corazón negro no se limpia solo. La respuesta cristiana es que
+         <b>Dios bajó</b> — y que eso se recibe con un gesto de agua.</p>
+      <div class="acciones">
+        <button class="btn oro lleno" id="bLuz">MANTENÉ EL DEDO AQUÍ</button>
+      </div>
+      <div class="dato" id="dLuz" style="display:none">Bautismo: agua, y «en el nombre del Padre,
+        del Hijo y del Espíritu Santo». Un solo Dios en tres personas — eso es la Trinidad,
+        y es la puerta de entrada a la comunidad.</div>
+    </section>
+
+    <!-- ══ 5 · 313 · 325 · 380 ═════════════════════════════════════ -->
+    <section class="escena" data-e="5">
+      <div class="ojo" id="ojoMapa">Tres fechas que cambian todo</div>
+      <h2 id="tMapa">313</h2>
+      <canvas id="cMapa" class="lienzo" width="360" height="170"></canvas>
+      <p id="pMapa">—</p>
+      <div class="acciones">
+        <button class="btn" id="bMapa">›</button>
+      </div>
+    </section>
+
+    <!-- ══ 6 · TU PEDAZO ═══════════════════════════════════════════ -->
+    <section class="escena" data-e="6">
+      <div class="ojo">Año 325 · Concilio de Nicea</div>
+      <div class="pedazo">
+        <div class="n" id="pedN">Pedazo — de —</div>
+        <div class="frase" id="pedTxt">—</div>
+        <div class="pie">Trescientos obispos discutieron meses para dejar la fe en
+          <b>una sola frase</b>. Vos tenés un pedazo de esa frase.</div>
+      </div>
+      <p><b>Cuando escuches tu pedazo, levantá el teléfono.</b> Entre todos está completa;
+         solo, ninguno la tiene entera.</p>
+      <div class="acciones">
+        <button class="btn oro" id="bSala">LISTO ›</button>
+      </div>
+    </section>
+
+    <!-- ══ 7 · MODO SALA ═══════════════════════════════════════════ -->
+    <section class="escena" data-e="7">
+      <div class="ojo">Hoy</div>
+      <canvas id="cSala" class="lienzo" width="360" height="210"></canvas>
+      <div class="pedazo">
+        <div class="n" id="pedN2">Tu pedazo</div>
+        <div class="frase" id="pedTxt2">—</div>
+      </div>
+      <div id="hoy">—</div>
+    </section>
+  </main>
+
+  <footer>
+    <button id="bMas">+ VER TODO</button>
+    <button class="sep" id="bReiniciar">REINICIAR</button>
+  </footer>
+
+  <div id="tuyo"><div>
+      <div class="n" id="tuyoN">Pedazo — de —</div>
+      <div class="frase" id="tuyoTxt">—</div>
+      <div class="pie">ES TUYO · LEVANTÁ EL TELÉFONO</div>
+  </div></div>
+  <div id="vineta"></div>
+  <div id="destello"></div>
+</div>
+
+<!-- ══ PANEL: todo el contenido, para leer con calma ═══════════════ -->
+<div id="mas">
+  <button class="cerrar" id="bCerrar">CERRAR ✕</button>
+
+  <h3>En una frase</h3>
+  <p>El cristianismo empezó como un grupo chico y perseguido dentro del Imperio romano,
+  y en menos de trescientos años terminó siendo <b>la religión oficial de ese mismo Imperio</b>.
+  La palabra <i>católico</i> viene del griego <i>katholikós</i>: <b>universal</b>.</p>
+
+  <h3>La línea de tiempo, sin adornos</h3>
+  <table class="tabla">
+    <tr><th>Año</th><th>Qué pasa</th></tr>
+    <tr><td>c. 30–33</td><td>Muerte y —según sus seguidores— resurrección de Jesús de Nazaret,
+      en Judea, provincia romana. La comunidad arranca en Jerusalén.</td></tr>
+    <tr><td>c. 64</td><td>Primera persecución sonada: Nerón culpa a los cristianos del incendio de Roma.</td></tr>
+    <tr><td>c. 107</td><td>Ignacio de Antioquía escribe por primera vez «Iglesia católica»
+      (Carta a los de Esmirna).</td></tr>
+    <tr><td>250</td><td>Decio obliga a todos a sacrificar y entrega un certificado (<i>libellus</i>).
+      Los que ceden quedan como <i>lapsi</i>, «caídos».</td></tr>
+    <tr><td>303</td><td>Diocleciano: la persecución más dura y la última.</td></tr>
+    <tr><td><b>313</b></td><td><b>Edicto de Milán</b>: Constantino y Licinio dan libertad religiosa.
+      Ser cristiano deja de ser delito.</td></tr>
+    <tr><td><b>325</b></td><td><b>Concilio de Nicea</b>, convocado por Constantino: se define que el
+      Hijo es «de la misma naturaleza» del Padre. De ahí sale el Credo.</td></tr>
+    <tr><td>381</td><td>Concilio de Constantinopla I: completa el Credo (la parte del Espíritu Santo).
+      El que se reza hoy es <b>niceno-constantinopolitano</b>, 325 + 381.</td></tr>
+    <tr><td><b>380</b></td><td><b>Edicto de Tesalónica</b>: Teodosio hace del cristianismo niceno la
+      religión oficial del Imperio.</td></tr>
+    <tr><td>431 / 451</td><td>Éfeso y Calcedonia: los otros dos concilios que casi todas las iglesias
+      cristianas reconocen junto a Nicea y Constantinopla.</td></tr>
+    <tr><td>476</td><td>Cae el Imperio romano de Occidente. La Iglesia —y sobre todo la sede de
+      Roma— queda como la estructura que sigue de pie.</td></tr>
+  </table>
+
+  <h3>Por qué nos tocaron estos tres elementos</h3>
+  <p>Porque son las tres respuestas a tres preguntas distintas, y juntas explican por qué esta
+  religión sobrevivió al Imperio que la perseguía:</p>
+  <ul>
+    <li><b>Dogmas y creencias — «¿qué creo?»</b> Un solo Dios en tres personas (Padre, Hijo y
+      Espíritu Santo); Jesucristo, Dios hecho hombre, muerto y resucitado; la Iglesia y el Papa
+      como autoridad. Todo eso está condensado en el Credo. La Iglesia católica reconoce
+      <b>21 concilios ecuménicos</b> (muchos más que la ortodoxa, la anglicana o la luterana) y
+      <b>cuatro dogmas marianos</b>.</li>
+    <li><b>Ritos y liturgia — «¿qué hago?»</b> El bautismo es la puerta: así entraba oficialmente
+      alguien a la comunidad, y sigue igual. Sobre él, la misa y los siete sacramentos.</li>
+    <li><b>Ética, moral y costumbres — «¿cómo vivo?»</b> La dignidad de toda persona (incluido el
+      esclavo y el enfermo), el amor al prójimo, el domingo como día distinto. De ahí salen
+      hospitales, hospicios y universidades siglos después.</li>
+  </ul>
+
+  <h3>Las tres cosas que conviene no confundir</h3>
+  <ul>
+    <li><b>313 no es 380.</b> En 313 el cristianismo se <i>permite</i>; en 380 se <i>impone</i>.
+      Constantino nunca lo hizo religión oficial: eso fue Teodosio, 67 años después.</li>
+    <li><b>21 son los concilios, no los dogmas.</b> Los dogmas están resumidos en el Credo;
+      los concilios ecuménicos reconocidos por la Iglesia católica son 21.</li>
+    <li><b>El Credo de hoy es de dos concilios</b>, 325 y 381. Y el «y del Hijo» (<i>Filioque</i>)
+      es un añadido latino posterior: es una de las razones del cisma con los ortodoxos.</li>
+  </ul>
+
+  <h3>Qué de todo esto sigue vivo</h3>
+  <ul>
+    <li>La misa del domingo repite la estructura de esas comunidades: Palabra y Eucaristía.</li>
+    <li>El Credo que se reza en misa es, palabra por palabra, lo que salió de Nicea y Constantinopla.</li>
+    <li>Nuestro calendario cuenta desde el nacimiento de Jesús; Navidad y Semana Santa mueven al país.</li>
+    <li>El Papa es el obispo de Roma: ese cargo nace en esta historia.</li>
+    <li>Hoy hay alrededor de <b>1,400 millones</b> de católicos: sigue siendo, de hecho, «universal».</li>
+  </ul>
+
+  <h3>El Credo completo (niceno-constantinopolitano)</h3>
+  <p id="credoLargo" style="font-family:var(--serif);color:var(--tinta)"></p>
+
+  <h3>Fuentes</h3>
+  <p class="fuente">
+    Rodrigo Ricardo (2025). <i>Catolicismo Romano | Historia, creencias y símbolos</i>. Estudyando.<br>
+    Holyart. <i>La historia de los dogmas de la Iglesia católica</i>.
+    holyart.es/blog/articulos-religiosos/la-historia-de-los-dogmas-de-la-iglesia-catolica/<br>
+    Juan Pablo II (9 de marzo de 1988). <i>Audiencia general</i>. vatican.va<br>
+    Vatican News (2025). <i>El Credo de Nicea, documento de identidad del cristiano</i>. vaticannews.va<br>
+    Textos de los edictos de Milán (313) y de Tesalónica (380), y actas de los concilios de
+    Nicea (325), Constantinopla I (381), Éfeso (431) y Calcedonia (451).
+  </p>
+  <p class="fuente" style="margin-top:14px">Claves del Pensamiento 1 · Universidad del Istmo ·
+    presentación «For Dummies», zona del segundo parcial.</p>
+</div>
+
+<script src="assets/sprites.js?v=2"></script>
+<script src="assets/sala.js?v=2"></script>
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════
+   EL IMPERIO Y LA IGLESIA — experiencia de sala
+   Todo el pixel art sale de assets/sprites.js (sprites de CCPP
+   repintados al siglo I por herramientas/generar-assets.py).
+   Sin audio, sin video: solo dibujo y toques.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const $  = (s)=>document.querySelector(s);
+const $$ = (s)=>Array.from(document.querySelectorAll(s));
+const clamp = (v,a,b)=>v<a?a:(v>b?b:v);
+const lerp  = (a,b,t)=>a+(b-a)*t;
+const easeOut = (t)=>1-Math.pow(1-t,3);
+const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+/* ── El Credo, partido en pedazos. Cada teléfono se queda con uno. ── */
+const CREDO = [
+  "Creo en un solo Dios,",
+  "Padre todopoderoso,",
+  "Creador del cielo y de la tierra,",
+  "de todo lo visible y lo invisible.",
+  "Creo en un solo Señor, Jesucristo,",
+  "Hijo único de Dios,",
+  "Dios de Dios, Luz de Luz,",
+  "engendrado, no creado,",
+  "de la misma naturaleza del Padre;",
+  "que por nosotros bajó del cielo",
+  "y se hizo hombre;",
+  "padeció y fue sepultado,",
+  "y resucitó al tercer día.",
+  "Creo en el Espíritu Santo, Señor y dador de vida.",
+  "Creo en la Iglesia, que es una, santa, católica y apostólica.",
+  "Confieso que hay un solo bautismo para el perdón de los pecados."
+];
+
+const HOY = [
+  "En misa se reza <b>esa misma frase</b>, casi palabra por palabra, desde el año 381.",
+  "El calendario cuenta los años <b>desde el nacimiento de Jesús</b>. También el tuyo.",
+  "El Papa es, literalmente, <b>el obispo de Roma</b>: ese cargo nace en esta historia.",
+  "La Iglesia católica reconoce <b>21 concilios</b>; el primero fue Nicea, en 325.",
+  "Hospitales, hospicios y universidades salen de comunidades como éstas.",
+  "Hoy son unos <b>1,400 millones</b> de católicos. <i>Katholikós</i> era «universal».",
+  "El domingo es día libre en medio mundo porque era <b>el día del Señor</b>.",
+  "En 313 se permitió. En <b>380</b> se volvió oficial. No es lo mismo."
+];
+
+/* ── estado ────────────────────────────────────────────────────────── */
+const LS = "iglesia-imperio-v1";
+let S = { persona:0, pedazo:0, eleccion:null, escena:0 };
+try{
+  const g = JSON.parse(localStorage.getItem(LS)||"null");
+  if(g && typeof g.persona==="number") S = Object.assign(S,g);
+  else nuevoSorteo();
+}catch(e){ nuevoSorteo(); }
+function nuevoSorteo(){
+  S.persona = Math.floor(Math.random()*window.SPRITES.catalogo.length);
+  S.pedazo  = Math.floor(Math.random()*CREDO.length);
+  S.eleccion = null;
+}
+function guardar(){ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){} }
+
+/* ── hojas de sprites ──────────────────────────────────────────────── */
+const SP = window.SPRITES;
+const imgPersonas = new Image(), imgCorazon = new Image();
+let listas = 0;
+function cuando(fn){ const t=()=>{ if(++listas>=2) fn(); };
+  imgPersonas.onload=t; imgCorazon.onload=t;
+  imgPersonas.src=SP.personas.src; imgCorazon.src=SP.corazon.src; }
+
+/* Corazón teñido: se lee el frame y se remapea por luminancia.
+   estado 0 = vivo (rosa) · 1 = ennegrecido · 2 = purificado (oro/luz) */
+const PAL = {
+  0:[[0x7A,0x0C,0x2E],[0xC8,0x18,0x50],[0xF0,0x3C,0x84],[0xFF,0x8C,0xC0]],
+  1:[[0x0A,0x0A,0x0E],[0x18,0x18,0x1E],[0x2A,0x28,0x30],[0x3E,0x3A,0x44]],
+  2:[[0x7A,0x54,0x10],[0xD8,0xA8,0x2A],[0xF2,0xD2,0x6A],[0xFF,0xF4,0xC8]]
+};
+const cacheCor = {};
+function frameCorazon(i, estado){
+  const k = i+"|"+estado;
+  if(cacheCor[k]) return cacheCor[k];
+  const w=SP.corazon.w, h=SP.corazon.h;
+  const c=document.createElement("canvas"); c.width=w; c.height=h;
+  const x=c.getContext("2d",{willReadFrequently:true});
+  x.drawImage(imgCorazon, 0, i*h, w, h, 0, 0, w, h);
+  if(estado!==0){
+    const d=x.getImageData(0,0,w,h), p=d.data, pal=PAL[estado];
+    for(let j=0;j<p.length;j+=4){
+      if(p[j+3]===0) continue;
+      const l=(0.299*p[j]+0.587*p[j+1]+0.114*p[j+2])/255;
+      const t=pal[l<0.28?0:(l<0.5?1:(l<0.75?2:3))];
+      p[j]=t[0]; p[j+1]=t[1]; p[j+2]=t[2];
+    }
+    x.putImageData(d,0,0);
+  }
+  cacheCor[k]=c; return c;
+}
+function mezclaCorazon(i, t){           // t: 0 = negro → 1 = purificado
+  const w=SP.corazon.w,h=SP.corazon.h;
+  const c=document.createElement("canvas"); c.width=w; c.height=h;
+  const x=c.getContext("2d");
+  x.drawImage(frameCorazon(i,1),0,0);
+  x.globalAlpha=clamp(t,0,1); x.drawImage(frameCorazon(i,2),0,0);
+  return c;
+}
+function dibujaPersona(ctx, idx, frame, x, y, esc){
+  const w=SP.personas.w, h=SP.personas.h;
+  ctx.drawImage(imgPersonas, frame*w, idx*h, w, h,
+                Math.round(x), Math.round(y), w*esc, h*esc);
+}
+
+/* ── lienzos que se adaptan a la pantalla ──────────────────────────── */
+function ajusta(cv){
+  const r = cv.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  const w = Math.max(1,Math.round(r.width*dpr)), h = Math.max(1,Math.round(r.height*dpr));
+  if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; }
+  return cv.getContext("2d");
+}
+function limpio(ctx){
+  ctx.imageSmoothingEnabled=false;
+  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  return { W:ctx.canvas.width, H:ctx.canvas.height,
+           u:Math.max(1,Math.round(ctx.canvas.height/60)) };   // "pixel" base
+}
+
+/* ── polvo del fondo (partículas lentas) ───────────────────────────── */
+let ESTADO_LUZ = 0;   // 0 noche · 1 amanecer dorado (lo leen el polvo y el cielo)
+(function polvo(){
+  const cv=$("#polvo"), ctx=cv.getContext("2d");
+  let ps=[], W=0,H=0;
+  function reset(){
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cv.width=Math.round(innerWidth*dpr); H=cv.height=Math.round(innerHeight*dpr);
+    const n = Math.round(W*H/48000);
+    ps = Array.from({length:clamp(n,26,90)},()=>({
+      x:Math.random()*W, y:Math.random()*H, r:(Math.random()*1.6+0.5)*dpr,
+      v:(Math.random()*0.16+0.04)*dpr, a:Math.random()*0.4+0.12,
+      f:Math.random()*Math.PI*2
+    }));
+  }
+  addEventListener("resize",reset,{passive:true}); reset();
+  (function loop(t){
+    ctx.clearRect(0,0,W,H);
+    for(const p of ps){
+      if(!reduce){ p.y-=p.v; p.f+=0.01; p.x+=Math.sin(p.f)*0.12; if(p.y<-4){p.y=H+4;p.x=Math.random()*W;} }
+      ctx.globalAlpha=p.a*(0.6+0.4*Math.sin(p.f*2));
+      ctx.fillStyle=ESTADO_LUZ>0.5?"#F5DE93":"#8FA0C0";
+      ctx.fillRect(p.x|0,p.y|0,p.r,p.r);
+    }
+    ctx.globalAlpha=1; requestAnimationFrame(loop);
+  })(0);
+})();
+
+/* ── cielo ─────────────────────────────────────────────────────────── */
+const CIELOS = {
+  noche:  "radial-gradient(ellipse 120% 80% at 50% 8%, #17203A 0%, #0B0D14 62%)",
+  camino: "radial-gradient(ellipse 120% 80% at 50% 10%, #1E2440 0%, #0B0D14 60%)",
+  humo:   "radial-gradient(ellipse 120% 90% at 50% 20%, #2A1418 0%, #07070A 62%)",
+  negro:  "radial-gradient(ellipse 120% 90% at 50% 40%, #100E12 0%, #050508 70%)",
+  luz:    "radial-gradient(ellipse 110% 75% at 50% 4%, #6B5A22 0%, #17140E 55%, #0B0D14 100%)",
+  oro:    "radial-gradient(ellipse 120% 80% at 50% 8%, #4A3A12 0%, #14110C 58%, #0B0D14 100%)"
+};
+function cielo(k){ $("#cielo").style.background = CIELOS[k]; }
+cielo("noche");
+function destello(ms){
+  const d=$("#destello"); if(reduce) return;
+  d.style.transition="none"; d.style.opacity="0.85";
+  requestAnimationFrame(()=>{ d.style.transition="opacity "+ms+"ms ease-out"; d.style.opacity="0"; });
+}
+
+/* ── navegación entre escenas ──────────────────────────────────────── */
+const PIPS = 6;                       // pasos que se le muestran al usuario
+(function pips(){ const c=$("#pasos");
+  for(let i=0;i<PIPS;i++){ const d=document.createElement("div"); d.className="pip"; c.appendChild(d);} })();
+function marcaPips(n){
+  $$("#pasos .pip").forEach((p,i)=>{ p.className="pip"+(i<n-1?" done":(i===n-1?" on":"")); });
+}
+function ir(n){
+  S.escena=n; guardar();
+  $$(".escena").forEach(s=>s.classList.toggle("on", +s.dataset.e===n));
+  marcaPips(clamp(n-1,0,PIPS));
+  if(n===2) arrancaCamino();
+  if(n===3) arrancaAltar();
+  if(n===4) arrancaLuz();
+  if(n===5) arrancaMapa();
+  if(n===7) arrancaSala();
+}
+
+/* ══ 1 · CÉDULA ═══════════════════════════════════════════════════ */
+function pintaCedula(){
+  const p = SP.catalogo[S.persona];
+  $("#perNombre").textContent = p.nombre;
+  $("#perLugar").textContent  = p.lugar + " · " + p.ano;
+  const ctx = ajusta($("#cCedula"));
+  (function loop(){
+    if(!$('.escena[data-e="1"]').classList.contains("on")) return requestAnimationFrame(loop);
+    const {W,H,u} = limpio(ctx);
+    const esc = Math.max(2, Math.round(H/38));
+    const t = performance.now()/1000;
+    // suelo de piedra
+    ctx.fillStyle="#1A1D28"; ctx.fillRect(0,H-u*6,W,u*6);
+    ctx.fillStyle="#232838"; for(let x=0;x<W;x+=u*7) ctx.fillRect(x,H-u*6,u*5,u);
+    // columnas a los lados
+    columna(ctx, u*3, H-u*6, u, 22); columna(ctx, W-u*7, H-u*6, u, 22);
+    const f = (Math.sin(t*2)>0)?0:1;
+    const bob = reduce?0:Math.round(Math.sin(t*2)*u*0.5);
+    dibujaPersona(ctx, S.persona, f, W/2-SP.personas.w*esc/2, H-u*6-SP.personas.h*esc+bob, esc);
+    requestAnimationFrame(loop);
+  })();
+}
+function columna(ctx,x,base,u,alto){
+  ctx.fillStyle="#2A3044"; ctx.fillRect(x, base-u*alto, u*4, u*alto);
+  ctx.fillStyle="#343B54"; ctx.fillRect(x, base-u*alto, u, u*alto);
+  ctx.fillStyle="#3A4260"; ctx.fillRect(x-u, base-u*alto-u*2, u*6, u*2);
+  ctx.fillStyle="#252B3C"; ctx.fillRect(x-u, base-u, u*6, u);
+}
+
+/* ══ 2 · EL CAMINO ════════════════════════════════════════════════ */
+const CIUDADES = ["Jerusalén","Antioquía","Éfeso","Corinto","Roma"];
+const TXT_CAMINO = [
+  "Sus seguidores dicen que <b>volvió a vivir</b>. Y salen a contarlo por las mismas carreteras que Roma construyó para sus ejércitos.",
+  "En cada ciudad queda un grupo. Se reúnen en casas, comparten el pan y eligen un responsable: el <b>obispo</b>.",
+  "El Imperio es un solo territorio, con un solo idioma comercial y caminos seguros. <b>Nunca una idea había viajado tan rápido.</b>",
+  "En trescientos años llegan a todo el Mediterráneo. Sin ejército, sin dinero y siendo ilegales.",
+  "Llegan a Roma. Y ahí el problema deja de ser religioso: <b>se vuelve político.</b>"
+];
+let camPaso = 0, camAnim = 0;
+function arrancaCamino(){
+  camPaso = 0; camAnim = 0; cielo("camino");
+  $("#pCamino").innerHTML = TXT_CAMINO[0];
+  $("#bPaso").textContent = "TOCÁ PARA MOVER LA NOTICIA";
+  const ctx = ajusta($("#cCamino"));
+  (function loop(){
+    if(!$('.escena[data-e="2"]').classList.contains("on")) return requestAnimationFrame(loop);
+    const {W,H,u} = limpio(ctx);
+    camAnim = lerp(camAnim, camPaso, reduce?1:0.12);
+    const t = performance.now()/1000;
+    const base = H-u*10, esc = Math.max(2, Math.round(H/62));
+    // camino de losas
+    ctx.fillStyle="#1B1F2C"; ctx.fillRect(0, base, W, u*10);
+    ctx.fillStyle="#242A3A";
+    for(let x=-((t*6)%(u*8))|0; x<W; x+=u*8) ctx.fillRect(x, base+u, u*6, u*2);
+    ctx.fillStyle="#2E3548"; ctx.fillRect(0, base, W, u);
+    // hitos: una ciudad por tramo
+    const paso = W/(CIUDADES.length-1);
+    for(let i=0;i<CIUDADES.length;i++){
+      const x = i*paso, alcanzada = i<=camAnim+0.02;
+      ciudadPixel(ctx, x, base, u, alcanzada, i);
+      ctx.font = (u*3.4|0)+"px "+getComputedStyle(document.body).fontFamily;
+      ctx.fillStyle = alcanzada? "#F5DE93":"#4A5268";
+      ctx.textAlign = i===0?"left":(i===CIUDADES.length-1?"right":"center");
+      ctx.fillText(CIUDADES[i], clamp(x,u*2,W-u*2), base+u*7.5);
+    }
+    // el mensajero
+    const mx = camAnim*paso, f=(Math.sin(t*8)>0)?0:1;
+    const sw = SP.personas.w*esc;
+    const sx = clamp(mx-sw/2, u, W-sw-u);          // que no se salga del lienzo
+    dibujaPersona(ctx, S.persona, camAnim<camPaso-0.02?f:0,
+                  sx, base-SP.personas.h*esc, esc);
+    // chispa de la noticia
+    if(!reduce){
+      ctx.globalAlpha=0.5+0.5*Math.sin(t*6);
+      ctx.fillStyle="#F5DE93";
+      ctx.fillRect(sx+sw+u, base-SP.personas.h*esc-u*2, u, u);
+      ctx.globalAlpha=1;
+    }
+    requestAnimationFrame(loop);
+  })();
+}
+function ciudadPixel(ctx,x,base,u,on,i){
+  const alto = 6+((i*3)%4);
+  ctx.fillStyle = on? "#3A4260":"#1E2331";
+  ctx.fillRect(x-u*2.5, base-u*alto, u*5, u*alto);
+  ctx.fillStyle = on? "#4A5474":"#252B3C";
+  ctx.fillRect(x-u*3.5, base-u*(alto+1.5), u*7, u*1.5);
+  ctx.fillStyle = on? "#F0D67A":"#2A3040";
+  ctx.fillRect(x-u, base-u*(alto-2), u, u);
+  ctx.fillRect(x+u*0.5, base-u*(alto-4), u, u);
+}
+
+/* ══ 3 · LA PRUEBA (el corazón se ennegrece) ══════════════════════ */
+let altarFase = 0, negrura = 0, humo = [];
+function arrancaAltar(){
+  altarFase = 0; negrura = 0; humo = []; cielo("humo");
+  $("#accAltar").style.display=""; $("#accAltar2").style.display="none";
+  $("#tAltar").innerHTML = "Un grano de incienso";
+  $("#pAltar").innerHTML = "Todos en el Imperio deben sacrificar al emperador y recoger un <b>certificado</b> que lo pruebe. Vos creés en un solo Dios.";
+  const ctx = ajusta($("#cAltar"));
+  (function loop(){
+    if(!$('.escena[data-e="3"]').classList.contains("on")) return requestAnimationFrame(loop);
+    const {W,H,u} = limpio(ctx);
+    const t = performance.now()/1000;
+    const base = H-u*4, esc = Math.max(2, Math.round(H/46));
+    if(altarFase>0) negrura = clamp(negrura + 0.012, 0, 1);
+    // suelo
+    ctx.fillStyle="#171A24"; ctx.fillRect(0,base,W,u*4);
+    // altar de piedra al centro
+    const ax=W/2-u*7, ay=base-u*12;
+    ctx.fillStyle="#2A3044"; ctx.fillRect(ax,ay,u*14,u*12);
+    ctx.fillStyle="#343B54"; ctx.fillRect(ax,ay,u*14,u*2);
+    ctx.fillStyle="#1E2331"; ctx.fillRect(ax+u*2,ay+u*4,u*10,u*6);
+    // busto del emperador sobre el altar
+    ctx.fillStyle="#8E2A6E"; ctx.fillRect(W/2-u*2, ay-u*5, u*4, u*5);
+    ctx.fillStyle="#E8C44A"; ctx.fillRect(W/2-u*3, ay-u*5, u*6, u);
+    // brasero: humo
+    if(!reduce && Math.random()<0.35) humo.push({x:W/2+ (Math.random()*u*4-u*2), y:ay-u*6, a:1});
+    humo = humo.filter(p=>p.a>0.02);
+    for(const p of humo){ p.y-=u*0.22; p.a-=0.012; p.x+=Math.sin(p.y*0.05)*0.6;
+      ctx.globalAlpha=p.a*0.5; ctx.fillStyle="#C6C2B4"; ctx.fillRect(p.x|0,p.y|0,u,u); }
+    ctx.globalAlpha=1;
+    // vos, a la izquierda
+    dibujaPersona(ctx, S.persona, 0, u*4, base-SP.personas.h*esc, esc);
+    // el corazón, a la derecha, ennegreciéndose
+    const cw = Math.min(SP.corazon.w*esc*0.85, W*0.30);
+    const fr = Math.floor((t*14)%SP.corazon.n);
+    const cor = negrura<=0 ? frameCorazon(fr,0)
+              : (()=>{ const c=document.createElement("canvas");
+                       c.width=SP.corazon.w;c.height=SP.corazon.h;
+                       const x=c.getContext("2d");
+                       x.drawImage(frameCorazon(fr,0),0,0);
+                       x.globalAlpha=negrura; x.drawImage(frameCorazon(fr,1),0,0);
+                       return c; })();
+    ctx.drawImage(cor, W-cw-u*6, base-cw-u*8, cw, cw);
+    if(altarFase>0){                       // la noche cae sobre todo
+      ctx.fillStyle="rgba(4,4,7,"+(negrura*0.55)+")"; ctx.fillRect(0,0,W,H);
+    }
+    requestAnimationFrame(loop);
+  })();
+}
+function eligeAltar(cual){
+  S.eleccion = cual; guardar();
+  altarFase = 1;
+  $("#accAltar").style.display="none"; $("#accAltar2").style.display="";
+  if(cual==="incienso"){
+    $("#tAltar").innerHTML = "Vivís.";
+    $("#pAltar").innerHTML = "Te dan tu certificado y volvés a casa. A los que hicieron eso los llamaron <b><i>lapsi</i></b>, «los caídos». La Iglesia discutió años si podían volver — y decidió que sí, con penitencia.";
+    $("#bTrasAltar").textContent = "¿Y LOS DEMÁS? ›";
+  }else{
+    $("#tAltar").innerHTML = "No vivís.";
+    $("#pAltar").innerHTML = "Te llamaron <b>mártir</b>: en griego, «testigo». Tertuliano lo resumió así: <i>«la sangre de los mártires es semilla de cristianos»</i>. Mientras más mataban, más crecían.";
+    $("#bTrasAltar").textContent = "¿Y ENTONCES? ›";
+  }
+  setTimeout(()=>{ $("#ojoAltar").textContent="Nerón · Decio · Diocleciano"; }, 600);
+}
+
+/* ══ 4 · BAJA LA LUZ (purificación) ═══════════════════════════════ */
+let luzT = 0, luzHold = false, luzListo = false;
+function arrancaLuz(){
+  luzT = 0; luzHold = false; luzListo=false; cielo("negro"); ESTADO_LUZ=0;
+  $("#dLuz").style.display="none";
+  $("#tLuz").innerHTML = "Y entonces baja";
+  $("#bLuz").style.setProperty("--p","0%");
+  $("#bLuz").firstChild.nodeValue = "MANTENÉ EL DEDO AQUÍ";
+  const ctx = ajusta($("#cLuz"));
+  let gotas = [];
+  (function loop(){
+    if(!$('.escena[data-e="4"]').classList.contains("on")) return requestAnimationFrame(loop);
+    const {W,H,u} = limpio(ctx);
+    const t = performance.now()/1000;
+    if(luzHold) luzT = clamp(luzT + 0.016, 0, 1);
+    else if(!luzListo) luzT = clamp(luzT - 0.02, 0, 1);
+    ESTADO_LUZ = luzT;
+    if(luzT>=1 && !luzListo) completaLuz();
+    // haz de luz desde arriba
+    if(luzT>0.02){
+      const g = ctx.createLinearGradient(0,0,0,H*0.9);
+      g.addColorStop(0,"rgba(255,244,200,"+(0.42*luzT)+")");
+      g.addColorStop(1,"rgba(255,244,200,0)");
+      ctx.fillStyle=g;
+      const anchoArriba = u*6+u*10*luzT;
+      ctx.beginPath();
+      ctx.moveTo(W/2-anchoArriba,0); ctx.lineTo(W/2+anchoArriba,0);
+      ctx.lineTo(W/2+u*18, H*0.92); ctx.lineTo(W/2-u*18, H*0.92); ctx.closePath(); ctx.fill();
+    }
+    // gotas de agua que caen mientras sostenés
+    if(luzHold && !reduce && Math.random()<0.4)
+      gotas.push({x:W/2+(Math.random()*u*10-u*5), y:0, v:u*(0.5+Math.random())});
+    gotas = gotas.filter(g0=>g0.y<H*0.72);
+    for(const g0 of gotas){ g0.y+=g0.v;
+      ctx.fillStyle="#9FD8EC"; ctx.globalAlpha=.85; ctx.fillRect(g0.x|0,g0.y|0,u,u*2); }
+    ctx.globalAlpha=1;
+    // el corazón, del negro al oro
+    const fr = Math.floor((t*(10+8*luzT))%SP.corazon.n);
+    const cw = SP.corazon.w*Math.max(3,Math.round(H/42));
+    const cor = mezclaCorazon(fr, easeOut(luzT));
+    if(luzT>0.5 && !reduce){
+      ctx.save(); ctx.globalAlpha=(luzT-0.5)*0.9;
+      ctx.filter="blur(6px)"; ctx.drawImage(cor, W/2-cw/2, H*0.4-cw/2, cw, cw); ctx.restore();
+      ctx.filter="none";
+    }
+    ctx.drawImage(cor, W/2-cw/2, H*0.4-cw/2, cw, cw);
+    requestAnimationFrame(loop);
+  })();
+}
+function completaLuz(){
+  luzListo = true; cielo("luz"); destello(900);
+  $("#tLuz").innerHTML = "Limpio.";
+  $("#pLuz").innerHTML = "Eso que acabás de hacer con el dedo es, en la práctica, el gesto más antiguo de esta religión: <b>el bautismo</b>. Así — y solo así — se entraba a la comunidad.";
+  $("#dLuz").style.display="";
+  const b=$("#bLuz"); b.classList.remove("lleno"); b.style.setProperty("--p","100%");
+  b.firstChild.nodeValue = "SEGUIR ›";
+  b.onclick = ()=>ir(5);
+}
+
+/* ══ 5 · 313 · 325 · 380 ══════════════════════════════════════════ */
+const FECHAS = [
+  { a:"313", t:"Edicto de Milán",
+    p:"Constantino y Licinio firman la <b>libertad religiosa</b>. Ser cristiano deja de ser delito de un día para otro. Se devuelven los templos confiscados.",
+    ojo:"313 · deja de ser delito", oro:0.34, btn:"¿Y LA FE? ›" },
+  { a:"325", t:"Concilio de Nicea",
+    p:"Constantino convoca a <b>unos 300 obispos</b>. Discuten meses una sola pregunta: quién es Jesús exactamente. La respuesta la escriben en una frase para que nadie la deforme: el <b>Credo</b>.",
+    ojo:"325 · la fe cabe en una frase", oro:0.62, btn:"DAME MI PEDAZO ›" },
+  { a:"380", t:"Edicto de Tesalónica",
+    p:"Teodosio convierte el cristianismo niceno en la <b>religión oficial del Imperio</b>. En 313 se permitía; ahora se impone. La misma gente que se escondía en catacumbas ahora manda.",
+    ojo:"380 · religión oficial", oro:1, btn:"› " }
+];
+let fIdx = 0, oroMapa = 0;
+function arrancaMapa(){
+  fIdx = 0; oroMapa = 0; cielo("oro");
+  aplicaFecha();
+  const ctx = ajusta($("#cMapa"));
+  (function loop(){
+    if(!$('.escena[data-e="5"]').classList.contains("on")) return requestAnimationFrame(loop);
+    const {W,H,u} = limpio(ctx);
+    const t = performance.now()/1000;
+    oroMapa = lerp(oroMapa, FECHAS[fIdx].oro, reduce?1:0.06);
+    // mar
+    ctx.fillStyle="#0F1626"; ctx.fillRect(0,0,W,H);
+    // costa esquemática del Mediterráneo, en bloques
+    const tierra = [[0,0,W,0.22],[0,0.72,W,0.28],[0.02,0.18,0.30,0.16],[0.62,0.16,0.22,0.2]];
+    for(const [x,y,w,h] of tierra){
+      ctx.fillStyle="#232B3C";
+      ctx.fillRect(x<1?x*W:x, y*H, w<=1?w*W:w, h*H);
+    }
+    // ciudades encendiéndose de oro según el año
+    const puntos = [[0.14,0.42],[0.28,0.34],[0.42,0.46],[0.55,0.36],[0.68,0.5],
+                    [0.80,0.32],[0.35,0.62],[0.62,0.66],[0.88,0.55],[0.20,0.66]];
+    puntos.forEach((p,i)=>{
+      const on = (i/puntos.length) < oroMapa;
+      const pulso = on && !reduce ? (0.7+0.3*Math.sin(t*3+i)) : 1;
+      ctx.globalAlpha = on? pulso : 0.35;
+      ctx.fillStyle = on? "#F0D67A" : "#3A4260";
+      const s = on? u*1.6 : u;
+      ctx.fillRect(p[0]*W-s/2, p[1]*H-s/2, s, s);
+      if(on){ ctx.globalAlpha=pulso*0.25; ctx.fillRect(p[0]*W-s*1.5, p[1]*H-s*1.5, s*3, s*3); }
+    });
+    ctx.globalAlpha=1;
+    // el año, grande, detrás
+    ctx.font = "700 "+(H*0.5|0)+"px "+getComputedStyle(document.body).fontFamily;
+    ctx.textAlign="center"; ctx.globalAlpha=0.10; ctx.fillStyle="#F0D67A";
+    ctx.fillText(FECHAS[fIdx].a, W/2, H*0.72); ctx.globalAlpha=1;
+    requestAnimationFrame(loop);
+  })();
+}
+function aplicaFecha(){
+  const f = FECHAS[fIdx];
+  $("#tMapa").innerHTML = f.a + " <span style='font-family:var(--serif);color:var(--tinta2);font-size:.62em'>· "+f.t+"</span>";
+  $("#pMapa").innerHTML = f.p;
+  $("#ojoMapa").textContent = f.ojo;
+  $("#bMapa").textContent = fIdx<FECHAS.length-1 ? f.btn : "CERRAR EL CÍRCULO ›";
+}
+
+/* ══ 6 · TU PEDAZO ════════════════════════════════════════════════ */
+function pintaPedazo(){
+  const n = S.pedazo+1;
+  $("#pedN").textContent  = "Pedazo "+n+" de "+CREDO.length;
+  $("#pedN2").textContent = "Tu pedazo · "+n+" de "+CREDO.length;
+  $("#pedTxt").textContent = CREDO[S.pedazo];
+  $("#pedTxt2").textContent = CREDO[S.pedazo];
+}
+
+/* ══ 7 · MODO SALA ════════════════════════════════════════════════ */
+let hoyIdx = 0, hoyTimer = null;
+function arrancaSala(){
+  cielo("oro"); ESTADO_LUZ = 1;
+  $("#hoy").innerHTML = HOY[0];
+  clearInterval(hoyTimer);
+  hoyTimer = setInterval(()=>{
+    hoyIdx = (hoyIdx+1)%HOY.length;
+    const h=$("#hoy"); h.style.opacity=0;
+    setTimeout(()=>{ h.innerHTML=HOY[hoyIdx]; h.style.transition="opacity .5s"; h.style.opacity=1; },420);
+  }, 5200);
+  const ctx = ajusta($("#cSala"));
+  (function loop(){
+    if(!$('.escena[data-e="7"]').classList.contains("on")) return requestAnimationFrame(loop);
+    const {W,H,u} = limpio(ctx);
+    const t = performance.now()/1000;
+    const base = H-u*5, esc = Math.max(2, Math.round(H/46));
+    // basílica sencilla: columnas + arco
+    ctx.fillStyle="#191D2A"; ctx.fillRect(0,base,W,u*5);
+    for(let i=0;i<4;i++){ const x = W*(0.12+i*0.25); columna(ctx, x, base, u, 16); }
+    // corazón dorado latiendo sobre el altar
+    const fr = Math.floor((t*11)%SP.corazon.n);
+    const cw = SP.corazon.w*Math.max(3,Math.round(H/44));
+    const cor = frameCorazon(fr,2);
+    if(!reduce){ ctx.save(); ctx.globalAlpha=0.5+0.2*Math.sin(t*2.2); ctx.filter="blur(7px)";
+      ctx.drawImage(cor, W/2-cw/2, base-cw-u*7, cw, cw); ctx.restore(); ctx.filter="none"; }
+    ctx.drawImage(cor, W/2-cw/2, base-cw-u*7, cw, cw);
+    // tu personaje, ahora de pie en la basílica
+    dibujaPersona(ctx, S.persona, 0, W/2-SP.personas.w*esc/2, base-SP.personas.h*esc, esc);
+    requestAnimationFrame(loop);
+  })();
+}
+
+/* ── panel "ver todo" ─────────────────────────────────────────────── */
+$("#credoLargo").textContent = CREDO.join(" ");
+$("#bMas").onclick    = ()=>$("#mas").classList.add("on");
+$("#bCerrar").onclick = ()=>$("#mas").classList.remove("on");
+$("#bReiniciar").onclick = ()=>{ nuevoSorteo(); pintaPedazo(); pintaCedula(); ir(0);
+  if(typeof saluda==="function") saluda(); };
+
+/* ── cableado de botones ──────────────────────────────────────────── */
+$("#bEmpezar").onclick = ()=>{ ir(1); };
+$("#bCamino").onclick  = ()=>ir(2);
+$("#bPaso").onclick = ()=>{
+  camPaso++;
+  if(camPaso>=CIUDADES.length-1){
+    camPaso = CIUDADES.length-1;
+    $("#pCamino").innerHTML = TXT_CAMINO[4];
+    $("#bPaso").textContent = "TRESCIENTOS AÑOS DESPUÉS ›";
+    $("#bPaso").onclick = ()=>ir(3);
+  }else{
+    $("#pCamino").innerHTML = TXT_CAMINO[camPaso];
+  }
+};
+$("#bIncienso").onclick = ()=>eligeAltar("incienso");
+$("#bNiego").onclick    = ()=>eligeAltar("niego");
+$("#bTrasAltar").onclick= ()=>ir(4);
+$("#bMapa").onclick = ()=>{
+  if(fIdx<FECHAS.length-1){ fIdx++; aplicaFecha(); if(fIdx===1) destello(700); }
+  else ir(6);
+};
+$("#bSala").onclick = ()=>ir(7);
+
+/* mantener el dedo = purificar */
+(function holdLuz(){
+  const b=$("#bLuz");
+  const on = (e)=>{ if(luzListo) return; e.preventDefault(); luzHold=true; };
+  const off= ()=>{ luzHold=false; };
+  b.addEventListener("touchstart",on,{passive:false});
+  b.addEventListener("touchend",off); b.addEventListener("touchcancel",off);
+  b.addEventListener("mousedown",on); addEventListener("mouseup",off);
+  b.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter") on(e); });
+  b.addEventListener("keyup",off);
+  setInterval(()=>{ if(!luzListo) b.style.setProperty("--p",(luzT*100).toFixed(1)+"%"); }, 60);
+})();
+
+/* teclado, para probarlo en la laptop */
+addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"||e.key===" "){
+    const n=S.escena;
+    const b = $('.escena[data-e="'+n+'"] .btn');
+    if(b && n!==4) b.click();
+  }
+  if(e.key==="ArrowLeft" && S.escena>0) ir(S.escena-1);
+});
+
+/* ══ LA SALA ══════════════════════════════════════════════════════
+   La computadora del presentador manda la escena; el teléfono la sigue.
+   Si el canal no conecta, no pasa nada: los botones siguen ahí y cada
+   quien avanza solo. Nunca se bloquea la experiencia por falta de red. */
+const idTelefono = (function(){
+  let v = null;
+  try{ v = localStorage.getItem("imperio-id"); }catch(e){}
+  if(!v){ v = Math.random().toString(36).slice(2,10);
+          try{ localStorage.setItem("imperio-id", v); }catch(e){} }
+  return v;
+})();
+function codigoSala(){
+  const m = (location.hash+location.search).match(/[?#&]s=([a-zA-Z0-9_-]{1,24})/);
+  if(m){ try{ localStorage.setItem("imperio-sala", m[1]); }catch(e){} return m[1]; }
+  try{ return localStorage.getItem("imperio-sala"); }catch(e){ return null; }
+}
+let canal = null, ultimaEscenaRecibida = -1;
+(function conectaSala(){
+  const cod = codigoSala();
+  if(!cod || !window.Sala) return;                  // sin código: modo solo
+  const luz = $("#luzSala");
+  canal = Sala.conectar({
+    sala: cod,
+    alEstado(e){ luz.className = "luzSala " + (e==="conectado"?"ok":(e==="sin-red"?"":"busca")); },
+    alRecibir(m){
+      if(m.t==="escena" && typeof m.n==="number" && m.n!==ultimaEscenaRecibida){
+        ultimaEscenaRecibida = m.n;
+        if(m.n!==S.escena) ir(m.n);
+      }
+      if(m.t==="quien") saluda();
+      if(m.t==="credo" && typeof m.i==="number") avisaPedazo(m.i);
+    }
+  });
+  saluda();
+  // el que entra tarde se pone al día con lo último que dijo la compu
+  canal.recuperar(45, (msgs)=>{
+    for(let k=msgs.length-1;k>=0;k--){
+      if(msgs[k].t==="escena" && typeof msgs[k].n==="number"){
+        if(S.escena===0 && msgs[k].n>0){ ultimaEscenaRecibida=msgs[k].n; ir(msgs[k].n); }
+        break;
+      }
+    }
+  });
+})();
+function saluda(){
+  if(canal) canal.enviar({t:"hola", id:idTelefono, p:S.persona, f:S.pedazo});
+}
+function avisaPedazo(i){
+  if(i!==S.pedazo) return;
+  const caja = $("#tuyo");
+  $("#tuyoN").textContent = "Pedazo "+(i+1)+" de "+CREDO.length;
+  $("#tuyoTxt").textContent = CREDO[i];
+  caja.classList.add("on");
+  try{ if(navigator.vibrate) navigator.vibrate([90,60,90]); }catch(e){}
+  if(canal) canal.enviar({t:"arriba", id:idTelefono});
+  clearTimeout(avisaPedazo.t);
+  avisaPedazo.t = setTimeout(()=>caja.classList.remove("on"), 14000);
+}
+document.getElementById("tuyo").onclick = ()=>document.getElementById("tuyo").classList.remove("on");
+
+/* ── arranque ─────────────────────────────────────────────────────── */
+window.__ir = ir;   // gancho para las pruebas automáticas
+cuando(()=>{ pintaPedazo(); pintaCedula(); ir(0); });
+addEventListener("resize",()=>{ $$(".lienzo").forEach(c=>{ c.width=c.width; }); },{passive:true});
+</script>
+</body>
+</html>

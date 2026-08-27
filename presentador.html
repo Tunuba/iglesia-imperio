@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sala — El Imperio y la Iglesia</title>
+<style>
+:root{
+  --noche:#0B0D14; --piedra:#161A26; --linea:#2C3346;
+  --tinta:#FFF6E2; --tinta2:#C6C2B4; --apagado:#8A8674;
+  --oro:#E8C44A; --oro2:#F5DE93; --purpura:#8E2A6E; --sangre:#C0261E; --verde:#3E8E4A;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--noche);color:var(--tinta);font-family:var(--sans);overflow:hidden;
+  background-image:radial-gradient(ellipse 120% 80% at 50% 0%,#17203A 0%,#0B0D14 60%)}
+#pantalla{position:fixed;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  height:100dvh;overflow:hidden}
+
+/* ── cabecera ─────────────────────────────────────────────────────── */
+header{display:flex;align-items:baseline;gap:16px;padding:18px 26px 10px}
+header h1{font-family:var(--serif);font-weight:400;font-size:clamp(20px,2.4vw,34px);
+  letter-spacing:-.02em}
+header .sub{font-family:var(--mono);font-size:clamp(9px,.85vw,12px);letter-spacing:.24em;
+  text-transform:uppercase;color:var(--apagado)}
+.estado{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--mono);
+  font-size:clamp(10px,1vw,13px);letter-spacing:.12em;text-transform:uppercase;color:var(--tinta2)}
+.luz{width:9px;height:9px;border-radius:50%;background:#5A5A5A;box-shadow:0 0 10px currentColor}
+.luz.ok{background:var(--verde);color:var(--verde)}
+.luz.busca{background:var(--oro);color:var(--oro);animation:pulso 1.1s infinite}
+.luz.mal{background:var(--sangre);color:var(--sangre)}
+@keyframes pulso{0%,100%{opacity:.35}50%{opacity:1}}
+.cuenta{color:var(--oro2);font-size:clamp(13px,1.5vw,20px)}
+
+/* ── cuerpo ───────────────────────────────────────────────────────── */
+main{display:grid;grid-template-columns:minmax(210px,24vw) minmax(0,1fr);gap:clamp(14px,2vw,30px);
+  padding:0 26px;min-height:0;overflow:hidden}
+.tarjeta{border:1px solid var(--linea);border-radius:16px;background:rgba(16,20,30,.72);
+  padding:clamp(12px,1.4vw,20px);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.rotulo{font-family:var(--mono);font-size:clamp(9px,.8vw,11px);letter-spacing:.24em;
+  text-transform:uppercase;color:var(--oro);margin-bottom:10px}
+
+#qr{background:#FFF6E2;border-radius:10px;padding:9px;line-height:0;align-self:center;
+  width:100%;max-width:min(34vh,300px);flex:0 1 auto}
+#qr svg{width:100%;height:auto;display:block}
+.url{font-family:var(--mono);font-size:clamp(10px,.95vw,13px);color:var(--tinta2);
+  margin-top:12px;text-align:center;word-break:break-all;line-height:1.45}
+.codigo{font-family:var(--serif);font-size:clamp(22px,3vw,40px);color:var(--oro2);
+  text-align:center;letter-spacing:.06em;margin-top:6px}
+.nota{font-size:clamp(10.5px,1vw,14px);color:var(--tinta2);text-align:center;margin-top:10px;
+  line-height:1.55}
+.nota .resalta{color:var(--oro2);font-size:1.18em;letter-spacing:.02em}
+
+#sala{flex:1;min-height:0;image-rendering:pixelated;width:100%;display:block}
+
+/* ── barra de control ─────────────────────────────────────────────── */
+footer{padding:clamp(10px,1.2vw,18px) 26px calc(env(safe-area-inset-bottom) + 16px);
+  display:flex;flex-direction:column;gap:10px}
+.fila{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.b{border:1px solid var(--linea);border-radius:11px;background:var(--piedra);
+  padding:10px 15px;font-size:clamp(12px,1.05vw,15px);font-weight:600;
+  transition:transform .1s,border-color .25s,background .25s}
+.b:hover{border-color:var(--oro)}
+.b:active{transform:scale(.97)}
+.b.oro{border-color:var(--oro);background:linear-gradient(180deg,#231D0C,#171308);color:var(--oro2)}
+.b.chico{padding:7px 10px;font-size:clamp(10px,.9vw,12px);font-weight:500}
+.escenaActual{font-family:var(--serif);font-size:clamp(17px,2vw,28px);white-space:nowrap}
+.escenaActual small{font-family:var(--mono);font-size:.42em;letter-spacing:.2em;color:var(--oro);
+  text-transform:uppercase;display:block;margin-bottom:2px}
+.pistaTeclas{margin-left:auto;font-family:var(--mono);font-size:clamp(9px,.85vw,11.5px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--apagado)}
+#credos{display:flex;gap:5px;flex-wrap:wrap}
+#credos .p{border:1px solid #3A3320;border-radius:8px;padding:5px 8px;font-family:var(--mono);
+  font-size:clamp(9px,.85vw,11.5px);color:var(--apagado);cursor:pointer;transition:.2s}
+#credos .p:hover{border-color:var(--oro);color:var(--oro2)}
+#credos .p.dicho{background:#1B1708;color:#6A5A28;border-color:#2A2410}
+#credos .p.ahora{background:var(--oro);color:#171308;border-color:var(--oro);font-weight:700}
+
+/* ── el pedazo que se está leyendo, en grande ─────────────────────── */
+#leyendo{position:fixed;inset:0;z-index:30;display:none;place-items:center;
+  background:rgba(6,7,11,.94);padding:6vw;text-align:center}
+#leyendo.on{display:grid}
+#leyendo .n{font-family:var(--mono);font-size:clamp(11px,1.2vw,16px);letter-spacing:.3em;
+  color:var(--oro);text-transform:uppercase}
+#leyendo .frase{font-family:var(--serif);font-size:clamp(34px,7vw,110px);line-height:1.08;
+  color:var(--oro2);margin-top:22px;max-width:22ch}
+#leyendo .pie{font-family:var(--mono);font-size:clamp(10px,1vw,14px);letter-spacing:.18em;
+  color:var(--apagado);margin-top:26px;text-transform:uppercase}
+
+/* ── guion ────────────────────────────────────────────────────────── */
+#guion{position:fixed;right:0;top:0;bottom:0;width:min(430px,42vw);z-index:25;
+  background:rgba(8,10,16,.985);border-left:1px solid var(--linea);overflow-y:auto;
+  padding:22px 22px 40px;transform:translateX(102%);transition:transform .35s ease}
+#guion.on{transform:none}
+#guion h2{font-family:var(--serif);font-weight:400;font-size:22px;margin:18px 0 8px}
+#guion h2:first-child{margin-top:0}
+#guion p,#guion li{font-size:13.5px;line-height:1.5;color:var(--tinta2)}
+#guion ul{margin:6px 0 0 17px;display:flex;flex-direction:column;gap:5px}
+#guion .min{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--oro);
+  text-transform:uppercase;margin-top:16px}
+#guion .quien{color:var(--oro2);font-weight:600}
+@media (max-width:900px){ main{grid-template-columns:1fr;grid-template-rows:auto 1fr} }
+</style>
+</head>
+<body>
+<div id="pantalla">
+  <header>
+    <div>
+      <div class="sub">Claves del Pensamiento 1 · Universidad del Istmo</div>
+      <h1>El Imperio y la Iglesia</h1>
+    </div>
+    <div class="estado">
+      <span class="luz" id="luz"></span><span id="txtEstado">buscando la sala…</span>
+      <span class="cuenta" id="cuenta">0 teléfonos</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="tarjeta">
+      <div class="rotulo">Escaneá para entrar</div>
+      <div id="qr"></div>
+      <div class="codigo" id="codigo">—</div>
+      <div class="url" id="url">—</div>
+      <div class="nota" id="nota">Cada quien recibe un personaje distinto y un pedazo del Credo.</div>
+    </section>
+
+    <section class="tarjeta">
+      <div class="rotulo">La sala <span id="ojoSala" style="color:var(--apagado)"></span></div>
+      <canvas id="sala"></canvas>
+    </section>
+  </main>
+
+  <footer>
+    <div class="fila">
+      <div class="escenaActual"><small id="numEscena">Escena 1 de 8</small><span id="nomEscena">Portada</span></div>
+      <button class="b" id="bAtras">◀</button>
+      <button class="b oro" id="bAdelante">SIGUIENTE ▶</button>
+      <button class="b chico" id="bTodos">Llevar a todos aquí</button>
+      <button class="b chico" id="bGuion">Guion (G)</button>
+      <button class="b chico" id="bNueva">Sala nueva</button>
+      <div class="pistaTeclas">← → mueven a todos · 1–8 escena · G guion · Esc cierra</div>
+    </div>
+    <div class="fila">
+      <div class="rotulo" style="margin:0 6px 0 0">El Credo, pedazo por pedazo</div>
+      <div id="credos"></div>
+    </div>
+  </footer>
+</div>
+
+<div id="leyendo">
+  <div>
+    <div class="n" id="leyN">Pedazo 1 de 16</div>
+    <div class="frase" id="leyTxt">—</div>
+    <div class="pie">quien lo tenga, que levante el teléfono · Esc para cerrar</div>
+  </div>
+</div>
+
+<aside id="guion">
+  <h2>Cómo se corre esto</h2>
+  <p>La compu manda: cada vez que tocás <b>SIGUIENTE</b>, todos los teléfonos de la
+  sala saltan a esa escena. Ellos no tienen que tocar nada — pero si el canal se cae,
+  cada teléfono puede avanzar solo y esto sigue funcionando.</p>
+  <p><b>Antes de empezar:</b> proyectá esta pantalla, dejá el QR arriba mientras entran, y
+  no pases de escena hasta ver la cuenta de teléfonos subir.</p>
+
+  <div class="min">Minuto 1 · qué es y por qué me importa</div>
+  <ul>
+    <li><span class="quien">Escenas 1–2.</span> «Todos ustedes acaban de recibir un personaje.
+      Son gente común del Imperio: un pescador, una esclava, un legionario.»</li>
+    <li>Año 33: matan a un maestro en una provincia chica; sus seguidores dicen que resucitó.</li>
+    <li>La noticia viaja por las <b>carreteras romanas</b>: mismo territorio, mismo idioma
+      comercial, caminos seguros. Nunca una idea había viajado tan rápido.</li>
+    <li><b>Católico</b> = <i>katholikós</i> = universal. Lo escribe primero Ignacio de Antioquía, año 107.</li>
+  </ul>
+
+  <div class="min">Minutos 2 a 4 · los hitos</div>
+  <ul>
+    <li><span class="quien">Escena 3 — la prueba.</span> Que elijan en el teléfono: ofrecer
+      incienso al emperador o negarse. Preguntá en voz alta quién se negó.
+      Los que cedieron: <i>lapsi</i>. Los que no: mártires. Tertuliano: «la sangre de los
+      mártires es semilla de cristianos».</li>
+    <li><span class="quien">Escena 4 — baja la luz.</span> Que mantengan el dedo en la pantalla.
+      El corazón negro se limpia: eso es el <b>bautismo</b>, la puerta de entrada, y ahí
+      entra la <b>Trinidad</b>: un solo Dios en tres personas.</li>
+    <li><span class="quien">Escena 5 — 313, 325, 380.</span> Tres toques:
+      <b>313</b> Edicto de Milán (Constantino y Licinio): deja de ser delito.
+      <b>325</b> Concilio de Nicea: 300 obispos, la fe en una frase.
+      <b>380</b> Edicto de Tesalónica (Teodosio): religión oficial.
+      Remarcá: <b>313 permite, 380 impone</b>. No es lo mismo.</li>
+  </ul>
+
+  <div class="min">Minuto 5 · cómo cambió el mundo</div>
+  <ul>
+    <li><span class="quien">Escena 6–7 y el Credo.</span> Abrí los pedazos de abajo y leelos
+      en orden: cada quien levanta el teléfono cuando escucha el suyo. «Ninguno lo tiene
+      entero. Entre todos, sí.»</li>
+    <li>Cierre: el Credo de la misa es esa frase, el Papa es el obispo de Roma, el calendario
+      cuenta desde Jesús, y hoy son unos 1,400 millones.</li>
+  </ul>
+
+  <div class="min">Si alguien pregunta</div>
+  <ul>
+    <li><b>21 son los concilios</b>, no los dogmas. Los dogmas están resumidos en el Credo.</li>
+    <li>El Credo que rezamos es de <b>dos</b> concilios: Nicea 325 y Constantinopla 381.</li>
+    <li>El «y del Hijo» (<i>Filioque</i>) es un añadido latino posterior: pesa en el cisma
+      con los ortodoxos.</li>
+  </ul>
+</aside>
+
+<script src="assets/sprites.js?v=2"></script>
+<script src="assets/qr.js?v=2"></script>
+<script src="assets/sala.js?v=2"></script>
+<script>
+"use strict";
+const $ = (s)=>document.querySelector(s);
+const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+/* Los mismos textos que el teléfono; si cambian allá, cambian aquí. */
+const CREDO = [
+  "Creo en un solo Dios,","Padre todopoderoso,","Creador del cielo y de la tierra,",
+  "de todo lo visible y lo invisible.","Creo en un solo Señor, Jesucristo,",
+  "Hijo único de Dios,","Dios de Dios, Luz de Luz,","engendrado, no creado,",
+  "de la misma naturaleza del Padre;","que por nosotros bajó del cielo","y se hizo hombre;",
+  "padeció y fue sepultado,","y resucitó al tercer día.",
+  "Creo en el Espíritu Santo, Señor y dador de vida.",
+  "Creo en la Iglesia, que es una, santa, católica y apostólica.",
+  "Confieso que hay un solo bautismo para el perdón de los pecados."
+];
+const ESCENAS = ["Portada","Tu personaje","El camino","La prueba","Baja la luz",
+                 "313 · 325 · 380","Tu pedazo del Credo","Modo sala"];
+
+/* ── código de sala: se guarda para que recargar no eche a nadie ──── */
+const PALABRAS = ["roma","nicea","milan","efeso","judea","tiber","foro","cesarea"];
+function nuevoCodigo(){
+  return PALABRAS[Math.floor(Math.random()*PALABRAS.length)] + (10+Math.floor(Math.random()*89));
+}
+let codigo = localStorage.getItem("imperio-sala") || nuevoCodigo();
+localStorage.setItem("imperio-sala", codigo);
+
+let ipDeLaCompu = null;   // la que anuncia el servidor local, si hay
+function urlTelefono(){
+  let base = location.href.replace(/presentador\.html.*$/, "").replace(/[^/]*$/, "");
+  // Si esta página se abrió en localhost, el QR NO puede decir localhost: un
+  // teléfono que lo escanee se apuntaría a sí mismo. Se cambia por la IP real.
+  if(ipDeLaCompu && /^https?:\/\/(localhost|127\.0\.0\.1)/.test(base))
+    base = base.replace(/^(https?:\/\/)(localhost|127\.0\.0\.1)/, "$1" + ipDeLaCompu);
+  return base + "index.html#s=" + codigo;
+}
+
+function pintaQR(){
+  const u = urlTelefono();
+  $("#codigo").textContent = codigo.toUpperCase();
+  $("#url").textContent = u.replace(/^https?:\/\//,"");
+  try{
+    $("#qr").innerHTML = QR.svg(u, {escala:8, borde:2, claro:"#FFF6E2", oscuro:"#14110A"});
+  }catch(e){
+    $("#qr").innerHTML = '<div style="color:#C0261E;font:13px monospace;padding:12px">'+e.message+'</div>';
+  }
+  if(location.protocol === "file:"){
+    $("#nota").innerHTML = "⚠ Estás abriendo el archivo directo. Los teléfonos no pueden "+
+      "leer una dirección <code>file://</code>: publicá la carpeta o servila con "+
+      "<code>herramientas/servir.ps1</code>.";
+  }
+}
+pintaQR();
+// El servidor local dice en qué IP lo pueden ver los teléfonos: sin esto el QR
+// diría "127.0.0.1", que en un teléfono apunta al propio teléfono y no abre nada.
+function preguntaIP(){
+  if(location.protocol === "file:") return;
+  fetch(location.origin + "/sala/ping", {cache:"no-store"})
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      if(!j || !j.ips || !j.ips.length) return;
+      // se prefiere una IP de red casera/hotspot (192.168.x / 172.20-31 / 10.x)
+      const buenas = j.ips.filter(ip => /^192\.168\./.test(ip)) .concat(
+                     j.ips.filter(ip => /^10\./.test(ip)));
+      ipDeLaCompu = (buenas[0] || j.ips[0]);
+      pintaQR();
+      const red = (j.redes && j.redes.length) ? j.redes[0] : null;
+      $("#nota").innerHTML = red
+        ? "<b>1.</b> Conectate al WiFi <b class='resalta'>" + red + "</b>  ·  <b>2.</b> escaneá el código."
+        : "Conectate al mismo WiFi que esta computadora y escaneá el código.";
+      $("#nota").innerHTML += "<br><span style='opacity:.7'>Sin internet: los teléfonos entran "+
+        "directo a esta computadora (" + ipDeLaCompu + ").</span>";
+    })
+    .catch(()=>{});
+}
+preguntaIP();
+
+/* ── la sala: cada teléfono conectado es un personaje ─────────────── */
+const SP = window.SPRITES;
+const imgPersonas = new Image(); imgPersonas.src = SP.personas.src;
+const gente = new Map();      // id -> {p, f, x, meta, arriba, entra}
+let escena = 0, pedazoActual = -1;
+
+function ranura(i){ return 0.06 + ((i*0.077) % 0.88); }
+
+function dibujaSala(){
+  const cv = $("#sala"), r = cv.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const W = Math.max(1,Math.round(r.width*dpr)), H = Math.max(1,Math.round(r.height*dpr));
+  if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+  const ctx = cv.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0,0,W,H);
+  const u = Math.max(2, Math.round(H/70));
+  const base = H - u*7;
+  const t = performance.now()/1000;
+
+  // piso y columnas de la basílica
+  ctx.fillStyle="#141822"; ctx.fillRect(0, base, W, H-base);
+  ctx.fillStyle="#1B2030";
+  for(let x=0; x<W; x+=u*9) ctx.fillRect(x, base+u, u*7, u);
+  for(let i=0;i<6;i++){
+    const x = W*(0.04+i*0.19);
+    ctx.fillStyle="#212739"; ctx.fillRect(x, base-u*26, u*4, u*26);
+    ctx.fillStyle="#2B3348"; ctx.fillRect(x, base-u*26, u, u*26);
+    ctx.fillStyle="#333C55"; ctx.fillRect(x-u, base-u*28, u*6, u*2);
+  }
+  // vitral del fondo, entre las columnas del centro
+  ctx.strokeStyle="#2A3348"; ctx.lineWidth=Math.max(2,u*0.8);
+  ctx.beginPath(); ctx.arc(W/2, base-u*20, u*9, Math.PI, 0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W/2-u*9, base-u*20); ctx.lineTo(W/2-u*9, base-u*6);
+  ctx.moveTo(W/2+u*9, base-u*20); ctx.lineTo(W/2+u*9, base-u*6); ctx.stroke();
+  ctx.fillStyle="rgba(232,196,74,.05)";
+  ctx.fillRect(W/2-u*9, base-u*29, u*18, u*23);
+
+  const esc = Math.max(2, Math.round(H/46));
+  const pw = SP.personas.w*esc, ph = SP.personas.h*esc;
+  let i = 0;
+  for(const g of gente.values()){
+    const destino = ranura(g.orden)*(W-pw);
+    g.x = lerp(g.x, destino, 0.06);
+    const anda = Math.abs(g.x-destino) > u;
+    const frame = anda ? ((Math.sin(t*9+g.orden)>0)?0:1) : 0;
+    const salto = g.arriba>0 ? Math.abs(Math.sin(t*6))*u*4 : 0;
+    if(g.arriba>0) g.arriba -= 1/60;
+    ctx.drawImage(imgPersonas, frame*SP.personas.w, g.p*SP.personas.h, SP.personas.w, SP.personas.h,
+                  Math.round(g.x), Math.round(base-ph-salto), pw, ph);
+    if(g.arriba>0){                       // el que tiene el pedazo que se está leyendo
+      ctx.globalAlpha = 0.35+0.35*Math.sin(t*7);
+      ctx.fillStyle="#F0D67A";
+      ctx.fillRect(Math.round(g.x+pw/2-esc), Math.round(base-ph-salto-esc*4), esc*2, esc*2);
+      ctx.globalAlpha = 1;
+    }
+    i++;
+  }
+  if(gente.size===0){
+    ctx.fillStyle="#4A5268";
+    ctx.font = (u*4)+"px "+getComputedStyle(document.body).fontFamily;
+    ctx.textAlign="center";
+    ctx.fillText("esperando que escaneen el código…", W/2, base-u*10);
+  }
+  requestAnimationFrame(dibujaSala);
+}
+imgPersonas.onload = ()=>requestAnimationFrame(dibujaSala);
+
+/* ── canal ────────────────────────────────────────────────────────── */
+let sala = null;
+function conecta(){
+  if(sala) sala.cerrar();
+  gente.clear();
+  sala = Sala.conectar({
+    sala: codigo,
+    alEstado(e){
+      const l = $("#luz"), t = $("#txtEstado");
+      l.className = "luz " + (e==="conectado"?"ok":(e==="sin-red"?"mal":"busca"));
+      t.textContent = e==="conectado" ? "sala abierta"
+                    : e==="sin-red" ? "sin canal — que avancen ellos"
+                    : "buscando la sala…";
+    },
+    alRecibir(m){
+      if(m.t==="hola"){
+        if(!gente.has(m.id))
+          gente.set(m.id, {p:m.p|0, f:m.f|0, x:-40, orden:gente.size, arriba:0});
+        else Object.assign(gente.get(m.id), {p:m.p|0, f:m.f|0});
+        $("#cuenta").textContent = gente.size + (gente.size===1?" teléfono":" teléfonos");
+        if(escena>0) sala.enviar({t:"escena", n:escena});   // el que llega tarde se pone al día
+      }
+      if(m.t==="arriba"){
+        const g = gente.get(m.id); if(g) g.arriba = 6;
+      }
+    }
+  });
+  setTimeout(()=>sala.enviar({t:"quien"}), 1500);  // que se re-anuncien los que ya estaban
+}
+conecta();
+
+/* ── control de escenas ───────────────────────────────────────────── */
+function vaA(n){
+  escena = clamp(n, 0, ESCENAS.length-1);
+  $("#numEscena").textContent = "Escena "+(escena+1)+" de "+ESCENAS.length;
+  $("#nomEscena").textContent = ESCENAS[escena];
+  if(sala) sala.enviar({t:"escena", n:escena});
+}
+vaA(0);
+$("#bAdelante").onclick = ()=>vaA(escena+1);
+$("#bAtras").onclick    = ()=>vaA(escena-1);
+$("#bTodos").onclick    = ()=>{ if(sala) sala.enviar({t:"escena", n:escena}); };
+$("#bGuion").onclick    = ()=>$("#guion").classList.toggle("on");
+$("#bNueva").onclick    = ()=>{
+  codigo = nuevoCodigo(); localStorage.setItem("imperio-sala", codigo);
+  pintaQR();
+  conecta();
+};
+
+/* ── los pedazos del Credo ────────────────────────────────────────── */
+const cajaCredos = $("#credos");
+CREDO.forEach((frase,i)=>{
+  const b = document.createElement("button");
+  b.className = "p"; b.textContent = (i+1);
+  b.title = frase;
+  b.onclick = ()=>llamaPedazo(i);
+  cajaCredos.appendChild(b);
+});
+function llamaPedazo(i){
+  pedazoActual = i;
+  Array.from(cajaCredos.children).forEach((b,k)=>{
+    b.classList.toggle("ahora", k===i);
+    if(k<i) b.classList.add("dicho");
+  });
+  $("#leyN").textContent = "Pedazo "+(i+1)+" de "+CREDO.length;
+  $("#leyTxt").textContent = CREDO[i];
+  $("#leyendo").classList.add("on");
+  if(sala) sala.enviar({t:"credo", i:i});
+}
+$("#leyendo").onclick = ()=>$("#leyendo").classList.remove("on");
+
+/* ── teclado ──────────────────────────────────────────────────────── */
+addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"){ if($("#leyendo").classList.contains("on") && pedazoActual<CREDO.length-1) llamaPedazo(pedazoActual+1); else vaA(escena+1); }
+  else if(e.key==="ArrowLeft"){ if($("#leyendo").classList.contains("on") && pedazoActual>0) llamaPedazo(pedazoActual-1); else vaA(escena-1); }
+  else if(e.key>="1" && e.key<="8") vaA(+e.key-1);
+  else if(e.key.toLowerCase()==="g") $("#guion").classList.toggle("on");
+  else if(e.key==="Escape"){ $("#leyendo").classList.remove("on"); $("#guion").classList.remove("on"); }
+});
+$("#ojoSala").textContent = "· código " + codigo.toUpperCase();
+</script>
+</body>
+</html>
