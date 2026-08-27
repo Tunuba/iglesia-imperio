@@ -1204,8 +1204,7 @@ function avisaPedazo(i){
   clearTimeout(avisaPedazo.t);
   avisaPedazo.t=setTimeout(()=>$("#tuyo").classList.remove("on"),14000);
 }
-(function conecta(){
-  const cod=codigoSala();
+function abreCanal(cod){
   if(!cod||!window.Sala) return;
   const luz=$("#luzSala");
   canal=Sala.conectar({
@@ -1236,6 +1235,24 @@ function avisaPedazo(i){
       }
     }
   });
+}
+/* Si el enlace no trae código (por ejemplo si alguien entra a la raíz), se le
+   pregunta al servidor cuál es la sala. Así el enlace de los teléfonos puede
+   ser simplemente la dirección de la computadora, sin nada más. */
+(function conecta(){
+  const delEnlace=codigoSala();
+  if(delEnlace){ abreCanal(delEnlace); return; }
+  if(location.protocol==="file:"){ return; }
+  let listo=false;
+  const corta=setTimeout(()=>{ if(!listo){ listo=true; abreCanal(null); } }, 2000);
+  fetch(location.origin+"/sala/ping",{cache:"no-store"})
+    .then(r=>r.ok?r.json():null)
+    .then(j=>{
+      if(listo) return; listo=true; clearTimeout(corta);
+      if(j&&j.codigo){ try{ localStorage.setItem("imperio-sala",j.codigo); }catch(e){} }
+      abreCanal((j&&j.codigo)||null);
+    })
+    .catch(()=>{ if(!listo){ listo=true; clearTimeout(corta); abreCanal(null); } });
 })();
 
 addEventListener("keydown",(e)=>{

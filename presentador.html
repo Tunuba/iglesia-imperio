@@ -355,6 +355,17 @@ function preguntaIP(){
     .then(r => r.ok ? r.json() : null)
     .then(j => {
       if(!j || !j.ips || !j.ips.length) return;
+      // El código de la sala lo manda el SERVIDOR. Antes lo sorteaba esta
+      // pantalla y lo guardaba en su localStorage: al abrirla desde otra IP
+      // salía otro código y los teléfonos quedaban en una sala distinta sin
+      // que se notara (medido: la pantalla decía NICEA91 y ellos entraban a
+      // NICEA25, y la cuenta se quedaba en cero).
+      if(j.codigo && j.codigo !== codigo){
+        codigo = j.codigo;
+        try{ localStorage.setItem("imperio-sala", codigo); }catch(e){}
+        $("#ojoSala").textContent = "· código " + codigo.toUpperCase();
+        conecta();
+      }
       const hs = j.hotspot && j.hotspot.encendido ? j.hotspot : null;
       // Si esta compu ES el punto de acceso, la dirección buena es la del
       // hotspot (192.168.137.x): las otras son de redes donde los teléfonos

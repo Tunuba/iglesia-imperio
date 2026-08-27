@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Estudio — grabación de la demostración</title>
+<!--
+  Esta página existe sólo para grabar el video de demostración: pone en una
+  sola pantalla lo que se proyecta y dos teléfonos de verdad, para que se vea
+  a la vez lo que toca el presentador y lo que le pasa a la gente.
+  La graba herramientas/grabar-demo.js.
+-->
+<style>
+:root{
+  --noche:#05060B; --linea:#2A3145; --tinta:#FFF6E2; --oro:#E8C44A; --apagado:#8A8674;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --mono:"Cascadia Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1600px;height:900px;overflow:hidden;background:var(--noche);color:var(--tinta);
+  font-family:var(--sans);
+  background-image:radial-gradient(ellipse 120% 80% at 50% 0%,#141B33 0%,#05060B 62%)}
+
+#cabecera{height:112px;padding:18px 40px 0;display:flex;flex-direction:column;justify-content:center}
+#paso{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--oro);text-transform:uppercase}
+#titulo{font-family:var(--serif);font-size:34px;line-height:1.15;margin-top:6px}
+#sub{font-size:15px;color:var(--apagado);margin-top:5px;min-height:20px}
+
+#escena{display:flex;gap:34px;padding:6px 40px 0;height:788px}
+
+.rotulo{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--apagado);
+  text-transform:uppercase;margin-bottom:8px}
+.rotulo b{color:var(--oro)}
+
+/* la laptop */
+#ladoPC{flex:0 0 900px;display:flex;flex-direction:column}
+.laptop{border:2px solid #2E3750;border-radius:12px;background:#000;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.laptop iframe{width:1280px;height:720px;border:0;display:block;
+  transform:scale(.6953);transform-origin:top left}
+.laptop .marco{width:890px;height:501px;overflow:hidden}
+.base{height:12px;background:linear-gradient(180deg,#222A3C,#141A28);border-radius:0 0 16px 16px;
+  margin:0 60px}
+
+/* los teléfonos */
+#ladoTel{flex:1;display:flex;gap:26px;align-items:flex-start}
+.tel{display:flex;flex-direction:column;align-items:center}
+.telMarco{border:3px solid #2E3750;border-radius:26px;overflow:hidden;background:#000;
+  box-shadow:0 16px 44px rgba(0,0,0,.6)}
+.telMarco iframe{width:390px;height:760px;border:0;display:block;
+  transform:scale(.6447);transform-origin:top left}
+.telHueco{width:252px;height:490px;overflow:hidden}
+.telNombre{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--apagado);
+  text-transform:uppercase;margin-top:9px}
+
+#pie{position:absolute;left:40px;bottom:22px;right:40px;display:flex;align-items:center;gap:16px}
+#marcaPie{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:#4A5268;text-transform:uppercase}
+#progreso{flex:1;height:3px;background:#1A2030;border-radius:2px;overflow:hidden}
+#progreso i{display:block;height:100%;width:0%;background:var(--oro)}
+
+.destacar{outline:3px solid var(--oro);outline-offset:4px;border-radius:14px}
+#nota{position:absolute;right:40px;top:118px;max-width:330px;background:rgba(232,196,74,.10);
+  border:1px solid #4A3C14;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;
+  color:#F5DE93;display:none}
+#nota.on{display:block}
+</style>
+</head>
+<body>
+  <div id="cabecera">
+    <div id="paso">paso 1 de 9</div>
+    <div id="titulo">El catolicismo For Dummies</div>
+    <div id="sub">cómo se usa</div>
+  </div>
+
+  <div id="escena">
+    <div id="ladoPC">
+      <div class="rotulo">La computadora · <b>lo que se proyecta</b></div>
+      <div class="laptop" id="cajaPC">
+        <div class="marco"><iframe id="pc" src="../presentador.html"></iframe></div>
+      </div>
+      <div class="base"></div>
+    </div>
+
+    <div id="ladoTel">
+      <div class="tel">
+        <div class="rotulo">Teléfono <b>1</b></div>
+        <div class="telMarco" id="cajaT1"><div class="telHueco"><iframe id="t1" src="../index.html"></iframe></div></div>
+        <div class="telNombre" id="n1">—</div>
+      </div>
+      <div class="tel">
+        <div class="rotulo">Teléfono <b>2</b></div>
+        <div class="telMarco" id="cajaT2"><div class="telHueco"><iframe id="t2" src="../index.html"></iframe></div></div>
+        <div class="telNombre" id="n2">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="nota"></div>
+
+  <div id="pie">
+    <div id="marcaPie">Claves del Pensamiento 1 · Universidad del Istmo</div>
+    <div id="progreso"><i id="barra"></i></div>
+  </div>
+
+<script>
+"use strict";
+/* Lo que usa el grabador para manejar la escena. Nada de esto forma parte de
+   la presentación: es sólo el andamio del video. */
+const $=(s)=>document.querySelector(s);
+window.Estudio={
+  paso(n, total, titulo, sub){
+    $("#paso").textContent="paso "+n+" de "+total;
+    $("#titulo").textContent=titulo;
+    $("#sub").textContent=sub||"";
+    $("#barra").style.width=Math.round(n/total*100)+"%";
+  },
+  nota(t){ const n=$("#nota"); if(!t){ n.classList.remove("on"); return; } n.innerHTML=t; n.classList.add("on"); },
+  destacar(cual){
+    ["cajaPC","cajaT1","cajaT2"].forEach(id=>document.getElementById(id).classList.remove("destacar"));
+    if(cual) document.getElementById(cual).classList.add("destacar");
+  },
+  nombres(){
+    ["1","2"].forEach(k=>{
+      const w=document.getElementById("t"+k).contentWindow;
+      try{ const n=w.document.getElementById("perNombre").textContent;
+           const p=w.document.getElementById("pedN").textContent;
+           document.getElementById("n"+k).textContent=(n&&n!=="—")?(n+" · "+p):"—";
+      }catch(e){}
+    });
+  },
+  pc(){ return document.getElementById("pc").contentWindow; },
+  tel(k){ return document.getElementById("t"+k).contentWindow; }
+};
+</script>
+</body>
+</html>

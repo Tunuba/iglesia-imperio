@@ -37,6 +37,20 @@ const TIPOS = {
   ".txt": "text/plain; charset=utf-8", ".md": "text/plain; charset=utf-8"
 };
 
+// ── el código de la sala ──────────────────────────────────────────────
+// Lo decide el SERVIDOR, no cada navegador. Antes lo sorteaba la pantalla del
+// presentador y lo guardaba en su localStorage: si se abría desde otra IP salía
+// otro código y los teléfonos entraban a una sala distinta sin que se notara.
+// Así, además, el enlace para los teléfonos es fijo: la raíz del servidor.
+const PALABRAS = ["roma", "nicea", "milan", "efeso", "judea", "tiber", "foro", "cesarea"];
+const ARCHIVO_SALA = path.join(RAIZ, ".sala");
+function nuevoCodigo() {
+  return PALABRAS[Math.floor(Math.random() * PALABRAS.length)] + (10 + Math.floor(Math.random() * 89));
+}
+let codigoSala = null;
+try { codigoSala = fs.readFileSync(ARCHIVO_SALA, "utf8").trim() || null; } catch (e) {}
+if (!codigoSala) { codigoSala = nuevoCodigo(); try { fs.writeFileSync(ARCHIVO_SALA, codigoSala); } catch (e) {} }
+
 // ── el nombre del WiFi ────────────────────────────────────────────────
 // La pantalla del presentador lo muestra para que la gente sepa a qué red
 // conectarse ANTES de escanear el QR: si el teléfono no está en la misma red,
@@ -165,6 +179,7 @@ const servidor = http.createServer((req, res) => {
       redes: redes,
       hotspot: hotspot ? { encendido: hotspotVivo(), ssid: hotspot.ssid, clave: hotspot.clave } : null,
       vigilando: VIGILAR,
+      codigo: codigoSala,
       oyentes: [...oyentes.values()].reduce((a, s) => a + s.size, 0)
     }));
   }
@@ -177,6 +192,12 @@ const servidor = http.createServer((req, res) => {
        "/connecttest.txt", "/library/test/success.html"].indexOf(ruta) >= 0) {
     res.writeHead(302, { "Location": "/index.html", "Cache-Control": "no-store" });
     return res.end();
+  }
+  if (ruta === "/sala/nueva") {
+    codigoSala = nuevoCodigo();
+    try { fs.writeFileSync(ARCHIVO_SALA, codigoSala); } catch (e) {}
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({ codigo: codigoSala }));
   }
   if (ruta === "/sala/sse") {
     const t = tema(req.url);
@@ -210,7 +231,10 @@ const servidor = http.createServer((req, res) => {
   }
 
   // ── archivos ──
-  let rel = ruta === "/" ? "/presentador.html" : ruta;
+  // La raíz es la página del TELÉFONO: es la que abren veinte personas, y así
+  // el enlace que se reparte es la dirección pelada de la computadora. La
+  // pantalla del presentador vive en /presentador.html, que la abre uno solo.
+  let rel = ruta === "/" ? "/index.html" : ruta;
   const destino = path.join(RAIZ, path.normalize(rel).replace(/^([\\/])+/, ""));
   if (!destino.startsWith(RAIZ)) { res.writeHead(403); return res.end("fuera de la carpeta"); }
   fs.stat(destino, (err, st) => {
