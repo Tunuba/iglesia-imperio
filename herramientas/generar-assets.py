@@ -116,7 +116,7 @@ CABEZAS = {
         (10, 2, 2, 0), (10, 15, 15, 0),
     ],
 }
-PENACHO = [(0, 8, 9), (1, 8, 9), (2, 8, 9)]   # la cresta roja del legionario
+PENACHO = [(1, 8, 9), (2, 8, 9)]   # cresta corta: si llega a la fila 0 se ve cortada
 
 TONOS = {
     "negro":   [(0x14, 0x10, 0x14), (0x24, 0x1E, 0x24), (0x3A, 0x32, 0x38)],
@@ -147,6 +147,9 @@ def colores_pelo(px):
 
 
 def limpiar_cabeza(px):
+    """Devuelve los píxeles que enmarcaban la cara (patillas, mechones sobre los
+    hombros) para que la cabeza nueva los repinte. Si sólo se borran, la cabeza
+    queda flotando y el personaje se ve mordido a los lados."""
     """Deja SOLO la cara: borra peinado, mechones largos, moños, lazos y
     cualquier adorno del sprite original. Sin esto quedan píxeles sueltos a la
     altura de los ojos (el pelo largo azul de MUJER5, los lazos de MUJER6) y el
@@ -159,6 +162,8 @@ def limpiar_cabeza(px):
     # Los ojos: una columna es ojo si tiene oscuro en las filas 10 y 11 y piel
     # justo arriba (fila 8) y abajo (fila 13). Un mechón que cruza la cara sigue
     # de largo, así que falla esa prueba; el ojo no.
+    # lo que rodea la cara y NO es piel ni ojo: es pelo, y hay que reponerlo
+    marco = []
     ojos = []
     for x in range(4, 14):
         if (not es_piel(px[x, 10]) and px[x, 10][3] != 0
@@ -170,6 +175,10 @@ def limpiar_cabeza(px):
     for y in range(8, 15):                      # la cara: piel y nada más
         for x in range(W):
             if px[x, y][3] != 0 and not es_piel(px[x, y]):
+                # a los lados es la silueta de la cabeza (se repone);
+                # en el medio es un mechón cruzándole la cara (se va)
+                if x < 4 or x > 13:
+                    marco.append((x, y))
                 px[x, y] = (0, 0, 0, 0)
     for (x, y, c) in ojos:                      # y se devuelven los ojos
         px[x, y] = c
@@ -178,10 +187,27 @@ def limpiar_cabeza(px):
             c = px[x, y]
             if c[3] != 0 and not es_piel(c) and (x < 3 or x > 15):
                 px[x, y] = (0, 0, 0, 0)
+    return marco
 
 
-def dibujar_cabeza(px, forma, tono):
+def dibujar_cabeza(px, forma, tono, marco=()):
     pal = TONOS[tono]
+    # La silueta original, repintada. Se rellena por tramos (del píxel más
+    # lejano hasta la cara) porque algunos peinados son mechones sueltos con
+    # huecos: pintados uno a uno se ven como rayas flotando junto a la cara.
+    porFila = {}
+    for (x, y) in marco:
+        porFila.setdefault(y, []).append(x)
+    for y, xs in porFila.items():
+        izq = [x for x in xs if x < 4]
+        der = [x for x in xs if x > 13]
+        for lado in (izq, der):
+            if not lado:
+                continue
+            for x in range(min(lado), max(lado) + 1):
+                if px[x, y][3] != 0 and es_piel(px[x, y]):
+                    continue
+                px[x, y] = (pal[0][0], pal[0][1], pal[0][2], 255)
     for (y, x0, x1, t) in CABEZAS[forma]:
         for x in range(x0, x1 + 1):
             if 0 <= x < W and 0 <= y < H:
@@ -334,8 +360,9 @@ def construir_persona(p, frame):
     repintar(px, FILAS_CAMISA, p["tunica"])
     repintar(px, FILAS_PANTALON, p["tunica"])   # camisa + pantalon = tunica larga
     repintar(px, FILAS_ZAPATO, SANDALIA)
-    limpiar_cabeza(px)
-    dibujar_cabeza(px, p["cabeza"], p["tono"])
+    marco = limpiar_cabeza(px)
+    dibujar_cabeza(px, p["cabeza"], p["tono"], marco)
+    quitar_sueltos(px)
     for a in p["acc"]:
         if a == "palio":
             acc_palio(px)
@@ -346,6 +373,26 @@ def construir_persona(p, frame):
         elif a.startswith("faja:"):
             acc_faja(px, hex2rgb(a[5:]))
     return im
+
+
+def quitar_sueltos(px):
+    """Borra píxeles huérfanos del cuerpo: restos de adornos del sprite original
+    (hojas, lazos) que quedan como motitas de otro color sobre la túnica."""
+    fuera = []
+    for y in range(12, H):
+        for x in range(W):
+            c = px[x, y]
+            if c[3] == 0 or es_piel(c):
+                continue
+            vecinos = 0
+            for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < W and 0 <= ny < H and px[nx, ny][3] != 0:
+                    vecinos += 1
+            if vecinos <= 1:
+                fuera.append((x, y))
+    for (x, y) in fuera:
+        px[x, y] = (0, 0, 0, 0)
 
 
 def hoja_personas():

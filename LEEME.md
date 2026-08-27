@@ -198,8 +198,12 @@ Los 16 personajes **no son imágenes bajadas de internet**: salen de los sprites
 trabaja por filas (pelo 0–7, cara 8–14, ropa 15–21, calzado 22–24), se pinta camisa
 y pantalón con **una sola** paleta para que la camisa corta se vuelva túnica larga,
 y la cabeza se **borra y se vuelve a dibujar** con un mapa canónico (pelo, velo,
-capucha, casco). Ese último paso es el que importa: reutilizar la silueta del
-peinado original dejaba píxeles sueltos a la altura de los ojos y bordes grumosos.
+capucha, casco). Tres cosas que costaron encontrarlas, todas visibles a ojo:
+reutilizar la silueta del peinado original dejaba píxeles sueltos sobre la cara;
+borrarla del todo dejaba **huecos a los lados** y la cabeza parecía flotar (ahora
+esa silueta se repinta, y se rellena por tramos para que los mechones sueltos no
+se vean como rayas); y el penacho del casco tocaba la fila 0, así que salía
+cortado por el borde de arriba.
 El corazón que late son los 30 cuadros de `DISEÑOS\CORAZON`, teñidos en vivo por
 luminancia (rosa → negro → oro).
 
