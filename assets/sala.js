@@ -65,6 +65,12 @@
     var alEstado = op.alEstado || function () {};
     var idx = 0, es = null, vivo = true, temporizador = null, ruta = null;
     var caminos = SERVIDORES.map(function (b) { return rutasNtfy(b, tema); });
+    // Si la pagina la sirve una computadora que TIENE sala, esa es la unica
+    // sala que existe: los telefonos entraron por ahi. Irse a un rele publico
+    // parte el salon en dos (la pantalla en ntfy, los telefonos en la compu)
+    // y las dos mitades se ven verdes. Por eso, con sala local no hay respaldo:
+    // se reintenta la local hasta que vuelva.
+    var soloLocal = false;
     var yaVistos = Object.create(null);   // ids ya recibidos, para no repetir mensajes
     // Nada sale a la red hasta saber POR DÓNDE. Si no, el primer mensaje se
     // iría a internet aunque la computadora de al lado esté sirviendo la sala.
@@ -86,7 +92,13 @@
 
     function intenta() {
       if (!vivo) return;
-      if (idx >= caminos.length) { estado("sin-red"); return; }
+      if (idx >= caminos.length) {
+        if (soloLocal) {                       // no hay a donde irse: se insiste
+          estado("buscando", caminos[0].nombre);
+          idx = 0; setTimeout(intenta, 1500); return;
+        }
+        estado("sin-red"); return;
+      }
       ruta = caminos[idx];
       estado("buscando", ruta.nombre);
       try { if (es) es.close(); } catch (e) {}
@@ -167,17 +179,26 @@
       var origen = (location.protocol === "http:" || location.protocol === "https:")
                    ? location.origin : null;
       if (!origen) { intenta(); return; }
-      var listo = false;
-      var corta = setTimeout(function () { if (!listo) { listo = true; intenta(); } }, 1800);
+      // La computadora que sirve la pagina va PRIMERO sin esperar a nadie. Antes
+      // esto se decidia con una carrera contra /sala/ping: si el ping tardaba
+      // (seis conexiones por origen, la musica, los sprites) se arrancaba por
+      // ntfy y ahi se quedaba — pantalla en el rele, telefonos en la compu, y
+      // las dos mitades verdes. Si el servidor no tiene sala, /sala/sse contesta
+      // 404, EventSource falla sin abrir y se pasa al rele en menos de un segundo.
+      caminos.unshift(rutasLocales(origen, tema));
+      intenta();
+      // El ping ya no decide el orden: solo confirma que esta compu ES la sala,
+      // y si para entonces se estaba hablando por un rele, se vuelve a la local.
       fetch(origen + "/sala/ping", { cache: "no-store" })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (j) {
-          if (listo) return;
-          listo = true; clearTimeout(corta);
-          if (j && j.sala) caminos.unshift(rutasLocales(origen, tema));
-          intenta();
+          if (!vivo || !j || !j.sala) return;
+          caminos = [rutasLocales(origen, tema)]; soloLocal = true;
+          if (!ruta || ruta.nombre !== caminos[0].nombre) {
+            abierto = false; idx = 0; intenta();
+          }
         })
-        .catch(function () { if (!listo) { listo = true; clearTimeout(corta); intenta(); } });
+        .catch(function () {});
     }
     arranca();
     return { enviar: enviar, cerrar: cerrar, recuperar: recuperar, tema: tema,

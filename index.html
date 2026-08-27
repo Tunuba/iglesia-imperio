@@ -381,6 +381,10 @@ function abreCanal(cod){
   });
   saluda();
   canal.recuperar(45,(msgs)=>{
+    // la historia llega por su propio pedido y puede contestar DESPUES de que ya
+    // entro una escena en vivo: sin este freno, el telefono retrocede a una
+    // escena vieja justo cuando la clase avanzo, y se queda sin sus botones
+    if(ultimaEscena>=0) return;
     for(let k=msgs.length-1;k>=0;k--){
       if(msgs[k].t==="escena"&&typeof msgs[k].n==="number"){
         if(S.escena===0&&msgs[k].n>0){ ultimaEscena=msgs[k].n; ir(msgs[k].n); }

@@ -1,4 +1,4 @@
-# TRASPASO — estado al 2026-08-27, 07:20
+# TRASPASO — estado al 2026-08-27, 09:10
 
 **Se presenta HOY.** Esto es lo que hay, lo que falta y las trampas que ya se pagaron.
 
@@ -54,9 +54,13 @@ python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
 - **28 pantallas sin solapes ni desbordes** (13 escenas en dos tamaños de teléfono +
   el presentador en 1920×1080 y 1366×768). Mide también **dentro del lienzo**, con las
   cajas que declara cada escena.
-- **8 de 8 pruebas de integración**: que entren, que SIGUIENTE los mueva a todos, que
-  con media sala la luz **no** se abra, que con toda **sí**, que el pedazo del Credo
-  encienda **sólo** al que lo tiene, y que los votos lleguen.
+- **12 de 12 pruebas de integración**: que entren, que SIGUIENTE los mueva a todos, que
+  **los botones del teléfono aparezcan en su escena** (2 apagar, 3 sostener, 8 votar),
+  que con media sala la luz **no** se abra, que con toda **sí**, que el pedazo del Credo
+  encienda **sólo** al que lo tiene, que los votos lleguen, y que **la pantalla hable por
+  la propia computadora** y no por un relé.
+  Ojo al correrlas: si hay pestañas abiertas contra la misma sala, cuentan como teléfonos
+  y la primera prueba falla diciendo «5 teléfonos» cuando entraron 4.
 - **30 de 30 teléfonos, 20 ms**, sin tocar internet.
 - El QR: idéntico a la librería de Python y **leído por un lector real** (zbar).
 
@@ -68,6 +72,31 @@ python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
    borrarlo). Pages sólo funciona si es público.
 
 ## Las trampas que ya se pagaron (no volver a pisarlas)
+
+- **El salón partido en dos, y las dos mitades en verde.** La pantalla se conectaba por
+  `ntfy.sh` mientras los teléfonos (que entran por la propia compu) estaban en el hub
+  local: dos salas distintas con el mismo nombre. En el teléfono **no aparecía ningún
+  botón** — nunca le llegaba la escena — y tanto la pantalla («sala abierta») como el
+  teléfono (su lucecita verde) decían que todo estaba bien. La causa era una **carrera**:
+  `sala.js` le daba 1.8 s a `/sala/ping` para decidir el camino, y si el ping llegaba
+  tarde (seis conexiones por origen: música, sprites, SSE) arrancaba por el relé y ahí se
+  quedaba para siempre. Ahora **la compu que sirve la página va primero sin preguntar**,
+  el ping sólo confirma (y si hay sala local, **no hay respaldo**: se reintenta la local),
+  y el estado de la pantalla **dice por dónde habla**: `sala abierta · esta computadora`.
+- **El historial podía hacer retroceder al teléfono.** `recuperar()` contesta por su
+  cuenta y a veces llegaba *después* de una escena en vivo: el teléfono volvía a una
+  escena vieja justo cuando la clase avanzaba, y se quedaba sin sus botones. Ya no se
+  aplica el historial si alguna escena en vivo entró antes.
+- **El arnés aprobaba tocando otra cosa.** Las pruebas movían la luz llamando
+  `__sostiene()` y `__paso()` a mano: daban verde con los botones del teléfono **sin
+  dibujarse**, que es justo lo que iba a tocar la clase. Ahora se miran los botones.
+- **El teléfono de demostración (`D`) no cabía en la laptop.** 600 px de alto + barra +
+  el control de abajo: la barra con la **✕** se dibujaba *arriba* del borde de la
+  pantalla y no había forma de cerrarlo. Su alto ahora es `calc(100vh - 190px)`.
+- **`rAF` congelado miente sobre el corazón.** Midiendo sin foco en la ventana, el
+  corazón «no se ennegrecía» (`negrura` quedaba en 0) y parecía un bug: era el navegador
+  frenando `requestAnimationFrame` a 1 cuadro por segundo. Con un clic real del mouse
+  (ventana enfocada) llega a 1. Lo mismo vale para la luz.
 
 - **`canal` y `Musica` usados antes de declararse** rompían la página entera al cargar
   y los botones no respondían. Cuidado con el orden de los `let/const`.

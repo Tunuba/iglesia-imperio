@@ -97,7 +97,10 @@ body.limpia.conFranja #sala{bottom:9vh}
   text-transform:uppercase;color:var(--apagado)}
 .demoBarra button{color:var(--apagado);font-size:14px;line-height:1;padding:2px 4px}
 .demoBarra button:hover{color:var(--oro2)}
-#demoTel{width:300px;height:600px;border:0;display:block}
+#demoTel{width:300px;height:600px;border:0;display:block;
+  /* en una laptop no caben 600 px + la barra + el control de abajo: si se deja
+     fijo, la barra con la X se dibuja ARRIBA del borde y no se puede cerrar */
+  max-height:calc(100vh - 190px)}
 
 /* el Credo, armándose en la última escena */
 #credoLista{position:fixed;left:0;right:0;bottom:0;z-index:5;display:none;
@@ -456,9 +459,13 @@ function conecta(){
   gente.clear(); salaLuz=0;
   sala=Sala.conectar({
     sala:codigo,
-    alEstado(e){
+    alEstado(e,d){
       $("#luz").className="luz "+(e==="conectado"?"ok":(e==="sin-red"?"mal":"busca"));
-      $("#txtEstado").textContent=e==="conectado"?"sala abierta":(e==="sin-red"?"sin canal":"buscando…");
+      // el POR DONDE es parte del estado: pantalla en un rele y telefonos en la
+      // compu es el fallo que no se ve, porque los dos lados se ven verdes
+      const donde=d?" · "+d:"";
+      $("#txtEstado").textContent=e==="conectado"?("sala abierta"+donde)
+        :(e==="sin-red"?"sin canal":("buscando…"+donde));
     },
     alRecibir(m){
       if(m.t==="hola"){

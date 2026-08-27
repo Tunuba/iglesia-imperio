@@ -59,7 +59,13 @@ function comprueba(nombre, ok, detalle) {
   // en vez de inventarlo: si la prueba usara otro, entraría a una sala vacía.
   const codigo = await fetch(BASE + "/sala/ping").then(r => r.json()).then(j => j.codigo);
   await pres.goto(BASE + "/presentador.html", { waitUntil: "domcontentloaded" });
-  await pres.waitForFunction("document.getElementById('txtEstado').textContent==='sala abierta'", { timeout: 15000 });
+  await pres.waitForFunction(
+    "document.getElementById('txtEstado').textContent.indexOf('sala abierta')===0", { timeout: 15000 });
+  // POR DONDE habla la pantalla es parte de la prueba: si se va a un rele
+  // publico, los telefonos (que entran por la propia compu) quedan en otra sala
+  // y las dos mitades se ven verdes. Eso paso en clase y no lo vio nadie.
+  const porDonde = await pres.evaluate("document.getElementById('txtEstado').textContent");
+  comprueba("la pantalla habla por la propia computadora", /esta computadora/.test(porDonde), porDonde);
   console.log("\nSala «" + codigo + "» abierta. Entrando " + N + " teléfonos…");
 
   // ── los teléfonos ──
@@ -85,6 +91,22 @@ function comprueba(nombre, ok, detalle) {
   const escenas = [];
   for (const p of tels) escenas.push(await p.evaluate("window.__escena()"));
   comprueba("SIGUIENTE mueve a todos a la escena 3", escenas.every(e => e === 3), "escenas: " + escenas.join(","));
+
+  // ── 2b. los botones del telefono aparecen en su escena ──
+  // Esta prueba existe porque el arnes tocaba __sostiene() y __paso() a mano:
+  // pasaba en verde con los botones del telefono sin dibujarse, que es
+  // justamente lo que la clase iba a tocar. Ahora se miran los botones.
+  const ESPERADOS = { 2: /TOC[AÁ] PARA APAGARLO/i, 3: /MANTEN[EÉ] EL DEDO/i,
+                      8: /ADORAR AL EMPERADOR[\s\S]*MANTENER MI FE/i };
+  for (const n of Object.keys(ESPERADOS)) {
+    await pres.evaluate("window.__ir(" + n + ")");
+    await espera(1100);
+    const txt = await tels[0].evaluate("document.getElementById('acciones').innerText");
+    comprueba("en la escena " + n + " el telefono muestra su boton",
+              ESPERADOS[n].test(txt), JSON.stringify(txt));
+  }
+  await pres.evaluate("window.__ir(3)");
+  await espera(1100);
 
   // ── 3. la luz es de la sala ──
   const mitad = Math.floor(N / 2);
