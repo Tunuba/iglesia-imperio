@@ -181,19 +181,15 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   await capturar(2.4);
   await rellenar(7);
 
-  // ── 9 · el pedazo del Credo ──
+  // ── 9 · el cierre: el corazón entero de oro ──
   await irA(12);
   await paso(8);
   await E(`Estudio.nombres()`);
-  await capturar(1.6);
-  const pedazo = await pag.evaluate(`(function(){
-    var t = Estudio.tel(1).document.getElementById("pedN").textContent;
-    return parseInt(t.replace(/[^0-9]+/, ""), 10) - 1;
-  })()`);
-  await E(`Estudio.pc().document.querySelectorAll("#credos .p")[${pedazo}].click()`);
-  await espera(1200);
+  await capturar(2.2);
   await E(`Estudio.destacar("cajaT1")`);
-  await capturar(3);
+  await capturar(2.4);
+  await E(`Estudio.destacar("cajaT2")`);
+  await capturar(2.4);
   await E(`Estudio.destacar(null)`);
   await rellenar(8);
 

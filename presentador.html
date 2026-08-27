@@ -86,16 +86,6 @@ body.limpia.conFranja #sala{bottom:9vh}
   letter-spacing:.12em;text-transform:uppercase;color:var(--tinta2)}
 .voto .num{position:relative;font-family:var(--serif);font-size:clamp(26px,2.8vw,46px);line-height:1.1}
 
-/* el pedazo del Credo, a pantalla completa */
-#credo{position:fixed;inset:0;z-index:8;display:none;place-items:center;text-align:center;
-  background:radial-gradient(ellipse 80% 70% at 50% 45%,rgba(58,44,8,.96),rgba(5,6,11,.97))}
-#credo.on{display:grid}
-#credo .n{font-family:var(--mono);font-size:clamp(11px,1.1vw,17px);letter-spacing:.32em;
-  color:var(--oro);text-transform:uppercase}
-#credo .frase{font-family:var(--serif);font-size:clamp(38px,7vw,118px);line-height:1.08;
-  color:var(--oro2);margin-top:24px;max-width:20ch}
-#credo .pie{font-family:var(--mono);font-size:clamp(10px,.95vw,14px);letter-spacing:.2em;
-  color:var(--apagado);margin-top:28px;text-transform:uppercase}
 
 /* el teléfono de demostración */
 #demo{position:fixed;right:22px;bottom:110px;z-index:12;width:300px;display:none;
@@ -112,19 +102,6 @@ body.limpia.conFranja #sala{bottom:9vh}
      fijo, la barra con la X se dibuja ARRIBA del borde y no se puede cerrar */
   max-height:calc(100vh - 190px)}
 
-/* el Credo, armándose en la última escena */
-#credoLista{position:fixed;left:0;right:0;bottom:0;z-index:5;display:none;
-  padding:0 4vw 3vh;pointer-events:none}
-#credoLista.on{display:flex;flex-wrap:wrap;gap:5px 18px;justify-content:center;align-items:flex-end}
-#credoLista b{font-family:var(--serif);font-weight:400;font-size:clamp(12px,1.15vw,20px);
-  color:#4A4636;transition:color .5s,text-shadow .5s;white-space:nowrap}
-#credoLista b.dicho{color:var(--oro2);text-shadow:0 0 22px rgba(232,196,74,.5)}
-#credoLista b.ahora{color:#FFF6E2;text-shadow:0 0 26px rgba(255,246,226,.8)}
-body:not(.limpia) #credoLista{bottom:88px}
-/* en la última escena la gente sube: si no, los personajes quedan encima de
-   las frases del Credo */
-body.conCredo #sala{bottom:calc(88px + 15vh)}
-body.limpia.conCredo #sala{bottom:15vh}
 
 /* botones grandes sobre el visual: se usan con el mouse aunque la barra de
    control esté escondida, y se desvanecen solos para no salir en la foto */
@@ -165,12 +142,6 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   text-transform:uppercase;display:block}
 .teclas{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:#4A5268}
-#credos{display:flex;gap:4px;flex-wrap:wrap}
-#credos .p{border:1px solid #3A3320;border-radius:6px;padding:3px 6px;font-family:var(--mono);
-  font-size:10.5px;color:var(--apagado);cursor:pointer}
-#credos .p:hover{border-color:var(--oro);color:var(--oro2)}
-#credos .p.dicho{background:#1B1708;color:#6A5A28}
-#credos .p.ahora{background:var(--oro);color:#171308;font-weight:700}
 #aviso{font-family:var(--mono);font-size:11px;color:#F0B0A8;background:rgba(192,38,30,.16);
   border:1px solid #5A211C;border-radius:8px;padding:5px 9px;display:none}
 #aviso.on{display:block}
@@ -229,19 +200,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
     <iframe id="demoTel" title="teléfono de demostración"></iframe>
   </div>
 
-  <!-- el Credo armándose, en la última escena -->
-  <div id="credoLista"></div>
 
   <div id="franja"></div>
   <div id="destello"></div>
-
-  <div id="credo">
-    <div>
-      <div class="n" id="credoN">Pedazo 1 de 16</div>
-      <div class="frase" id="credoTxt">—</div>
-      <div class="pie">quien lo tenga, que levante el teléfono</div>
-    </div>
-  </div>
 
   <div id="control">
     <div class="fila">
@@ -260,13 +221,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <div id="aviso">⚠ el wifi se apagó · se está levantando solo</div>
       <div class="teclas">← → escena · 1–9 saltar · H esconder barra · F pantalla completa</div>
     </div>
-    <div class="fila"><div id="credos"></div></div>
   </div>
 
   <aside id="guion">
     <h2>Cómo se corre</h2>
     <p><b>Esta pantalla es la presentación.</b> Los teléfonos acompañan: cada quien ve su
-    corazón, su personaje y su pedazo del Credo, y toca cuando toca. Lo que mira la clase
+    corazón y su personaje, y toca cuando toca. Lo que mira la clase
     es esto.</p>
     <p>Con <b>H</b> se esconde esta barra y queda sólo el visual. Con <b>F</b>, pantalla
     completa. Con <b>T</b> se quitan hasta los títulos: sólo imagen, y ustedes hablando.</p>
@@ -308,8 +268,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
     <div class="min">Cierre · 12 y 13</div>
     <ul>
       <li>Escuelas, hospitales y catedrales; y el salto a América.</li>
-      <li>Abrí los pedazos del Credo de abajo y leelos en orden: cada quien levanta el
-        teléfono cuando escucha el suyo.</li>
+      <li>Cerrá con la pregunta del principio: <b>¿qué es el catolicismo?</b> En los
+        teléfonos queda el corazón entero de oro, con los siete gestos cayendo dentro.</li>
     </ul>
 
     <div class="min">Si alguien pregunta</div>
@@ -332,22 +292,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 /* ═══════════════════════════════════════════════════════════════════
    LA PRESENTACIÓN. Esta pantalla es la que mira la clase: el visual a
    pantalla completa y nada de párrafos — el texto son ustedes hablando.
-   Los teléfonos acompañan: su corazón, su personaje, su pedazo.
+   Los teléfonos acompañan: su corazón y su personaje.
    ═══════════════════════════════════════════════════════════════════ */
 const $=(s)=>document.querySelector(s);
 const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
 const lerp=(a,b,t)=>a+(b-a)*t;
 
-const CREDO=[
-  "Creo en un solo Dios,","Padre todopoderoso,","Creador del cielo y de la tierra,",
-  "de todo lo visible y lo invisible.","Creo en un solo Señor, Jesucristo,",
-  "Hijo único de Dios,","Dios de Dios, Luz de Luz,","engendrado, no creado,",
-  "de la misma naturaleza del Padre;","que por nosotros bajó del cielo","y se hizo hombre;",
-  "padeció y fue sepultado,","y resucitó al tercer día.",
-  "Creo en el Espíritu Santo, Señor y dador de vida.",
-  "Creo en la Iglesia, que es una, santa, católica y apostólica.",
-  "Confieso que hay un solo bautismo para el perdón de los pecados."
-];
 
 /* Cada momento: qué se dibuja, el rótulo mínimo y el ambiente. */
 const MOMENTOS=[
@@ -363,10 +313,10 @@ const MOMENTOS=[
   {d:"a313",       ojo:"edicto de milán",              t:"De prohibidos a permitidos",      c:"oro"},
   {d:"a380",       ojo:"edicto de tesalónica",         t:"De permitidos a ser el Imperio",  c:"oro"},
   {d:"hoy",        ojo:"5 · cómo lo vemos hoy",        t:"Escuelas, hospitales, catedrales",c:"calido", suma:{meta:3,que:"obras levantadas",cuenta:true}, sala:true},
-  {d:"cierre",     ojo:"el credo",                     t:"Ninguno lo tiene entero",         c:"oro",    sala:true}
+  {d:"cierre",     ojo:"el cierre",                    t:"¿Qué es el catolicismo?",         c:"oro",    sala:true}
 ];
 
-let escena=0, pedazoActual=-1, salaLuz=0;
+let escena=0, salaLuz=0;
 const EST=Escenas.nuevoEstado(0);
 EST.sinFigurantes=true;   // en la pantalla grande la gente es la de verdad
 const gente=new Map();
@@ -788,8 +738,6 @@ function vaA(n){
   $("#titulo").textContent=m.t;
   $("#entrada").className=(escena===0?"on":"");
   const ultima=(escena===MOMENTOS.length-1);
-  listaCredo.className=ultima?"on":"";
-  document.body.classList.toggle("conCredo",ultima);
   Escenas.cielo(m.c);
   if(escena===1&&EST.anim.semilla<1) anima("semilla",1,2600);
   if(escena===2){ EST.anim.pecado=0; gente.forEach(g=>{ g.apagado=false; }); }
@@ -830,42 +778,13 @@ $("#bNueva").onclick=()=>{
       pintaQR(); conecta(); }).catch(()=>{});
 };
 
-/* ── el Credo, pedazo por pedazo ────────────────────────────────── */
-const listaCredo=$("#credoLista");
-CREDO.forEach((frase,i)=>{
-  const b=document.createElement("b"); b.textContent=frase; b.dataset.i=i;
-  listaCredo.appendChild(b);
-});
-const cajaCredos=$("#credos");
-CREDO.forEach((frase,i)=>{
-  const b=document.createElement("button");
-  b.className="p"; b.textContent=(i+1); b.title=frase;
-  b.onclick=()=>llamaPedazo(i);
-  cajaCredos.appendChild(b);
-});
-function llamaPedazo(i){
-  pedazoActual=i;
-  Array.from(cajaCredos.children).forEach((b,k)=>{
-    b.classList.toggle("ahora",k===i); if(k<i) b.classList.add("dicho");
-  });
-  $("#credoN").textContent="Pedazo "+(i+1)+" de "+CREDO.length;
-  $("#credoTxt").textContent=CREDO[i];
-  $("#credo").classList.add("on");
-  Array.from(listaCredo.children).forEach((b,k)=>{
-    b.classList.toggle("ahora",k===i);
-    if(k<=i) b.classList.add("dicho");
-  });
-  if(sala) sala.enviar({t:"credo",i:i});
-}
-$("#credo").onclick=()=>$("#credo").classList.remove("on");
 
 /* ── teclado ────────────────────────────────────────────────────── */
 addEventListener("keydown",e=>{
-  const leyendo=$("#credo").classList.contains("on");
+
   const k=(e.key||"").toLowerCase();
-  if(e.key==="ArrowRight"){ if(leyendo&&pedazoActual<CREDO.length-1) llamaPedazo(pedazoActual+1);
-                            else { arrancaMusicaSiHace(); vaA(escena+1); } }
-  else if(e.key==="ArrowLeft"){ if(leyendo&&pedazoActual>0) llamaPedazo(pedazoActual-1); else vaA(escena-1); }
+  if(e.key==="ArrowRight"){ arrancaMusicaSiHace(); vaA(escena+1); }
+  else if(e.key==="ArrowLeft"){ vaA(escena-1); }
   else if(e.key>="1"&&e.key<="9") vaA(+e.key-1);
   else if(k==="g") $("#guion").classList.toggle("on");
   else if(k==="m") $("#bMusica").click();
@@ -874,7 +793,7 @@ addEventListener("keydown",e=>{
   else if(k==="h"){ $("#control").classList.toggle("oculto"); document.body.classList.toggle("limpia"); }
   else if(k==="f"){ if(document.fullscreenElement) document.exitFullscreen();
                     else document.documentElement.requestFullscreen(); }
-  else if(e.key==="Escape"){ $("#credo").classList.remove("on"); $("#guion").classList.remove("on"); }
+  else if(e.key==="Escape"){ $("#guion").classList.remove("on"); }
 });
 /* El teléfono de demostración es un teléfono más: entra a la misma sala, suma
    a la luz y su voto cuenta. Se carga recién al abrirlo para no gastar una de

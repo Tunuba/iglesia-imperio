@@ -5,8 +5,8 @@ Tema: *el cristianismo católico en el Imperio romano*, en formato **For Dummies
 5 minutos, sin leer diapositivas, sin video y sin sonido.
 
 La idea en una línea: **la computadora manda y los teléfonos del salón obedecen.**
-Cada quien escanea un QR, recibe un personaje distinto del siglo I y un pedazo del
-Credo, y va viviendo la historia mientras ustedes la cuentan en voz alta.
+Cada quien escanea un QR, recibe un personaje distinto del siglo I, y va viviendo
+la historia con su propio corazón mientras ustedes la cuentan en voz alta.
 
 ---
 
@@ -79,7 +79,6 @@ Para parar todo: `powershell -ExecutionPolicy Bypass -File arrancar.ps1 -Parar`
 | `→` o **SIGUIENTE** | mueve **todos** los teléfonos a la escena siguiente |
 | `←` | los devuelve una escena |
 | `1` … `8` | salta directo a esa escena |
-| los números del Credo | pone ese pedazo en grande y **hace vibrar el teléfono que lo tiene** |
 | `G` | abre el guion minuto a minuto |
 | **Sala nueva** | cambia el código (y saca a los que estaban) |
 
@@ -170,7 +169,7 @@ y se apagan solas para que no salgan en la proyección).
 
 - su **personaje** (uno de 16 del siglo I, con su ciudad y su año),
 - su **corazón**, que late, se ennegrece con el pecado y se vuelve oro con la luz,
-- su **pedazo del Credo**, que se enciende y vibra cuando el presentador lo lee.
+- y al final, su corazón **entero de oro**, con los siete gestos cayendo dentro.
 
 Y toca cuando toca: apagar el punto, sostener la luz, votar. Nada de párrafos a
 propósito — si hubiera texto, la clase leería el teléfono en vez de mirar y escuchar.
@@ -188,7 +187,7 @@ sacramentos) · 8 · Cómo se comportan (perdón, justicia, ayuda).
 10 · 313, Edicto de Milán · 11 · 380, Edicto de Tesalónica.
 
 **Cierre.** 12 · Hoy (escuelas, hospitales, catedrales, y el salto a América) ·
-13 · El Credo, repartido.
+13 · ¿Qué es el catolicismo? · el cierre, con el corazón entero de oro.
 
 ### Cómo está hecho el dibujo
 
@@ -290,7 +289,7 @@ python herramientas/comprobar-qr.py --decodificar
 - **Que la sala funcione** — `prueba-integracion.js` levanta el presentador y
   cuatro teléfonos de verdad y comprueba las **ocho** cosas que importan: que
   entren, que SIGUIENTE los mueva a todos, que con media sala la luz **no** se
-  abra, que con toda la sala **sí**, que el pedazo del Credo encienda **sólo**
+  abra, que con toda la sala **sí**, que lo que toca cada quien llegue a la
   al teléfono que lo tiene, y que los votos lleguen. Las ocho pasan.
 - **Reparto a muchos** — 30 de 30 teléfonos, 20 ms, sin tocar internet.
 - **El QR** — idéntico a la librería de Python y leído por un lector real (zbar).
@@ -317,5 +316,3 @@ Tres cosas que encontraron las pruebas y que a ojo no se veían:
 - Edictos de Milán (313) y de Tesalónica (380); concilios de Nicea (325),
   Constantinopla I (381), Éfeso (431) y Calcedonia (451).
 
-El texto del Credo que se reparte es el **niceno-constantinopolitano** en su versión
-litúrgica en español, partido en 16 pedazos.

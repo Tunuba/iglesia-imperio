@@ -8,7 +8,7 @@
   completa y sin párrafos. Lo pidió José David: *«todo lo visual es lo que se iba a
   presentar en la pc… y sin texto, va voz, sólo los visuales»*.
 - **El teléfono acompaña** (`index.html`): su personaje, su corazón (late → se ennegrece
-  → se vuelve oro) y su pedazo del Credo. **No tiene forma de avanzar**: eso lo manda
+  → se vuelve oro). **No tiene forma de avanzar**: eso lo manda
   la computadora.
 - **El teléfono casi no tiene letra, a propósito** (lo pidió José David: *«que no se vea
   sobrecargado de info, mejor casi nada de info»*). El nombre del curso se apaga después
@@ -35,8 +35,9 @@ página, en un iframe). Sirve para demostrar sin sacar el celular y para usar lo
 botones táctiles con el mouse: tocar el corazón, sostener la luz, votar. Entra a la
 misma sala, así que suma a la luz y su voto cuenta.
 
-**La última escena** muestra el Credo entero abajo, tenue, y cada frase se enciende en
-oro cuando se la llama: se ve armarse delante de la clase.
+**La última escena** vuelve a la pregunta del principio (*¿qué es el catolicismo?*) y en
+cada teléfono queda el corazón entero de oro, con los siete gestos cayendo dentro.
+El Credo se quitó entero — lo pidió José David: no tenía que ver con la exposición.
 También se avanza haciendo **clic en la mitad derecha/izquierda** de la pantalla.
 
 ## Los trece momentos
@@ -45,7 +46,7 @@ También se avanza haciendo **clic en la mitad derecha/izquierda** de la pantall
 4 Y entonces baja (**la luz es de toda la sala**) · 5 Problema · respuesta · meta ·
 6 Un solo Dios en tres personas · 7 Siete gestos · 8 Amar a Dios y al prójimo ·
 9 Elegí vos (votan) · 10 313 · 11 380 · 12 Escuelas, hospitales, catedrales ·
-13 El Credo, repartido.
+13 ¿Qué es el catolicismo? · el cierre, con el corazón entero de oro.
 
 ## Qué está probado (y con qué)
 
@@ -59,11 +60,11 @@ python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
 - **28 pantallas sin solapes ni desbordes** (13 escenas en dos tamaños de teléfono +
   el presentador en 1920×1080 y 1366×768). Mide también **dentro del lienzo**, con las
   cajas que declara cada escena.
-- **13 de 13 pruebas de integración**: que entren, que SIGUIENTE los mueva a todos, que
+- **11 de 11 pruebas de integración**: que entren, que SIGUIENTE los mueva a todos, que
   **los botones del teléfono aparezcan en su escena** (2 apagar, 3 sostener, 8 votar),
-  que **tocando el corazón** se apague, que con media sala la luz **no** se abra, que con toda **sí**, que el pedazo del Credo
-  encienda **sólo** al que lo tiene, que los votos lleguen, y que **la pantalla hable por
-  la propia computadora** y no por un relé.
+  que **tocando el corazón** se apague, que con media sala la luz **no** se abra, que con
+  toda **sí**, que los votos lleguen, y que **la pantalla hable por la propia
+  computadora** y no por un relé.
   Ojo al correrlas: si hay pestañas abiertas contra la misma sala, cuentan como teléfonos
   y la primera prueba falla diciendo «5 teléfonos» cuando entraron 4.
 - **30 de 30 teléfonos, 20 ms**, sin tocar internet.
@@ -101,7 +102,7 @@ José David lo está memorizando.
 - **El voto enciende o apaga la pantalla del teléfono**, como dice el guion.
 - **Un anillo alrededor del corazón** muestra lo que llevás cargado, sin números.
 - **Vibra**: corto al tocar, un golpe al apagarse, tres tiempos al votar y un patrón
-  largo cuando llaman **tu** pedazo del Credo.
+  largo al cerrar, cuando el corazón queda entero de oro.
 - **Brasas**: polvo que sube despacio, del color del cielo de cada momento; al tocar
   salen chispas desde el centro del corazón (ceniza al apagarlo, oro al purificarlo).
 - **El cierre**: los siete gestos giran y caen dentro del corazón de oro.
@@ -191,7 +192,7 @@ node herramientas/grabar-demo.js http://127.0.0.1:8123 12
 
 ```
 presentador.html   LA PRESENTACIÓN (pantalla completa, 13 momentos)
-index.html         el teléfono (corazón, personaje, pedazo, acción)
+index.html         el teléfono (corazón, personaje, acción)
 arrancar.ps1       un clic: hotspot + servidor + Chrome
 assets/
   escenas.js       el dibujo de las 13 escenas, compartido por las dos pantallas

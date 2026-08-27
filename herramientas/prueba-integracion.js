@@ -8,8 +8,8 @@
      2. cuando el presentador toca SIGUIENTE, TODOS saltan de escena;
      3. la luz de la sala es el promedio: si sólo carga la mitad, se queda
         a la mitad y la escena no se abre;
-     4. al llamar un pedazo del Credo, sólo se enciende el teléfono que lo
-        tiene, y el presentador se entera de que lo levantó;
+     4. lo que toca cada quien (los tres, los siete, las obras) llega a la
+        computadora y se suma ahí;
      5. los votos del águila llegan y se cuentan.
 
    Uso:  node herramientas/prueba-integracion.js [url] [cuantos]
@@ -153,24 +153,6 @@ function comprueba(nombre, ok, detalle) {
   for (const p of tels) abiertos2.push(await p.evaluate("window.__estado().listoLuz ? 'Limpio.' : 'esperando'"));
   comprueba("con toda la sala sosteniendo, se abre",
             abiertos2.every(x => x === "Limpio."), abiertos2.join(" / "));
-
-  // ── 4. el pedazo del Credo ──
-  // el pedazo se lee de la PANTALLA, no de localStorage: en un mismo Chrome
-  // todas las pestañas comparten el almacenamiento y se pisan entre ellas
-  // (en clase no pasa: cada quien tiene su teléfono)
-  const leePedazo = (pag) => pag.evaluate("window.__estado().pedazo");
-  const mio = await leePedazo(tels[0]);
-  await pres.evaluate("document.querySelectorAll('#credos .p')[" + mio + "].click()");
-  await espera(2000);
-  const avisado = await tels[0].evaluate("document.getElementById('tuyo').classList.contains('on')");
-  comprueba("al llamar su pedazo, ese teléfono se enciende", avisado, "pedazo " + (mio + 1));
-  let otros = 0;
-  for (let i = 1; i < tels.length; i++) {
-    const p = await leePedazo(tels[i]);
-    const on = await tels[i].evaluate("document.getElementById('tuyo').classList.contains('on')");
-    if (on && p !== mio) otros++;
-  }
-  comprueba("y no se enciende ningún otro", otros === 0);
 
   // ── 5. los votos ──
   await pres.evaluate("(function(){for(let i=0;i<5;i++) document.getElementById('bAdelante').click();})()");

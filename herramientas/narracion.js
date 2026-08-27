@@ -56,8 +56,9 @@ module.exports = [
     voz: "Después cada quien elige: ofrecer incienso al emperador, o mantener la fe. Cada " +
          "uno lleva encima lo que eligió, y el conteo sale en vivo." },
 
-  { titulo: "Ninguno lo tiene entero",
-    sub: "Cada quien tiene un pedazo del Credo.",
-    voz: "Al final, cada quien tiene un pedazo del Credo. El presentador lo lee en grande, " +
-         "y ese teléfono se pone dorado y vibra. Ninguno lo tiene entero." }
+  { titulo: "¿Qué es el catolicismo?",
+    sub: "Termina con el corazón entero de oro, en la mano de cada quien.",
+    voz: "Y el cierre vuelve a la pregunta del principio. En cada teléfono queda el corazón " +
+         "entero de oro, con los siete gestos cayendo dentro: lo que empezó apagado, termina " +
+         "limpio y en la mano de cada uno." }
 ];

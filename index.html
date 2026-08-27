@@ -83,13 +83,6 @@ main{position:relative;z-index:10;flex:1 1 auto;min-height:0;display:flex;flex-d
   font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
 #barraSala i{box-shadow:0 0 22px rgba(245,222,147,.55)}
 
-/* el pedazo del Credo */
-#pedazo{border:1px solid #4A3C14;border-radius:13px;padding:12px 15px;flex:0 0 auto;width:100%;
-  max-width:460px;background:linear-gradient(180deg,rgba(40,33,12,.95),rgba(20,17,8,.95));display:none}
-#pedazo.on{display:block}
-#pedazo .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--oro);text-transform:uppercase}
-#pedazo .frase{font-family:var(--serif);font-size:clamp(19px,5.6vw,27px);line-height:1.15;
-  color:var(--oro2);margin-top:7px}
 
 footer{position:relative;z-index:10;flex:0 0 auto;display:flex;flex-direction:column;gap:8px;
   padding:6px 16px calc(env(safe-area-inset-bottom) + 12px)}
@@ -116,28 +109,6 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .btn.grande{padding:19px 16px;font-size:17px;flex-direction:column;gap:3px}
 .btn.grande .k{margin-left:0}
 
-/* el aviso de "es tuyo" */
-/* el voto se ve en la propia pantalla: encendida si ofreciste incienso,
-   apagada si mantuviste la fe (asi lo pide el guion) */
-body.encendida #cielo{background:radial-gradient(ellipse 120% 90% at 50% 40%,#FFF6E2 0%,#C9BE9A 55%,#8A7F63 100%)!important}
-body.encendida{color:#151926}
-body.apagada #cielo{background:#000!important}
-body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
-
-#tuyo{position:fixed;inset:0;z-index:30;display:none;place-items:center;text-align:center;
-  padding:8vw 7vw;background:radial-gradient(ellipse 90% 70% at 50% 42%,#3A2C08 0%,#05060B 78%)}
-#tuyo.on{display:grid;animation:entra .45s var(--ease)}
-#tuyo::before{content:"";position:absolute;inset:-40%;z-index:-1;opacity:.30;
-  /* rayos apenas insinuados: si se ven "a propósito" parecen calcomanía */
-  background:repeating-conic-gradient(from 0deg,rgba(245,222,147,.10) 0deg 3deg,transparent 3deg 17deg);
-  mask-image:radial-gradient(circle at 50% 50%,#000 12%,transparent 62%);
-  -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 12%,transparent 62%);
-  animation:gira 40s linear infinite}
-@keyframes gira{to{transform:rotate(360deg)}}
-@keyframes entra{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
-#tuyo .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:var(--oro);text-transform:uppercase}
-#tuyo .frase{font-family:var(--serif);font-size:clamp(26px,8vw,48px);line-height:1.14;color:var(--oro2);margin-top:16px}
-#tuyo .pie{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--tinta);margin-top:20px}
 </style>
 </head>
 <body>
@@ -159,10 +130,6 @@ body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
       <div class="sub" id="perLugar">—</div>
     </div>
     <div id="barraSala"><i id="barraLlena"></i><span id="barraTxt">la luz de la sala · 0%</span></div>
-    <div id="pedazo">
-      <div class="n" id="pedN">Pedazo — de —</div>
-      <div class="frase" id="pedTxt">—</div>
-    </div>
     <div id="dice" class="lat">mirá la pantalla grande</div>
   </main>
 
@@ -174,14 +141,6 @@ body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
   <div id="destello"></div>
 </div>
 
-<div id="tuyo">
-  <div>
-    <div class="n" id="tuyoN">Pedazo — de —</div>
-    <div class="frase" id="tuyoTxt">—</div>
-    <div class="pie">ES TUYO · LEVANTÁ EL TELÉFONO</div>
-  </div>
-</div>
-
 <script src="assets/sprites.js?v=6"></script>
 <script src="assets/escenas.js?v=6"></script>
 <script src="assets/motivos.js?v=1"></script>
@@ -191,9 +150,9 @@ body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
 /* ═══════════════════════════════════════════════════════════════════
    EL TELÉFONO — acompañamiento, no la presentación.
 
-   La presentación es la pantalla grande. Acá cada quien tiene tres cosas
-   suyas: su personaje, su corazón (que late, se ennegrece y se purifica)
-   y su pedazo del Credo. Y toca cuando le toca.
+   La presentación es la pantalla grande. Acá cada quien tiene lo suyo: su
+   personaje y su corazón (que late, se ennegrece y se purifica), y toca
+   cuando le toca. Termina con el corazón entero de oro.
 
    Nada de párrafos a propósito: si hubiera texto, la clase leería el
    teléfono en vez de mirar y escuchar.
@@ -201,32 +160,21 @@ body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
 const $=(s)=>document.querySelector(s);
 const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
 
-const CREDO=[
-  "Creo en un solo Dios,","Padre todopoderoso,","Creador del cielo y de la tierra,",
-  "de todo lo visible y lo invisible.","Creo en un solo Señor, Jesucristo,",
-  "Hijo único de Dios,","Dios de Dios, Luz de Luz,","engendrado, no creado,",
-  "de la misma naturaleza del Padre;","que por nosotros bajó del cielo","y se hizo hombre;",
-  "padeció y fue sepultado,","y resucitó al tercer día.",
-  "Creo en el Espíritu Santo, Señor y dador de vida.",
-  "Creo en la Iglesia, que es una, santa, católica y apostólica.",
-  "Confieso que hay un solo bautismo para el perdón de los pecados."
-];
 const TOTAL=13;
 
 /* ── quién sos ──────────────────────────────────────────────────── */
 /* En clase cada quien tiene SU teléfono. En el estudio de grabación son dos
    páginas del MISMO Chrome: comparten localStorage y salían con el mismo
-   personaje y el mismo pedazo del Credo, y para la computadora eran un solo
+   personaje, y para la computadora eran un solo
    aparato. Con ?yo=N cada una guarda por separado. En clase no se usa. */
 const YO=(location.search.match(/[?&]yo=([A-Za-z0-9_-]{1,8})/)||[])[1]||"";
 const LS="catolicismo-tel-v1"+(YO?"-"+YO:"");
-let S={ persona:0, pedazo:0, voto:null, escena:0 };
+let S={ persona:0, voto:null, escena:0 };
 try{ const g=JSON.parse(localStorage.getItem(LS)||"null");
      if(g&&typeof g.persona==="number") S=Object.assign(S,g); else sorteo();
 }catch(e){ sorteo(); }
 function sorteo(){
   S.persona=Math.floor(Math.random()*window.SPRITES.catalogo.length);
-  S.pedazo=Math.floor(Math.random()*CREDO.length);
   S.voto=null;
 }
 function guardar(){ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){} }
@@ -379,7 +327,7 @@ const MOMENTOS=[
   {dice:"año 313 · de prohibidos a permitidos", cielo:"oro", motivo:"corona", num:"313", destello:1},
   {dice:"año 380 · de permitidos a ser el imperio", cielo:"oro", motivo:"corona", num:"380", destello:1},
   {dice:"tocá para levantarlas", cielo:"calido", motivo:"ciudad", meta:3},
-  {dice:"cuando escuches tu pedazo, levantá el teléfono", cielo:"oro", pedazo:true, oro:true}
+  {dice:"tu corazón, entero", cielo:"oro", oro:true}
 ];
 
 (function pips(){ const c=$("#pasos");
@@ -391,7 +339,6 @@ function ir(n){
   const m=MOMENTOS[n];
   $("#dice").textContent=m.dice;
   $("#dice").className="lat"+(m.accion?"":" mira");
-  $("#pedazo").className=m.pedazo?"on":"";
   $("#barraSala").className=m.barra?"on":"";
   anillo=(m.accion==="luz");
   tinte=TINTES[m.cielo]||TINTES.vacio;
@@ -439,8 +386,7 @@ function ir(n){
 })();
 window.__ir=ir;
 window.__escena=()=>S.escena;
-window.__avisa=(i)=>avisaPedazo(i);   // para las fotos y las pruebas
-window.__estado=()=>({persona:S.persona,pedazo:S.pedazo,voto:S.voto,luz:luz,luzSala:luzSala,negrura:negrura,listoLuz:listoLuz});
+window.__estado=()=>({persona:S.persona,voto:S.voto,luz:luz,luzSala:luzSala,negrura:negrura,listoLuz:listoLuz});
 
 /* ── las acciones, una por momento ──────────────────────────────── */
 let sostiene=false, listoLuz=false;
@@ -589,19 +535,7 @@ function codigoDelEnlace(){
   if(m){ try{ localStorage.setItem("imperio-sala",m[1]); }catch(e){} return m[1]; }
   return null;
 }
-function saluda(){ if(canal) canal.enviar({t:"hola",id:idTelefono,p:S.persona,f:S.pedazo}); }
-function avisaPedazo(i){
-  if(i!==S.pedazo) return;
-  $("#tuyoN").textContent="Pedazo "+(i+1)+" de "+CREDO.length;
-  $("#tuyoTxt").textContent=CREDO[i];
-  $("#tuyo").classList.add("on");
-  vibra([90,60,90,60,220]);
-  chispea(48,[245,222,147]);
-  if(canal) canal.enviar({t:"arriba",id:idTelefono});
-  clearTimeout(avisaPedazo.t);
-  avisaPedazo.t=setTimeout(()=>$("#tuyo").classList.remove("on"),14000);
-}
-$("#tuyo").onclick=()=>$("#tuyo").classList.remove("on");
+function saluda(){ if(canal) canal.enviar({t:"hola",id:idTelefono,p:S.persona}); }
 
 function abreCanal(cod){
   if(!cod||!window.Sala) return;
@@ -620,7 +554,6 @@ function abreCanal(cod){
         ultimaEscena=m.n; if(m.n!==S.escena) ir(m.n);
       }
       if(m.t==="quien") saluda();
-      if(m.t==="credo"&&typeof m.i==="number") avisaPedazo(m.i);
       if(m.t==="salaLuz"&&typeof m.p==="number"){ luzSala=m.p; ultimaSalaLuz=Date.now(); }
     }
   });
@@ -669,8 +602,6 @@ Escenas.cargar(()=>{
   const p=Escenas.sprites().catalogo[S.persona];
   $("#perNombre").textContent=p.nombre;
   $("#perLugar").textContent=p.lugar+" · "+p.ano;
-  $("#pedN").textContent="Pedazo "+(S.pedazo+1)+" de "+CREDO.length;
-  $("#pedTxt").textContent=CREDO[S.pedazo];
   ir(S.escena||0);
 });
 requestAnimationFrame(pintaLatido);
