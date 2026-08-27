@@ -327,14 +327,16 @@ function pintaLatido(){
    // los costados lo cortaba el borde y quedaba un cuadrado de luz alrededor
    // del corazón. Ahora muere justo en el borde (0.5) y el corazón se dibuja
    // con aire alrededor, así el resplandor sale redondo y suave.
-  const fuerza=0.10+0.26*(M.oro?1:luz)+0.05*Math.sin(t*2);
+  // la última hoja se veía opaca: el corazón de oro tiene que ALUMBRAR, no
+  // sólo estar dorado
+  const fuerza=(M.oro?0.30:0.10)+0.26*(M.oro?1:luz)+0.05*Math.sin(t*2);
   const g=ctx.createRadialGradient(lado/2,lado/2,lado*0.04,lado/2,lado/2,lado*0.50);
   g.addColorStop(0,"rgba(255,244,200,"+fuerza.toFixed(3)+")");
   g.addColorStop(0.35,"rgba(255,244,200,"+(fuerza*0.55).toFixed(3)+")");
   g.addColorStop(0.65,"rgba(255,244,200,"+(fuerza*0.20).toFixed(3)+")");
   g.addColorStop(1,"rgba(255,244,200,0)");
   ctx.fillStyle=g; ctx.fillRect(0,0,lado,lado);
-  const dib=Math.round(lado*0.78), off=Math.round((lado-dib)/2);
+  const dib=Math.round(lado*(M.oro?0.84:0.78)), off=Math.round((lado-dib)/2);
   ctx.drawImage(img,off,off,dib,dib);
   // el cierre: los siete gestos giran y caen dentro del corazón de oro
   if(M.oro && window.Motivos) Motivos.absorbe(ctx,lado,t);

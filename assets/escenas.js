@@ -582,7 +582,7 @@ const DIBUJOS={
     ctx.fillStyle="#101625"; ctx.fillRect(0,base,W,H-base);
     ["escuela","hospital","catedral"].forEach((c,i)=>{
       const x=W*(0.2+i*0.3), on=((t*0.8)%3.6)>=i;
-      ctx.globalAlpha=on?1:0.35; edificio(ctx,c,x,base,u);
+      ctx.globalAlpha=on?0.88:0.30; edificio(ctx,c,x,base,u);
       ctx.globalAlpha=on?0.7:0.25; ctx.fillStyle="#8A8674";
       ctx.font=fuente(u*1.7,"700"); ctx.textAlign="center";
       rotulo(ctx,c.toUpperCase(),x,base+u*2.8); ctx.globalAlpha=1;
@@ -590,8 +590,10 @@ const DIBUJOS={
     // Lo que quedó en pie, con nombre y año: van saliendo de a una y se
     // quedan. No son fotos: el mismo lenguaje de píxeles de todo lo demás.
     if(self.Motivos&&Motivos.LEGADO){
-      const L=Motivos.LEGADO, n=L.length, hueco=W/n, lado=Math.min(u*8,hueco*0.46);
-      const yIco=H*0.40;
+      // más arriba: pegada a los edificios, la letra caía sobre el tejado y
+      // no se leía
+      const L=Motivos.LEGADO, n=L.length, hueco=W/n, lado=Math.min(u*7.4,hueco*0.44);
+      const yIco=H*0.30;
       for(let i=0;i<n;i++){
         const x=hueco*(i+0.5), on=(t*0.85)>=i+0.4;
         Motivos.legado(ctx,i,x,yIco,lado,t,on);

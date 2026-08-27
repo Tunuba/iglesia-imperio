@@ -296,28 +296,30 @@ function corona(g, t, e) {
    «Íconos rápidos: una escuela, un hospital, una catedral.» Cada
    toque levanta uno. */
 function ciudad(g, t, e) {
-  const n = e.toques | 0, suelo = 26;
+  const n = e.toques | 0, suelo = 28;
   brillo(g, 16, 19, 15, "255,246,226", 0.04 + 0.03 * n + 0.03 * pulso(t, 1.2));
-  edificio(g, 3, suelo, 7, 9, n > 0, "escuela", t);
-  edificio(g, 12, suelo, 8, 12, n > 1, "hospital", t);
-  edificio(g, 22, suelo, 7, 15, n > 2, "catedral", t);
+  edificio(g, 3, suelo, 7, 8, n > 0, "escuela", t);
+  edificio(g, 12, suelo, 8, 10, n > 1, "hospital", t);
+  edificio(g, 22, suelo, 7, 12, n > 2, "catedral", t);
   px(g, 1, suelo + 1, 30, 1, "#4A5268", .85);
   if (n >= 3) {
     // levantadas las tres, arriba van pasando las obras que quedaron: la
     // universidad, la escuela de acá, el hospital, el rosetón, la Sixtina,
     // la música escrita. Una cada dos segundos y medio, con su nombre.
+    // Van ARRIBA del todo, con su nombre y su año: antes caían encima de los
+    // edificios y no se leían. La ciudad queda debajo, como el suelo.
     const cual = Math.floor(t / 2.5) % LEGADO.length;
     const dentro = (t / 2.5) % 1;
     const fundido = Math.min(1, dentro * 6) * Math.min(1, (1 - dentro) * 6);
     const c = g.ctx;
     c.save(); c.globalAlpha = fundido;
-    legado(c, cual, 16 * g.u, 8.5 * g.u, 11 * g.u, t, true);
-    c.globalAlpha = fundido * 0.9;
-    c.font = Math.round(g.u * 1.5) + "px 'Cascadia Mono', Consolas, monospace";
+    legado(c, cual, 16 * g.u, 5 * g.u, 9 * g.u, t, true);
+    c.globalAlpha = fundido * 0.95;
+    c.font = Math.round(g.u * 1.35) + "px 'Cascadia Mono', Consolas, monospace";
     c.textAlign = "center"; c.fillStyle = CLARO;
-    c.fillText(LEGADO[cual].nombre, 16 * g.u, 15.6 * g.u);
+    c.fillText(LEGADO[cual].nombre, 16 * g.u, 11.3 * g.u);
     c.fillStyle = ORO;
-    c.fillText(LEGADO[cual].ano, 16 * g.u, 17.6 * g.u);
+    c.fillText(LEGADO[cual].ano, 16 * g.u, 13.2 * g.u);
     c.restore();
     // y la calle se llena: gente yendo y viniendo entre los tres edificios.
     // (Antes había una fila de puntos amarillos cruzando que no decía nada.)
