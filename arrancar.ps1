@@ -55,7 +55,7 @@ Parar-Servidor | Out-Null
 # Sin ventana: el servidor corre de fondo y no molesta durante la presentacion
 # La ruta lleva espacios ("OneDrive - Universidad del Istmo"): sin comillas,
 # node recibe la ruta partida en pedazos y el servidor no arranca nunca.
-$proceso = Start-Process -FilePath "node" -ArgumentList @("`"$Servidor`"", "$Puerto") `
+$proceso = Start-Process -FilePath "node" -ArgumentList (@("`"$Servidor`"", "$Puerto") + $(if ($SinHotspot) { @() } else { @("--hotspot") })) `
                          -WorkingDirectory $Aqui -WindowStyle Hidden -PassThru
 Set-Content -Path $Bandera -Value $proceso.Id -Encoding ascii
 Start-Sleep -Seconds 2

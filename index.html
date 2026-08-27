@@ -570,6 +570,7 @@ let anim={ pecado:0, luz:0, luzSala:0, sacra:0, oro313:0, oro380:0, semilla:0, v
    primer paso revienta con "Cannot access 'canal' before initialization" y
    se cae el resto del script. */
 let canal=null;
+let huboCaida=false;
 let ultimaSalaLuz=0;      // cuándo informó la computadora por última vez
 
 /* ── Cajas: cada cosa que se dibuja encima (figura, corazón, barra) anota
@@ -1209,7 +1210,14 @@ function avisaPedazo(i){
   const luz=$("#luzSala");
   canal=Sala.conectar({
     sala:cod,
-    alEstado(e){ luz.className="luzSala "+(e==="conectado"?"ok":(e==="sin-red"?"":"busca")); },
+    alEstado(e){
+      luz.className="luzSala "+(e==="conectado"?"ok":(e==="sin-red"?"":"busca"));
+      // si el canal se cayó y volvió (por ejemplo porque el wifi de la compu se
+      // reinició), hay que volver a presentarse: la computadora contesta con la
+      // escena en la que va, y este teléfono se pone al día solo
+      if(e==="conectado"){ if(huboCaida){ huboCaida=false; setTimeout(saluda,400); } }
+      else if(e==="buscando") huboCaida=true;
+    },
     alRecibir(m){
       if(m.t==="escena"&&typeof m.n==="number"&&m.n!==ultimaEscena){
         ultimaEscena=m.n; if(m.n!==S.escena) ir(m.n);

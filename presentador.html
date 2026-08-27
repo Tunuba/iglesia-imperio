@@ -65,6 +65,8 @@ main{display:grid;grid-template-columns:minmax(210px,24vw) minmax(0,1fr);gap:cla
 .nota .resalta{color:var(--oro2);font-size:1.2em;letter-spacing:.02em}
 .nota .clave{font-family:var(--mono);font-size:.86em;color:var(--apagado)}
 .nota .pasos2{text-align:left;line-height:1.75}
+.nota .aviso{color:#F0B0A8;background:rgba(192,38,30,.14);border:1px solid #5A211C;
+  border-radius:9px;padding:7px 9px;line-height:1.45}
 .nota .chiquito{font-size:.85em;color:var(--apagado);margin-top:7px;line-height:1.4}
 .otrasIps{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:center;margin-top:9px}
 .otrasIps span{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--apagado);
@@ -182,6 +184,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
     </div>
   </footer>
 </div>
+
+<audio id="pista" loop preload="none" src="assets/musica/coro-de-marmol.mp3"></audio>
 
 <div id="leyendo">
   <div>
@@ -601,71 +605,91 @@ window.__votos=()=>{                        // para las pruebas: el conteo del �
    cuando baja la luz, brillante en el 380. El cambio es por rampa, así que
    se desliza de uno a otro en vez de cortar. */
 const Musica=(function(){
-  let ctx=null, master=null, pad=[], on=false, sonando=false;
+  /* Si está el archivo (assets/musica/coro-de-marmol.mp3) suena esa canción.
+     Si no está —por ejemplo si alguien clona el repo sin ella— cae al pad
+     sintetizado, para que la presentación nunca se quede sin fondo.
+     Suena SÓLO en esta computadora; los teléfonos van mudos a propósito. */
+  const pista=document.getElementById("pista");
+  let hayPista=true, on=false, subiendo=null;
+  const VOL=0.38;
+  pista.addEventListener("error",()=>{ hayPista=false; });
+
+  // ── respaldo sintetizado ──
+  let ctx=null, master=null, pad=[];
   const ACORDES={
-    0:[146.83,220.00,293.66],   // re menor abierto · la pregunta
-    1:[174.61,261.63,349.23],   // fa mayor · la creación
-    2:[130.81,155.56,196.00],   // do menor · el pecado
-    3:[174.61,261.63,392.00],   // fa mayor amplio · baja la luz
-    4:[196.00,246.94,293.66],   // sol mayor · las tres frases
-    5:[196.00,293.66,392.00],
-    6:[174.61,261.63,349.23],
-    7:[220.00,277.18,329.63],
-    8:[138.59,164.81,207.65],   // tensión · el águila
-    9:[196.00,246.94,293.66],
-    10:[261.63,329.63,392.00],  // do mayor brillante · 380
-    11:[196.00,261.63,329.63],
+    0:[146.83,220.00,293.66], 1:[174.61,261.63,349.23], 2:[130.81,155.56,196.00],
+    3:[174.61,261.63,392.00], 4:[196.00,246.94,293.66], 5:[196.00,293.66,392.00],
+    6:[174.61,261.63,349.23], 7:[220.00,277.18,329.63], 8:[138.59,164.81,207.65],
+    9:[196.00,246.94,293.66], 10:[261.63,329.63,392.00], 11:[196.00,261.63,329.63],
     12:[174.61,261.63,392.00]
   };
-  function arranca(){
+  function arrancaSint(){
     if(ctx) return;
     const AC=window.AudioContext||window.webkitAudioContext;
     if(!AC) return;
     ctx=new AC();
     master=ctx.createGain(); master.gain.value=0.0001; master.connect(ctx.destination);
     const filtro=ctx.createBiquadFilter();
-    filtro.type="lowpass"; filtro.frequency.value=950; filtro.Q.value=0.7;
-    filtro.connect(master);
+    filtro.type="lowpass"; filtro.frequency.value=950; filtro.Q.value=0.7; filtro.connect(master);
     for(let i=0;i<3;i++){
       const o=ctx.createOscillator(), g=ctx.createGain();
-      o.type=(i===2)?"sine":"triangle";
-      g.gain.value=(i===2)?0.10:0.15;
+      o.type=(i===2)?"sine":"triangle"; g.gain.value=(i===2)?0.10:0.15;
       o.frequency.value=(ACORDES[0])[i];
-      o.connect(g); g.connect(filtro); o.start();
-      pad.push(o);
+      o.connect(g); g.connect(filtro); o.start(); pad.push(o);
     }
-    sonando=true;
   }
-  function acorde(freqs){
-    if(!ctx||!sonando) return;
+  function acorde(f){
+    if(!ctx) return;
     pad.forEach((o,i)=>{
       o.frequency.cancelScheduledValues(ctx.currentTime);
-      o.frequency.setTargetAtTime(freqs[i%freqs.length], ctx.currentTime, 0.9);
+      o.frequency.setTargetAtTime(f[i%f.length], ctx.currentTime, 0.9);
     });
+  }
+  function desvanece(hasta,ms){          // subir/bajar el volumen sin cortes
+    clearInterval(subiendo);
+    const paso=(hasta-pista.volume)/Math.max(1,ms/50);
+    subiendo=setInterval(()=>{
+      const v=pista.volume+paso;
+      if((paso>0&&v>=hasta)||(paso<0&&v<=hasta)){ pista.volume=hasta; clearInterval(subiendo);
+        if(hasta<=0.001) pista.pause(); }
+      else pista.volume=Math.max(0,Math.min(1,v));
+    },50);
   }
   return {
     alterna(){
-      arranca();
-      if(!ctx) return false;
-      if(ctx.state==="suspended") ctx.resume();
       on=!on;
-      master.gain.setTargetAtTime(on?0.13:0.0001, ctx.currentTime, 0.7);
-      if(on) acorde(ACORDES[escena]||ACORDES[0]);
+      if(hayPista){
+        if(on){ pista.volume=0; pista.play().then(()=>desvanece(VOL,1200))
+                  .catch(()=>{ hayPista=false; arrancaSint(); if(ctx){ ctx.resume();
+                    master.gain.setTargetAtTime(0.13,ctx.currentTime,0.7); acorde(ACORDES[escena]||ACORDES[0]); } }); }
+        else desvanece(0,900);
+      }else{
+        arrancaSint();
+        if(!ctx) return false;
+        if(ctx.state==="suspended") ctx.resume();
+        master.gain.setTargetAtTime(on?0.13:0.0001, ctx.currentTime, 0.7);
+        if(on) acorde(ACORDES[escena]||ACORDES[0]);
+      }
       return on;
     },
-    escena(n){ if(on) acorde(ACORDES[n]||ACORDES[0]); },
-    campana(){                       // un toque al leer cada pedazo del Credo
-      if(!on||!ctx) return;
+    escena(n){ if(on && !hayPista) acorde(ACORDES[n]||ACORDES[0]); },
+    campana(){                        // un toque al leer cada pedazo del Credo
+      if(!on) return;
+      arrancaSint();
+      if(!ctx) return;
+      if(ctx.state==="suspended") ctx.resume();
       const o=ctx.createOscillator(), g=ctx.createGain();
       o.type="sine"; o.frequency.value=880;
       g.gain.setValueAtTime(0.0001,ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.11,ctx.currentTime+0.02);
+      g.gain.exponentialRampToValueAtTime(0.10,ctx.currentTime+0.02);
       g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+1.6);
       o.connect(g); g.connect(ctx.destination);
       o.start(); o.stop(ctx.currentTime+1.7);
-    }
+    },
+    encendida(){ return on; }
   };
 })();
+
 $("#bMusica").onclick=()=>{
   const on=Musica.alterna();
   $("#bMusica").classList.toggle("on",on);
@@ -681,7 +705,15 @@ function vaA(n){
   Musica.escena(escena);
 }
 vaA(0);
-$("#bAdelante").onclick = ()=>vaA(escena+1);
+let yaSono=false;
+function arrancaMusicaSiHace(){
+  // el primer avance de escena es también el primer gesto del usuario: es el
+  // único momento en que el navegador deja empezar a sonar algo
+  if(yaSono) return;
+  yaSono=true;
+  if(!Musica.encendida()) $("#bMusica").click();
+}
+$("#bAdelante").onclick = ()=>{ arrancaMusicaSiHace(); vaA(escena+1); };
 $("#bAtras").onclick    = ()=>vaA(escena-1);
 $("#bTodos").onclick    = ()=>{ if(sala) sala.enviar({t:"escena", n:escena}); };
 $("#bGuion").onclick    = ()=>$("#guion").classList.toggle("on");

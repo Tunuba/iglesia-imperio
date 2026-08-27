@@ -69,18 +69,54 @@ const PS_HOTSPOT = [
   "Write-Output ($g.TetheringOperationalState.ToString()+'|'+$c.Ssid+'|'+$c.Passphrase)"
 ].join(";");
 
+/* Saber si el punto de acceso está vivo SIN lanzar procesos: cuando está
+   encendido, Windows le da a esta computadora una IP 192.168.137.x. Preguntarlo
+   con PowerShell cada pocos segundos costaba un proceso nuevo cada vez y dejaba
+   al servidor tan ocupado que los teléfonos ni entraban (medido: de 4 entraban 3
+   y SIGUIENTE no movía a nadie). */
+function hotspotVivo() {
+  return direcciones().some((d) => /^192\.168\.137\./.test(d.ip));
+}
+
 function leeHotspot() {
   execFile("powershell", ["-NoProfile", "-NonInteractive", "-Command", PS_HOTSPOT],
     { windowsHide: true, timeout: 6000 }, (err, salida) => {
       if (err || !salida) return;
       const t = String(salida).trim().split("|");
       if (t.length < 2) return;
-      hotspot = { encendido: /^on$/i.test(t[0]), ssid: t[1], clave: t[2] || "" };
+      hotspot = { encendido: /^on$/i.test(t[0]) || hotspotVivo(), ssid: t[1], clave: t[2] || "" };
+    });
+}
+
+/* Vigilante del punto de acceso.
+   Windows lo apaga solo cada tanto (aunque se desactive el temporizador, se
+   cae al cambiar de red o al dormir el adaptador), y entonces la pantalla del
+   presentador vuelve a decir "conectate al wifi de tu casa" en pleno salón.
+   Con --hotspot, el servidor lo revisa y lo vuelve a encender él mismo. */
+const VIGILAR = process.argv.indexOf("--hotspot") >= 0;
+let encendiendo = false, ultimoIntento = 0;
+function reviveHotspot() {
+  if (!VIGILAR || encendiendo) return;
+  if (hotspotVivo()) { if (hotspot) hotspot.encendido = true; return; }
+  if (hotspot) hotspot.encendido = false;
+  if (Date.now() - ultimoIntento < 15000) return;
+  ultimoIntento = Date.now();
+  encendiendo = true;
+  const script = path.join(__dirname, "hotspot.ps1");
+  execFile("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+                          "-File", script, "-Encender"],
+    { windowsHide: true, timeout: 45000 }, () => {
+      encendiendo = false;
+      leeHotspot();
+      console.log("  (el punto de acceso se habia apagado: se volvio a encender)");
     });
 }
 
 leeRedes(); leeHotspot();
-setInterval(leeHotspot, 20000);
+setInterval(leeHotspot, 60000);       // el nombre y la clave casi nunca cambian
+setInterval(leeRedes, 60000);
+setInterval(reviveHotspot, 5000);     // esto es barato: sólo mira las IPs
+if (VIGILAR) setTimeout(reviveHotspot, 2500);
 setInterval(leeRedes, 15000);   // por si encienden el hotspot a medio camino
 
 // ── la sala: quién está escuchando y qué se dijo ──────────────────────
@@ -127,7 +163,8 @@ const servidor = http.createServer((req, res) => {
       // usa para que el QR NUNCA diga 127.0.0.1 (un teléfono no puede entrar ahí)
       ips: direcciones().map((d) => d.ip),
       redes: redes,
-      hotspot: hotspot,
+      hotspot: hotspot ? { encendido: hotspotVivo(), ssid: hotspot.ssid, clave: hotspot.clave } : null,
+      vigilando: VIGILAR,
       oyentes: [...oyentes.values()].reduce((a, s) => a + s.size, 0)
     }));
   }
@@ -176,14 +213,33 @@ const servidor = http.createServer((req, res) => {
   let rel = ruta === "/" ? "/presentador.html" : ruta;
   const destino = path.join(RAIZ, path.normalize(rel).replace(/^([\\/])+/, ""));
   if (!destino.startsWith(RAIZ)) { res.writeHead(403); return res.end("fuera de la carpeta"); }
-  fs.readFile(destino, (err, datos) => {
-    if (err) { res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-               return res.end("no existe: " + rel); }
+  fs.stat(destino, (err, st) => {
+    if (err || !st.isFile()) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      return res.end("no existe: " + rel);
+    }
+    const tipo = TIPOS[path.extname(destino).toLowerCase()] || "application/octet-stream";
     // no-store, no no-cache: con "no-cache" Chrome siguió sirviendo el .js
     // viejo después de editarlo, y se pierde media hora buscando un fantasma.
-    res.writeHead(200, { "Content-Type": TIPOS[path.extname(destino).toLowerCase()] || "application/octet-stream",
-                         "Cache-Control": "no-store, must-revalidate" });
-    res.end(datos);
+    // La música sí se deja cachear: son ocho megas y no cambia nunca.
+    const musica = /\.(mp3|ogg|wav|m4a)$/i.test(destino);
+    const cabeceras = { "Content-Type": tipo, "Accept-Ranges": "bytes",
+      "Cache-Control": musica ? "public, max-age=86400" : "no-store, must-revalidate" };
+    // por trozos: leer el archivo entero en memoria por cada petición frenaba
+    // al servidor justo cuando estaban entrando los teléfonos
+    const rango = req.headers.range && /bytes=(\d*)-(\d*)/.exec(req.headers.range);
+    if (rango) {
+      const ini = parseInt(rango[1] || "0", 10);
+      const fin = rango[2] ? parseInt(rango[2], 10) : st.size - 1;
+      cabeceras["Content-Range"] = "bytes " + ini + "-" + fin + "/" + st.size;
+      cabeceras["Content-Length"] = fin - ini + 1;
+      res.writeHead(206, cabeceras);
+      fs.createReadStream(destino, { start: ini, end: fin }).pipe(res);
+    } else {
+      cabeceras["Content-Length"] = st.size;
+      res.writeHead(200, cabeceras);
+      fs.createReadStream(destino).pipe(res);
+    }
   });
 });
 

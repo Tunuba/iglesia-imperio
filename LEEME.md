@@ -26,9 +26,49 @@ ni al de tu casa: se conectan a la laptop, y ahí ella es la `192.168.137.1`.
 Sin router y sin internet. Si preferís usar una red que ya existe, corré
 `arrancar.ps1 -SinHotspot`.
 
-> Windows apaga el punto de acceso solo a los pocos minutos si nadie se conecta.
-> El script desactiva ese apagado automático (necesita permisos de
-> administrador; si no los tiene, avisa y sigue igual).
+### Por qué se apagaba el punto de acceso (y qué se hizo)
+
+No es un capricho: Windows lo tumba por diseño en cuatro casos.
+
+1. **Nadie conectado.** A los pocos minutos sin clientes lo apaga. Se desactiva
+   con `PeerlessTimeoutEnabled=0` en el registro — **pero el ajuste no vale
+   hasta reiniciar el servicio `icssvc`**, que es justo por lo que parecía no
+   servir. `hotspot.ps1 -Encender` ya hace las dos cosas.
+2. **La laptop se suspende o se cierra la tapa.** Se cae con todo.
+3. **Cambia la red que comparte.** El punto de acceso de Windows es un adaptador
+   *virtual* montado sobre el WiFi real: si el WiFi de casa parpadea o se
+   reconecta, el virtual se cae con él.
+4. **Ahorro de energía del adaptador.** (En esta laptop no aplica: el adaptador
+   reporta `Unsupported`.)
+
+Contra todo eso hay **dos redes de seguridad**, y las dos están probadas:
+
+1. **Mientras corre la presentación**, el servidor lo vigila cada 5 segundos
+   (`arrancar.ps1` lo lanza con `--hotspot`). La comprobación es barata: mira si
+   esta computadora tiene la IP `192.168.137.x`, sin lanzar procesos.
+2. **Siempre, aunque esté todo cerrado**, una tarea de Windows lo revisa cada
+   minuto. Se instala una sola vez:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File herramientas\instalar-vigilante.ps1
+# para quitarla:  ... instalar-vigilante.ps1 -Quitar
+```
+
+*Probado de verdad:* con el servidor apagado se apagó el hotspot a mano a las
+06:04:34 y la tarea lo tenía encendido de nuevo a las 06:05:01 — 27 segundos,
+sola. Con el servidor corriendo, menos de diez.
+
+**¿Y los teléfonos que ya estaban conectados?** No tienen que hacer nada: la red
+vuelve con el mismo nombre y la misma clave, así que el teléfono se reconecta
+solo porque ya la conoce. Y la página se pone al día sola: cuando el canal
+vuelve, cada teléfono se vuelve a presentar y la computadora le contesta con la
+escena en la que va.
+
+Si en ese hueco alguien mira la pantalla, el presentador muestra un aviso en
+rojo en vez de dejar creer que todo está bien.
+
+**Lo único que no se puede arreglar desde acá** es que la laptop se duerma:
+tenela enchufada y sin suspensión durante la presentación.
 
 Para parar todo: `powershell -ExecutionPolicy Bypass -File arrancar.ps1 -Parar`
 
@@ -156,12 +196,27 @@ mismo idioma.
 
 ### La música
 
-La pantalla del presentador puede tocar música con la tecla **M**. Está
-sintetizada en el momento con WebAudio: no hay archivos, no hay descargas y no
-hay voces grabadas. Suena **sólo en la computadora** (veinte teléfonos
-desincronizados serían ruido) y **arranca apagada**, porque la tarea pide evitar
-sonidos: encenderla es decisión de ustedes. Cada momento tiene su acorde: menor
-y grave en el pecado, mayor y amplio cuando baja la luz.
+Suena **«Coro de Mármol»** (`assets/musica/coro-de-marmol.mp3`, 5:55, justo el
+largo de la presentación). Empieza sola en el primer **SIGUIENTE** —que es el
+primer gesto del presentador, el único momento en que el navegador deja empezar
+a sonar algo— y se corta con la tecla **M**. Entra con un desvanecido de un
+segundo, no de golpe.
+
+Suena **sólo en esta computadora**: los teléfonos van mudos a propósito, porque
+veinte altavoces desfasados no son música, son ruido.
+
+Si el archivo no está, cae solo a un pad sintetizado con WebAudio, con un acorde
+por momento (menor y grave en el pecado, mayor y amplio cuando baja la luz), para
+que la presentación nunca se quede sin fondo.
+
+> Ojo con la regla de la tarea: pide evitar sonidos propios. Esto es música de
+> fondo, no voces grabadas, pero si la catedrática lo prefiere sin nada, se
+> apaga con una tecla.
+
+⚠ El archivo se carga **al darle play, no antes**. Precargarlo bajaba ocho megas
+justo cuando los teléfonos estaban entrando y se comía una de las seis
+conexiones del navegador: de cuatro teléfonos entraban tres y SIGUIENTE no movía
+a nadie. Lo cazó `prueba-integracion.js`.
 
 ## 5. Los archivos
 
