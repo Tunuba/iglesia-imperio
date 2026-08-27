@@ -1,4 +1,4 @@
-# TRASPASO — estado al 2026-08-27, 10:05
+# TRASPASO — estado al 2026-08-27, 12:40
 
 **Se presenta HOY.** Esto es lo que hay, lo que falta y las trampas que ya se pagaron.
 
@@ -69,23 +69,68 @@ python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
 - **30 de 30 teléfonos, 20 ms**, sin tocar internet.
 - El QR: idéntico a la librería de Python y **leído por un lector real** (zbar).
 
+## El guion manda
+
+Todo lo que se ve sale de **el guion** (está completo en `LEEME.md`): el corazón
+que late, el que se oscurece, el signo de interrogación, los tres puntos en
+triángulo, los siete símbolos (agua, fuego, manos, anillos, copa, aceite, cruz)
+con la copa creciendo al centro, las dos siluetas con el corazón en medio y las
+palabras *perdón · justicia · ayuda*, las coronas del **313** y el **380**, y
+escuela–hospital–catedral. Si algo se cambia, se cambia **contra el guion**:
+José David lo está memorizando.
+
 ## Lo que hace el teléfono con el dedo
 
+- **El corazón sólo sale donde es de uno**: cuando te lo dan, cuando se apaga, cuando
+  se carga, cuando elegís y al final lleno de oro. En los demás momentos hay un dibujo
+  propio (`assets/motivos.js`): un corazón quieto invita a apretarlo y no pasa nada.
 - **El corazón se toca.** En *«tocá para apagarlo»* se apaga tocando el corazón mismo
   (el botón de abajo sigue: es el que dice QUÉ hacer). En *«sostené»* se carga con el
   dedo sobre el corazón o sobre el botón, da igual. En cualquier otro momento, tocarlo
   suelta unas chispas: nunca se siente muerto.
+- **Y hay más momentos que se tocan**: los tres puntos de la Trinidad (3 toques), los
+  siete gestos (7), las tres palabras que salen del corazón (3) y las tres obras que se
+  levantan (3). Cada toque viaja a la computadora.
+- **La suma de la sala se ve en vivo en la pantalla grande**: *«10 de 14 gestos
+  encendidos»*, *«1 de 2 ya lo apagaron»*, *«5 de 6 obras levantadas»*. Los siete
+  símbolos del proyector se encienden con los de la sala, **no con un temporizador**, y
+  el corazón grande se apaga al ritmo de los teléfonos. La computadora **siempre** puede
+  seguir con SIGUIENTE sin esperar a nadie.
+- En la fila de gente, **cada quien lleva su cuenta encima**; al sostener la luz
+  parpadea, y al votar lleva el pebetero o la cruz.
+- **El voto enciende o apaga la pantalla del teléfono**, como dice el guion.
 - **Un anillo alrededor del corazón** muestra lo que llevás cargado, sin números.
 - **Vibra**: corto al tocar, un golpe al apagarse, tres tiempos al votar y un patrón
   largo cuando llaman **tu** pedazo del Credo.
 - **Brasas**: polvo que sube despacio, del color del cielo de cada momento; al tocar
   salen chispas desde el centro del corazón (ceniza al apagarlo, oro al purificarlo).
-- Todo esto es sólo del teléfono. **La pantalla del presentador no cambió.**
+- **El cierre**: los siete gestos giran y caen dentro del corazón de oro.
+- **Lo que quedó de esto**, en la escena «Escuelas, hospitales, catedrales» del
+  proyector y pasando de a una en el teléfono: Bolonia 1088, San Carlos de Guatemala
+  1676, los primeros hospitales (s. IV), las catedrales góticas (s. XII), la Capilla
+  Sixtina 1512 y la música escrita (s. XI). Dibujadas en píxeles: mismo lenguaje que
+  todo lo demás y sin pedirle permiso a nadie por una imagen.
+
+## El video de demostración
+
+```powershell
+node herramientas/generar-voz.js                       # la narración (una vez)
+node herramientas/grabar-demo.js http://127.0.0.1:8123 12
+```
+
+- **La voz** es la misma de la academia: `es-GT-MartaNeural`, acento guatemalteco,
+  `rate +8%`, `pitch +3Hz`, con **edge-tts** en local y gratis. El texto de los nueve
+  pasos vive en `herramientas/narracion.js`; los mp3 en `herramientas/narracion/`.
+- **Cada paso dura lo que dura su narración**: primero se mide el mp3 y después se
+  captura ese tiempo, así el letrero y lo que se ve van con lo que se está diciendo.
+- **La música** es `assets/musica/coro-de-marmol.mp3`, al 16 % y por debajo de la voz,
+  con entrada y salida suaves.
+- **El letrero va abajo, centrado y grande** (antes era una cajita a la derecha que
+  además tapaba el teléfono 2).
+- El estudio graba **en su propia sala** (`?s=…`): si no, cuenta los teléfonos que
+  alguien tenga abiertos y el video sale diciendo «3 teléfonos» con dos en pantalla.
 
 ## Lo que falta
-
-1. El video `demostracion.mp4` está grabado con la arquitectura **anterior**; hay que
-   regrabarlo (`node herramientas/grabar-demo.js http://127.0.0.1:8123 12`).
 4. Decidir qué hacer con el repo público `Tunuba/iglesia-imperio` (dejarlo, privado o
    borrarlo). Pages sólo funciona si es público.
 

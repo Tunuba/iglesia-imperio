@@ -508,11 +508,20 @@ window.__suma=sumaSala;
    si nadie ha tocado, no hay ninguno; con la sala entera, los siete. Y el
    presentador SIEMPRE puede seguir sin esperar a nadie. */
 function pintaSuma(){
+  // EL CORAZÓN DE LA LUZ. Esto faltaba: la barra llegaba al 100 % y el corazón
+  // de la pantalla grande se quedaba negro, porque EST.anim.luz no lo movía
+  // NADIE. Ahora lo mueve la sala, que es de quien es la luz.
+  if(escena===3){
+    EST.anim.luzSala=salaLuz;
+    EST.anim.luz=EST.anim.luz+(salaLuz-EST.anim.luz)*0.10;
+    if(salaLuz>0.995&&EST.anim.luz>0.985&&!yaBrillo){ yaBrillo=true; Escenas.destello(900); }
+  }
   const s=sumaSala();
   if(!s) return;
   if(escena===6) EST.anim.sacra=EST.anim.sacra+(7*s.frac-EST.anim.sacra)*0.12;
   if(escena===11) EST.anim.oro380=Math.max(EST.anim.oro380,s.frac);
 }
+let yaBrillo=false;
 setInterval(pintaSuma,120);
 
 /* El corazón de la pantalla se apaga al ritmo de la sala: con ocho conectados
@@ -582,7 +591,11 @@ setInterval(pintaFranja,400);
 /* ── la sala ────────────────────────────────────────────────────── */
 const PALABRAS=["roma","nicea","milan","efeso","judea","tiber","foro","cesarea"];
 function nuevoCodigo(){ return PALABRAS[Math.floor(Math.random()*PALABRAS.length)]+(10+Math.floor(Math.random()*89)); }
-let codigo=localStorage.getItem("imperio-sala")||nuevoCodigo();
+/* En clase el código lo manda el servidor. Con ?s=CODIGO se puede fijar uno
+   a mano: lo usan las pruebas y el estudio de grabación para trabajar en su
+   propia sala y no contar los teléfonos que alguien tenga abiertos. */
+const salaFijada=(location.search.match(/[?&]s=([A-Za-z0-9_-]{1,24})/)||[])[1]||"";
+let codigo=salaFijada||localStorage.getItem("imperio-sala")||nuevoCodigo();
 let sala=null;
 
 function conecta(){
@@ -692,7 +705,7 @@ function preguntaIP(){
     .then(j=>{
       if(!j||!j.ips||!j.ips.length) return;
       // el código lo manda el servidor: así nadie queda en otra sala
-      if(j.codigo&&j.codigo!==codigo){
+      if(!salaFijada&&j.codigo&&j.codigo!==codigo){
         codigo=j.codigo;
         try{ localStorage.setItem("imperio-sala",codigo); }catch(e){}
         conecta();
@@ -780,6 +793,7 @@ function vaA(n){
   Escenas.cielo(m.c);
   if(escena===1&&EST.anim.semilla<1) anima("semilla",1,2600);
   if(escena===2){ EST.anim.pecado=0; gente.forEach(g=>{ g.apagado=false; }); }
+  if(escena===3){ EST.anim.luz=0; yaBrillo=false; }
   if(escena===6) anima("sacra",7,2600);
   if(escena===9){ EST.anim.oro313=0; Escenas.destello(700); anima("oro313",0.6,1500); }
   if(escena===10){ EST.anim.oro380=0; Escenas.destello(900); anima("oro380",1,1700); }

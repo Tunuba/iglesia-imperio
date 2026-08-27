@@ -138,8 +138,15 @@ function cielo(k){ const e=$("#cielo"); if(e) e.style.background=CIELOS[k]||CIEL
 function destello(ms){
   if(reduce) return;
   const d=$("#destello"); if(!d) return;
+  ms=ms||700;
   d.style.transition="none"; d.style.opacity=".9";
-  requestAnimationFrame(()=>{ d.style.transition="opacity "+ms+"ms ease-out"; d.style.opacity="0"; });
+  // El fundido NO puede colgar de requestAnimationFrame: si la ventana no está
+  // al frente (o el teléfono tiene la pantalla apagada) el navegador lo congela
+  // y el destello se queda BLANCO para siempre, tapando la presentación. Con
+  // temporizadores vuelve igual, y el segundo lo apaga sí o sí.
+  clearTimeout(destello.t1); clearTimeout(destello.t2);
+  destello.t1=setTimeout(()=>{ d.style.transition="opacity "+ms+"ms ease-out"; d.style.opacity="0"; },30);
+  destello.t2=setTimeout(()=>{ d.style.transition="none"; d.style.opacity="0"; },ms+600);
 }
 
 /* ── el lienzo de la escena visible ─────────────────────────────── */
@@ -350,13 +357,35 @@ const DIBUJOS={
     const alto=by-u;                            // lo que le queda al dibujo
     ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,alto); ctx.clip();
     if(p>0.02){
-      const grad=ctx.createLinearGradient(0,0,0,alto);
-      grad.addColorStop(0,"rgba(255,244,200,"+(0.55*p)+")");
-      grad.addColorStop(1,"rgba(255,244,200,0)");
-      ctx.fillStyle=grad;
-      const a=u*4+u*13*p;
+      // EL HAZ DE LUZ. Antes era un trapecio con relleno plano: a plena luz se
+      // veía un rectángulo pálido de cantos duros, como una hoja pegada encima.
+      // Ahora se apaga hacia los lados (degradado horizontal) y hacia abajo
+      // (se borra con destination-out), así que no tiene ni un borde.
+      // el degradado tiene que llegar a CERO justo en el borde del recorte:
+      // si sobra ancho, el recorte lo corta con alfa todavia visible y se ve
+      // la raya vertical del trapecio
+      const a=u*4+u*13*p, ancho=u*17;
+      ctx.save();
       ctx.beginPath(); ctx.moveTo(W/2-a,0); ctx.lineTo(W/2+a,0);
-      ctx.lineTo(W/2+u*17,alto); ctx.lineTo(W/2-u*17,alto); ctx.closePath(); ctx.fill();
+      ctx.lineTo(W/2+u*17,alto); ctx.lineTo(W/2-u*17,alto); ctx.closePath(); ctx.clip();
+      const gx=ctx.createLinearGradient(W/2-ancho,0,W/2+ancho,0);
+      gx.addColorStop(0,   "rgba(255,244,200,0)");
+      gx.addColorStop(0.35,"rgba(255,244,200,"+(0.30*p).toFixed(3)+")");
+      gx.addColorStop(0.5, "rgba(255,244,200,"+(0.46*p).toFixed(3)+")");
+      gx.addColorStop(0.65,"rgba(255,244,200,"+(0.30*p).toFixed(3)+")");
+      gx.addColorStop(1,   "rgba(255,244,200,0)");
+      ctx.fillStyle=gx; ctx.fillRect(W/2-ancho,0,ancho*2,alto);
+      // y también ARRIBA: el haz empezaba de golpe en el borde de arriba del
+      // dibujo y se veía una raya horizontal cruzando la pantalla, justo
+      // debajo del título. Ahora entra desde la nada.
+      const gy=ctx.createLinearGradient(0,0,0,alto);
+      gy.addColorStop(0,   "rgba(0,0,0,0.92)");
+      gy.addColorStop(0.14,"rgba(0,0,0,0)");
+      gy.addColorStop(0.52,"rgba(0,0,0,0.45)");
+      gy.addColorStop(1,   "rgba(0,0,0,1)");
+      ctx.globalCompositeOperation="destination-out";
+      ctx.fillStyle=gy; ctx.fillRect(0,0,W,alto);
+      ctx.restore();
     }
     if(!reduce && p>0.05){
       for(let i=0;i<8;i++){
@@ -371,10 +400,17 @@ const DIBUJOS={
     const img=corazonMezcla(Math.floor((t*(10+8*p))%SP.corazon.n),"negro","oro",easeOut(p));
     // un resplandor detrás SIEMPRE: si no, el corazón negro sobre fondo
     // oscuro no se distingue y la escena parece vacía
-    const gh=ctx.createRadialGradient(W/2,cy+lado/2,lado*0.12,W/2,cy+lado/2,lado*0.85);
-    gh.addColorStop(0,"rgba(255,244,200,"+(0.10+0.22*p)+")");
-    gh.addColorStop(1,"rgba(255,244,200,0)");
-    ctx.fillStyle=gh; ctx.fillRect(cx-lado*0.5,cy-lado*0.4,lado*2,lado*1.9);
+    // El resplandor NO puede llegar al borde del dibujo: el recorte del mundo lo
+    // cortaba todavía encendido y quedaba una raya horizontal cruzando la
+    // pantalla justo debajo del título. Se limita el radio para que llegue a
+    // cero antes de tocar cualquier borde, y así no hay nada que cortar.
+    const gy0=cy+lado/2;
+    const rH=Math.max(lado*0.35,Math.min(lado*0.85,gy0,alto-gy0,W/2));
+    const gh=ctx.createRadialGradient(W/2,gy0,lado*0.10,W/2,gy0,rH);
+    gh.addColorStop(0,   "rgba(255,244,200,"+(0.10+0.22*p).toFixed(3)+")");
+    gh.addColorStop(0.45,"rgba(255,244,200,"+((0.10+0.22*p)*0.45).toFixed(3)+")");
+    gh.addColorStop(1,   "rgba(255,244,200,0)");
+    ctx.fillStyle=gh; ctx.fillRect(0,0,W,alto);
     if(p>0.45&&!reduce){
       ctx.save(); ctx.globalAlpha=(p-0.45)*1.1; ctx.filter="blur(8px)";
       ctx.drawImage(img,cx,cy,lado,lado); ctx.restore(); ctx.filter="none";
@@ -470,10 +506,12 @@ const DIBUJOS={
     // el corazón, grande y al centro: es lo que pasa entre los dos
     const lado=Math.round(Math.min(H*0.34, W*0.30));
     const cx=Math.round(W/2-lado/2), cy=Math.round(base-ph*0.55-lado/2);
-    const halo=ctx.createRadialGradient(cx+lado/2,cy+lado/2,lado*0.15,cx+lado/2,cy+lado/2,lado*0.8);
+    // (mismo cuidado que arriba: el halo se apaga antes de tocar ningún borde)
+    const rHalo=Math.max(lado*0.35,Math.min(lado*0.8,cy+lado/2,H-(cy+lado/2)));
+    const halo=ctx.createRadialGradient(cx+lado/2,cy+lado/2,lado*0.15,cx+lado/2,cy+lado/2,rHalo);
     halo.addColorStop(0,"rgba(240,214,122,"+(0.16+0.08*Math.sin(t*2.4))+")");
     halo.addColorStop(1,"rgba(240,214,122,0)");
-    ctx.fillStyle=halo; ctx.fillRect(cx-lado*0.4,cy-lado*0.4,lado*1.8,lado*1.8);
+    ctx.fillStyle=halo; ctx.fillRect(0,0,W,H);
     ctx.drawImage(corazon(Math.floor((t*11)%SP.corazon.n),"oro"),cx,cy,lado,lado);
     caja("corazon",cx,cy,lado,lado);
 

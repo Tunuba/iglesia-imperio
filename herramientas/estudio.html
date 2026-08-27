@@ -125,6 +125,15 @@ body{width:1600px;height:900px;overflow:hidden;background:var(--noche);color:var
 /* Lo que usa el grabador para manejar la escena. Nada de esto forma parte de
    la presentación: es sólo el andamio del video. */
 const $=(s)=>document.querySelector(s);
+/* El estudio graba en SU propia sala: si no, cuenta los teléfonos que alguien
+   tenga abiertos y el video sale diciendo "3 teléfonos" con dos en pantalla. */
+(function salaPropia(){
+  const cod=(location.search.match(/[?&]s=([A-Za-z0-9_-]{1,24})/)||[])[1];
+  if(!cod) return;
+  document.getElementById("pc").src="../presentador.html?s="+cod;
+  document.getElementById("t1").src="../index.html?yo=1#s="+cod;
+  document.getElementById("t2").src="../index.html?yo=2#s="+cod;
+})();
 window.Estudio={
   paso(n, total, titulo, sub){
     $("#paso").textContent="paso "+n+" de "+total;

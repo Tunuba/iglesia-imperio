@@ -57,8 +57,11 @@ function comprueba(nombre, ok, detalle) {
   await pres.setViewport({ width: 1600, height: 900 });
   // El código de la sala lo decide el SERVIDOR, así que se le pregunta a él
   // en vez de inventarlo: si la prueba usara otro, entraría a una sala vacía.
-  const codigo = await fetch(BASE + "/sala/ping").then(r => r.json()).then(j => j.codigo);
-  await pres.goto(BASE + "/presentador.html", { waitUntil: "domcontentloaded" });
+  // La prueba trabaja en SU sala, no en la del servidor: si alguien tiene un
+  // teléfono abierto (el de demostración de la tecla D, por ejemplo), entraba
+  // en la cuenta y la primera comprobación fallaba diciendo "5 de 4".
+  const codigo = "prueba" + Math.floor(Math.random() * 9000 + 1000);
+  await pres.goto(BASE + "/presentador.html?s=" + codigo, { waitUntil: "domcontentloaded" });
   await pres.waitForFunction(
     "document.getElementById('txtEstado').textContent.indexOf('sala abierta')===0", { timeout: 15000 });
   // POR DONDE habla la pantalla es parte de la prueba: si se va a un rele
