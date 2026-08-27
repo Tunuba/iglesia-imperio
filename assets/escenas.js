@@ -26,6 +26,10 @@ const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
 let EST={ persona:0, voto:null, anim:{} };
 const $=(sel)=>document.querySelector(sel);
 function fuente(px,peso){ return (peso||"600")+" "+Math.round(px)+"px "+getComputedStyle(document.body).fontFamily; }
+/* Escribe sólo si se pidió texto. Con EST.sinTexto la pantalla queda de puro
+   visual y la explicación la ponen ellos hablando. Los años (313, 380) son la
+   excepción: son la imagen misma, no un rótulo. */
+function rotulo(ctx,txt,x,y){ if(EST.sinTexto) return; ctx.fillText(txt,x,y); }
 
 /* ── sprites (los personajes y el corazón de CCPP) ──────────────── */
 const SP=window.SPRITES;
@@ -151,6 +155,10 @@ function medir(cv){
   return {ctx,W:w,H:h,u:Math.max(1,Math.round(h/56))};
 }
 function fuente(px,peso){ return (peso||"600")+" "+Math.round(px)+"px "+getComputedStyle(document.body).fontFamily; }
+/* Escribe sólo si se pidió texto. Con EST.sinTexto la pantalla queda de puro
+   visual y la explicación la ponen ellos hablando. Los años (313, 380) son la
+   excepción: son la imagen misma, no un rótulo. */
+function rotulo(ctx,txt,x,y){ if(EST.sinTexto) return; ctx.fillText(txt,x,y); }
 
 /* ── mundos 3D que se arman una sola vez ────────────────────────── */
 const MUNDO={};
@@ -389,9 +397,9 @@ const DIBUJOS={
       ctx.fillStyle=f[2]; ctx.fillRect(0,y-u*1.8,u*1.4,u*3.6);
       ctx.textAlign="left";
       ctx.fillStyle="#8A8674"; ctx.font=fuente(u*1.9,"700");
-      ctx.fillText(f[0],u*3,y-u*0.8);
+      rotulo(ctx,f[0],u*3,y-u*0.8);
       ctx.fillStyle=f[2]; ctx.font=fuente(u*3.8,"600");
-      ctx.fillText(f[1],u*3,y+u*2.6);
+      rotulo(ctx,f[1],u*3,y+u*2.6);
       ctx.globalAlpha=1;
     });
   },
@@ -412,7 +420,7 @@ const DIBUJOS={
       ctx.globalAlpha=1; ctx.fillStyle="#FFF4C8";
       ctx.fillRect(p[0]-u*1.3,p[1]-u*1.3,u*2.6,u*2.6);
       ctx.fillStyle="#C8C4B6"; ctx.font=fuente(u*1.8,"700"); ctx.textAlign="center";
-      ctx.fillText(nom[i],p[0],p[1]+(i===0?-u*3.2:u*5));
+      rotulo(ctx,nom[i],p[0],p[1]+(i===0?-u*3.2:u*5));
     });
     ctx.globalAlpha=0.55+0.3*pulso; ctx.fillStyle="#F0D67A";
     ctx.fillRect(cx-u*0.6,cy-u*0.6,u*1.2,u*1.2); ctx.globalAlpha=1;
@@ -437,7 +445,7 @@ const DIBUJOS={
       simbolo(ctx,i,x,y,u*1.5);
       if(on){ ctx.globalAlpha=0.55; ctx.fillStyle="#8A8674";
         ctx.font=fuente(u*1.5,"700"); ctx.textAlign="center";
-        ctx.fillText(nombres[i],x,y+u*4.4); }
+        rotulo(ctx,nombres[i],x,y+u*4.4); }
       ctx.globalAlpha=1;
     }
     const gr=1+(EST.anim.sacra>=3?0.35:0)+0.05*Math.sin(t*3);
@@ -470,7 +478,7 @@ const DIBUJOS={
     const cual=Math.floor(t/1.8)%3, f=(t/1.8)%1;
     ctx.globalAlpha=Math.min(1,Math.sin(f*Math.PI)*1.6);
     ctx.fillStyle="#F5DE93"; ctx.font=fuente(u*3.4,"700"); ctx.textAlign="center";
-    ctx.fillText(palabras[cual], W/2, cy-u*2);
+    rotulo(ctx,palabras[cual], W/2, cy-u*2);
     ctx.globalAlpha=1;
   },
 
@@ -501,7 +509,7 @@ const DIBUJOS={
     // la placa SPQR
     ctx.fillStyle="#8E2A2A"; ctx.fillRect(cx-u*4, suelo-alto*0.46, u*8, u*3.4);
     ctx.fillStyle=oro2; ctx.font=fuente(u*2.1,"700"); ctx.textAlign="center";
-    ctx.fillText("S·P·Q·R", cx, suelo-alto*0.46+u*2.5);
+    rotulo(ctx,"S·P·Q·R", cx, suelo-alto*0.46+u*2.5);
     // el águila: cuerpo, alas en escalones hacia arriba, cabeza y pico
     const ay=suelo-alto*0.62;
     ctx.fillStyle=oro;
@@ -535,7 +543,7 @@ const DIBUJOS={
       ctx.globalAlpha=on?1:0.35; edificio(ctx,c,x,base,u);
       ctx.globalAlpha=on?0.7:0.25; ctx.fillStyle="#8A8674";
       ctx.font=fuente(u*1.7,"700"); ctx.textAlign="center";
-      ctx.fillText(c.toUpperCase(),x,base+u*2.8); ctx.globalAlpha=1;
+      rotulo(ctx,c.toUpperCase(),x,base+u*2.8); ctx.globalAlpha=1;
     });
     const y=H*0.18;
     ctx.strokeStyle="rgba(240,214,122,.7)"; ctx.lineWidth=Math.max(1,u*0.6);

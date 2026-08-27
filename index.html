@@ -409,7 +409,10 @@ function abreCanal(cod){
 })();
 
 /* ── arranque ───────────────────────────────────────────────────── */
+/* A propósito no hay forma de avanzar desde el teléfono: la presentación la
+   maneja la computadora. Las flechas quedan sólo para las pruebas en laptop. */
 addEventListener("keydown",e=>{
+  if(!/[?&]prueba=1/.test(location.search)) return;
   if(e.key==="ArrowRight") ir(S.escena+1);
   if(e.key==="ArrowLeft") ir(S.escena-1);
 });

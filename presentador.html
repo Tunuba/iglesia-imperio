@@ -87,6 +87,32 @@ body.limpia.conFranja #sala{bottom:9vh}
 #credo .pie{font-family:var(--mono);font-size:clamp(10px,.95vw,14px);letter-spacing:.2em;
   color:var(--apagado);margin-top:28px;text-transform:uppercase}
 
+/* el teléfono de demostración */
+#demo{position:fixed;right:22px;bottom:110px;z-index:12;width:300px;display:none;
+  border:2px solid var(--linea);border-radius:20px;overflow:hidden;background:#000;
+  box-shadow:0 22px 60px rgba(0,0,0,.7)}
+#demo.on{display:block}
+.demoBarra{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;
+  background:var(--piedra);font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--apagado)}
+.demoBarra button{color:var(--apagado);font-size:14px;line-height:1;padding:2px 4px}
+.demoBarra button:hover{color:var(--oro2)}
+#demoTel{width:300px;height:600px;border:0;display:block}
+
+/* el Credo, armándose en la última escena */
+#credoLista{position:fixed;left:0;right:0;bottom:0;z-index:5;display:none;
+  padding:0 4vw 3vh;pointer-events:none}
+#credoLista.on{display:flex;flex-wrap:wrap;gap:5px 18px;justify-content:center;align-items:flex-end}
+#credoLista b{font-family:var(--serif);font-weight:400;font-size:clamp(12px,1.15vw,20px);
+  color:#4A4636;transition:color .5s,text-shadow .5s;white-space:nowrap}
+#credoLista b.dicho{color:var(--oro2);text-shadow:0 0 22px rgba(232,196,74,.5)}
+#credoLista b.ahora{color:#FFF6E2;text-shadow:0 0 26px rgba(255,246,226,.8)}
+body:not(.limpia) #credoLista{bottom:88px}
+/* en la última escena la gente sube: si no, los personajes quedan encima de
+   las frases del Credo */
+body.conCredo #sala{bottom:calc(88px + 15vh)}
+body.limpia.conCredo #sala{bottom:15vh}
+
 /* botones grandes sobre el visual: se usan con el mouse aunque la barra de
    control esté escondida, y se desvanecen solos para no salir en la foto */
 .flotante{position:fixed;top:0;bottom:0;width:14vw;max-width:220px;z-index:7;
@@ -176,6 +202,20 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   <button id="irAtras" class="flotante izq" title="anterior">‹</button>
   <button id="irAdelante" class="flotante der" title="siguiente">›</button>
 
+  <!-- Un teléfono de verdad dentro de la pantalla grande (tecla D). Sirve para
+       demostrar sin sacar el celular y para que los botones táctiles se puedan
+       usar con el mouse: es la misma página, no una imitación. -->
+  <div id="demo">
+    <div class="demoBarra">
+      <span>teléfono de demostración</span>
+      <button id="demoCerrar" title="cerrar (D)">✕</button>
+    </div>
+    <iframe id="demoTel" title="teléfono de demostración"></iframe>
+  </div>
+
+  <!-- el Credo armándose, en la última escena -->
+  <div id="credoLista"></div>
+
   <div id="franja"></div>
   <div id="destello"></div>
 
@@ -199,6 +239,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <button class="b chico" id="bMusica">Música (M)</button>
       <button class="b chico" id="bGuion">Guion (G)</button>
       <button class="b chico" id="bTitulos">Títulos (T)</button>
+      <button class="b chico" id="bDemo">Teléfono (D)</button>
       <button class="b chico" id="bNueva">Sala nueva</button>
       <div id="aviso">⚠ el wifi se apagó · se está levantando solo</div>
       <div class="teclas">← → escena · 1–9 saltar · H esconder barra · F pantalla completa</div>
@@ -570,6 +611,9 @@ function vaA(n){
   $("#ojo").textContent=m.ojo;
   $("#titulo").textContent=m.t;
   $("#entrada").className=(escena===0?"on":"");
+  const ultima=(escena===MOMENTOS.length-1);
+  listaCredo.className=ultima?"on":"";
+  document.body.classList.toggle("conCredo",ultima);
   Escenas.cielo(m.c);
   if(escena===1&&EST.anim.semilla<1) anima("semilla",1,2600);
   if(escena===2) EST.anim.pecado=0;
@@ -598,7 +642,9 @@ addEventListener("mousemove",()=>{
 $("#bGuion").onclick=()=>$("#guion").classList.toggle("on");
 $("#bTitulos").onclick=()=>{
   const oculto=$("#rotulo").classList.toggle("oculto");
+  EST.sinTexto=oculto;                 // también los rótulos de dentro del dibujo
   $("#bTitulos").classList.toggle("on",oculto);
+  $("#bTitulos").textContent=oculto?"Sin texto (T)":"Títulos (T)";
 };
 $("#bNueva").onclick=()=>{
   fetch(location.origin+"/sala/nueva",{method:"POST"}).then(r=>r.ok?r.json():null)
@@ -608,6 +654,11 @@ $("#bNueva").onclick=()=>{
 };
 
 /* ── el Credo, pedazo por pedazo ────────────────────────────────── */
+const listaCredo=$("#credoLista");
+CREDO.forEach((frase,i)=>{
+  const b=document.createElement("b"); b.textContent=frase; b.dataset.i=i;
+  listaCredo.appendChild(b);
+});
 const cajaCredos=$("#credos");
 CREDO.forEach((frase,i)=>{
   const b=document.createElement("button");
@@ -623,6 +674,10 @@ function llamaPedazo(i){
   $("#credoN").textContent="Pedazo "+(i+1)+" de "+CREDO.length;
   $("#credoTxt").textContent=CREDO[i];
   $("#credo").classList.add("on");
+  Array.from(listaCredo.children).forEach((b,k)=>{
+    b.classList.toggle("ahora",k===i);
+    if(k<=i) b.classList.add("dicho");
+  });
   if(sala) sala.enviar({t:"credo",i:i});
 }
 $("#credo").onclick=()=>$("#credo").classList.remove("on");
@@ -638,11 +693,24 @@ addEventListener("keydown",e=>{
   else if(k==="g") $("#guion").classList.toggle("on");
   else if(k==="m") $("#bMusica").click();
   else if(k==="t") $("#bTitulos").click();
+  else if(k==="d"){ alternaDemo(); }
   else if(k==="h"){ $("#control").classList.toggle("oculto"); document.body.classList.toggle("limpia"); }
   else if(k==="f"){ if(document.fullscreenElement) document.exitFullscreen();
                     else document.documentElement.requestFullscreen(); }
   else if(e.key==="Escape"){ $("#credo").classList.remove("on"); $("#guion").classList.remove("on"); }
 });
+/* El teléfono de demostración es un teléfono más: entra a la misma sala, suma
+   a la luz y su voto cuenta. Se carga recién al abrirlo para no gastar una de
+   las seis conexiones que Chrome da por origen. */
+function alternaDemo(){
+  const caja=$("#demo"), marco=$("#demoTel");
+  const abierto=caja.classList.toggle("on");
+  if(abierto && !marco.getAttribute("src")) marco.setAttribute("src","index.html");
+  $("#bDemo").classList.toggle("on",abierto);
+}
+$("#demoCerrar").onclick=alternaDemo;
+$("#bDemo").onclick=alternaDemo;
+
 window.__ir=vaA;
 
 conecta(); pintaQR(); preguntaIP(); setInterval(preguntaIP,20000); vaA(0);
