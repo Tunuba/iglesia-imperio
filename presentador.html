@@ -147,7 +147,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .luz.ok{background:var(--verde);box-shadow:0 0 9px var(--verde)}
 .luz.busca{background:var(--oro);opacity:.6}
 .luz.mal{background:var(--sangre)}
+/* el conteo se pegaba al estado y se leia "esta computadora 1 telefono" */
 .cuenta{color:var(--oro2)}
+.cuenta::before{content:"·";color:var(--apagado);margin-right:8px}
 .dondeEstoy{font-family:var(--serif);font-size:17px;white-space:nowrap;margin-right:4px}
 .dondeEstoy small{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--oro);
   text-transform:uppercase;display:block}
