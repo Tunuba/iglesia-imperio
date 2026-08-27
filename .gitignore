@@ -5,3 +5,6 @@ herramientas/qr-mascaras.json
 herramientas/pruebas/
 node_modules/
 *.log
+
+# capturas de las pruebas (se regeneran)
+herramientas/pruebas/capturas/

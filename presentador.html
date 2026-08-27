@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sala — El Imperio y la Iglesia</title>
+<title>Sala — El catolicismo For Dummies</title>
 <style>
 :root{
   --noche:#0B0D14; --piedra:#161A26; --linea:#2C3346;
@@ -43,21 +43,22 @@ main{display:grid;grid-template-columns:minmax(210px,24vw) minmax(0,1fr);gap:cla
 .rotulo{font-family:var(--mono);font-size:clamp(9px,.8vw,11px);letter-spacing:.24em;
   text-transform:uppercase;color:var(--oro);margin-bottom:10px}
 
-.dosQR{display:flex;align-items:center;justify-content:center;gap:clamp(6px,1vw,14px);
-  flex:0 1 auto;min-height:0}
-.unQR{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;flex:1 1 0}
+.dosQR{display:flex;align-items:stretch;justify-content:center;gap:clamp(6px,1vw,14px);
+  flex:1 1 auto;min-height:0;overflow:hidden}
+.unQR{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;min-height:0;flex:1 1 0}
 .flecha{font-size:clamp(18px,2.4vw,34px);color:var(--oro);opacity:.55;flex:0 0 auto}
-.paso{font-family:var(--mono);font-size:clamp(8.5px,.78vw,11px);letter-spacing:.2em;
+.paso{flex:0 0 auto;font-family:var(--mono);font-size:clamp(8.5px,.78vw,11px);letter-spacing:.2em;
   text-transform:uppercase;color:var(--apagado);white-space:nowrap}
 .paso b{color:var(--oro);font-size:1.15em}
-.lienzoQR{background:#FFF6E2;border-radius:10px;padding:8px;line-height:0;width:100%;
-  max-width:min(30vh,260px)}
-.lienzoQR svg{width:100%;height:auto;display:block}
-.pieQR{font-family:var(--mono);font-size:clamp(9px,.85vw,12px);color:var(--tinta2);
+.lienzoQR{background:#FFF6E2;border-radius:10px;padding:7px;line-height:0;width:100%;
+  max-width:min(30vh,260px);flex:1 1 auto;min-height:0;
+  display:flex;align-items:center;justify-content:center}
+.lienzoQR svg{max-width:100%;max-height:100%;width:auto;height:auto;display:block}
+.pieQR{flex:0 0 auto;font-family:var(--mono);font-size:clamp(9px,.85vw,12px);color:var(--tinta2);
   text-align:center;word-break:break-all;line-height:1.4}
 .url{font-family:var(--mono);font-size:clamp(10px,.95vw,13px);color:var(--tinta2);
   margin-top:12px;text-align:center;word-break:break-all;line-height:1.45}
-.codigo{font-family:var(--serif);font-size:clamp(22px,3vw,40px);color:var(--oro2);
+.codigo{flex:0 0 auto;font-family:var(--serif);font-size:clamp(18px,2.6vw,36px);color:var(--oro2);
   text-align:center;letter-spacing:.06em;margin-top:6px}
 .nota{font-size:clamp(10.5px,1vw,14px);color:var(--tinta2);text-align:center;margin-top:10px;
   line-height:1.55}
@@ -86,6 +87,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .b:active{transform:scale(.97)}
 .b.oro{border-color:var(--oro);background:linear-gradient(180deg,#231D0C,#171308);color:var(--oro2)}
 .b.chico{padding:7px 10px;font-size:clamp(10px,.9vw,12px);font-weight:500}
+.b.on{border-color:var(--verde);color:#B6F0C6}
 .escenaActual{font-family:var(--serif);font-size:clamp(17px,2vw,28px);white-space:nowrap}
 .escenaActual small{font-family:var(--mono);font-size:.42em;letter-spacing:.2em;color:var(--oro);
   text-transform:uppercase;display:block;margin-bottom:2px}
@@ -129,7 +131,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   <header>
     <div>
       <div class="sub">Claves del Pensamiento 1 · Universidad del Istmo</div>
-      <h1>El Imperio y la Iglesia</h1>
+      <h1>El catolicismo <i>For Dummies</i></h1>
     </div>
     <div class="estado">
       <span class="luz" id="luz"></span><span id="txtEstado">buscando la sala…</span>
@@ -165,13 +167,14 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
   <footer>
     <div class="fila">
-      <div class="escenaActual"><small id="numEscena">Escena 1 de 8</small><span id="nomEscena">Portada</span></div>
+      <div class="escenaActual"><small id="numEscena">Escena 1 de 13</small><span id="nomEscena">La pregunta</span></div>
       <button class="b" id="bAtras">◀</button>
       <button class="b oro" id="bAdelante">SIGUIENTE ▶</button>
       <button class="b chico" id="bTodos">Llevar a todos aquí</button>
+      <button class="b chico" id="bMusica">Música (M)</button>
       <button class="b chico" id="bGuion">Guion (G)</button>
       <button class="b chico" id="bNueva">Sala nueva</button>
-      <div class="pistaTeclas">← → mueven a todos · 1–8 escena · G guion · Esc cierra</div>
+      <div class="pistaTeclas">← → mueven a todos · 1–9 escena · G guion · M música · Esc cierra</div>
     </div>
     <div class="fila">
       <div class="rotulo" style="margin:0 6px 0 0">El Credo, pedazo por pedazo</div>
@@ -190,53 +193,62 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 <aside id="guion">
   <h2>Cómo se corre esto</h2>
-  <p>La compu manda: cada vez que tocás <b>SIGUIENTE</b>, todos los teléfonos de la
-  sala saltan a esa escena. Ellos no tienen que tocar nada — pero si el canal se cae,
-  cada teléfono puede avanzar solo y esto sigue funcionando.</p>
-  <p><b>Antes de empezar:</b> proyectá esta pantalla, dejá el QR arriba mientras entran, y
-  no pases de escena hasta ver la cuenta de teléfonos subir.</p>
+  <p>La compu manda: cada vez que tocás <b>SIGUIENTE</b>, los trece momentos avanzan en
+  todos los teléfonos a la vez. Si el canal se cae, cada teléfono avanza solo y esto
+  sigue funcionando.</p>
+  <p><b>Antes de empezar:</b> proyectá esta pantalla, dejá los dos QR mientras entran, y
+  no pases de escena hasta ver subir la cuenta de teléfonos.</p>
 
-  <div class="min">Minuto 1 · qué es y por qué me importa</div>
+  <div class="min">Apertura · escenas 1 a 5</div>
   <ul>
-    <li><span class="quien">Escenas 1–2.</span> «Todos ustedes acaban de recibir un personaje.
-      Son gente común del Imperio: un pescador, una esclava, un legionario.»</li>
-    <li>Año 33: matan a un maestro en una provincia chica; sus seguidores dicen que resucitó.</li>
-    <li>La noticia viaja por las <b>carreteras romanas</b>: mismo territorio, mismo idioma
-      comercial, caminos seguros. Nunca una idea había viajado tan rápido.</li>
-    <li><b>Católico</b> = <i>katholikós</i> = universal. Lo escribe primero Ignacio de Antioquía, año 107.</li>
+    <li><span class="quien">1 · La pregunta.</span> «Cuando pensamos en catolicismo se nos
+      viene una iglesia, un sacerdote, Semana Santa. Pero todo empieza con una pregunta:
+      <b>¿qué significa salvarse?</b>»</li>
+    <li><span class="quien">2 · La semilla.</span> Dios creó al ser humano por amor. A cada
+      uno le tocó un personaje del siglo I y un corazón que late.</li>
+    <li><span class="quien">3 · El pecado.</span> Que toquen el punto que se separa: se apaga
+      y el corazón se les oscurece. «Pecado es <b>dañar la relación con Dios</b>.»</li>
+    <li><span class="quien">4 · La luz.</span> Que sostengan el dedo. <b>La barra es de
+      todos</b>: si no colaboran, no se abre. Ahí explicás el bautismo y la Trinidad.</li>
+    <li><span class="quien">5 · Las tres frases.</span> El problema: el pecado.
+      La respuesta: Jesús. La meta: la salvación.</li>
   </ul>
 
-  <div class="min">Minutos 2 a 4 · los hitos</div>
+  <div class="min">Los tres elementos · escenas 6 a 8</div>
   <ul>
-    <li><span class="quien">Escena 3 — la prueba.</span> Que elijan en el teléfono: ofrecer
-      incienso al emperador o negarse. Preguntá en voz alta quién se negó.
-      Los que cedieron: <i>lapsi</i>. Los que no: mártires. Tertuliano: «la sangre de los
-      mártires es semilla de cristianos».</li>
-    <li><span class="quien">Escena 4 — baja la luz.</span> Que mantengan el dedo en la pantalla.
-      El corazón negro se limpia: eso es el <b>bautismo</b>, la puerta de entrada, y ahí
-      entra la <b>Trinidad</b>: un solo Dios en tres personas.</li>
-    <li><span class="quien">Escena 5 — 313, 325, 380.</span> Tres toques:
-      <b>313</b> Edicto de Milán (Constantino y Licinio): deja de ser delito.
-      <b>325</b> Concilio de Nicea: 300 obispos, la fe en una frase.
-      <b>380</b> Edicto de Tesalónica (Teodosio): religión oficial.
-      Remarcá: <b>313 permite, 380 impone</b>. No es lo mismo.</li>
+    <li><b>Dogmas</b> = qué creen → la Trinidad, y el Credo donde se resumen.</li>
+    <li><b>Ritos</b> = qué hacen → los siete sacramentos, con la Eucaristía al centro.
+      En los primeros siglos, escondidos en casas.</li>
+    <li><b>Moral</b> = cómo viven → amar a Dios y al prójimo; perdón, justicia, ayuda a
+      pobres, enfermos, viudas y huérfanos.</li>
   </ul>
 
-  <div class="min">Minuto 5 · cómo cambió el mundo</div>
+  <div class="min">La historia · escenas 9 a 11</div>
   <ul>
-    <li><span class="quien">Escena 6–7 y el Credo.</span> Abrí los pedazos de abajo y leelos
-      en orden: cada quien levanta el teléfono cuando escucha el suyo. «Ninguno lo tiene
-      entero. Entre todos, sí.»</li>
-    <li>Cierre: el Credo de la misa es esa frase, el Papa es el obispo de Roma, el calendario
-      cuenta desde Jesús, y hoy son unos 1,400 millones.</li>
+    <li><span class="quien">9 · El águila.</span> Que voten en el teléfono; acá se ve el
+      conteo en vivo. Los que ceden son los <i>lapsi</i>; los que no, mártires — así
+      murieron Ignacio de Antioquía (c. 107) e Ireneo de Lión (c. 202).</li>
+    <li><span class="quien">10 · 313.</span> Edicto de Milán: deja de ser delito. Doce años
+      después, Nicea define que Jesucristo es verdadero Dios y verdadero hombre.</li>
+    <li><span class="quien">11 · 380.</span> Edicto de Tesalónica: religión oficial.
+      Remarcá: <b>313 permite, 380 impone</b>. En menos de setenta años pasaron de
+      esconderse a ser el imperio.</li>
+  </ul>
+
+  <div class="min">Cierre · escenas 12 y 13</div>
+  <ul>
+    <li>Escuelas, hospitales y catedrales; y el salto a América: procesiones, fiestas
+      patronales, el nombre de casi cada municipio de Guatemala.</li>
+    <li>Abrí los pedazos del Credo de abajo y leelos en orden: cada quien levanta el
+      teléfono cuando escucha el suyo. «Ninguno lo tiene entero. Entre todos, sí.»</li>
   </ul>
 
   <div class="min">Si alguien pregunta</div>
   <ul>
     <li><b>21 son los concilios</b>, no los dogmas. Los dogmas están resumidos en el Credo.</li>
     <li>El Credo que rezamos es de <b>dos</b> concilios: Nicea 325 y Constantinopla 381.</li>
-    <li>El «y del Hijo» (<i>Filioque</i>) es un añadido latino posterior: pesa en el cisma
-      con los ortodoxos.</li>
+    <li>Los <b>cuatro primeros</b> concilios ocurrieron dentro del Imperio romano:
+      Nicea, Constantinopla I, Éfeso y Calcedonia.</li>
   </ul>
 </aside>
 
@@ -260,8 +272,10 @@ const CREDO = [
   "Creo en la Iglesia, que es una, santa, católica y apostólica.",
   "Confieso que hay un solo bautismo para el perdón de los pecados."
 ];
-const ESCENAS = ["Portada","Tu personaje","El camino","La prueba","Baja la luz",
-                 "313 · 325 · 380","Tu pedazo del Credo","Modo sala"];
+/* Los mismos trece momentos que el teléfono, en el mismo orden. */
+const ESCENAS = ["La pregunta","La semilla","El pecado","La luz (todos)","Las tres frases",
+                 "Lo que creen","Cómo lo celebran","Cómo se comportan","El águila (votan)",
+                 "313","380","Hoy","El Credo"];
 
 /* ── código de sala: se guarda para que recargar no eche a nadie ──── */
 const PALABRAS = ["roma","nicea","milan","efeso","judea","tiber","foro","cesarea"];
@@ -301,8 +315,9 @@ function textoWifi(ssid, clave){
 function pintaWifi(ssid, clave){
   const caja = $("#cajaWifi");
   if(!ssid){ caja.hidden = true; $("#flecha").hidden = true;
-             $("#pasoPagina").innerHTML = "escaneá para entrar"; return; }
+             $("#pasoPagina").hidden = true; return; }
   caja.hidden = false; $("#flecha").hidden = false;
+  $("#pasoPagina").hidden = false;
   $("#pasoPagina").innerHTML = "<b>2</b> abrí la página";
   try{
     $("#qrWifi").innerHTML = QR.svg(textoWifi(ssid, clave),
@@ -392,6 +407,7 @@ let escena = 0, pedazoActual = -1;
 
 function ranura(i){ return 0.06 + ((i*0.077) % 0.88); }
 
+const TIPO=getComputedStyle(document.body).fontFamily;
 function dibujaSala(){
   const cv = $("#sala"), r = cv.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio||1, 2);
@@ -401,50 +417,102 @@ function dibujaSala(){
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0,0,W,H);
   const u = Math.max(2, Math.round(H/70));
-  const base = H - u*7;
+  const franja = (escena===3||escena===8) ? u*8 : 0;
+  const base = H - u*7 - franja;
   const t = performance.now()/1000;
 
   // piso y columnas de la basílica
   ctx.fillStyle="#141822"; ctx.fillRect(0, base, W, H-base);
   ctx.fillStyle="#1B2030";
   for(let x=0; x<W; x+=u*9) ctx.fillRect(x, base+u, u*7, u);
+  // el vano del fondo: se dibuja ANTES que las columnas y como una figura
+  // cerrada (dos jambas + medio punto). Antes era media elipse suelta y se
+  // veía como una puerta cortada por la mitad.
+  const arcoR = Math.min(W*0.11, (base-u*10)*0.42);
+  const arcoY = base-u*7-arcoR;
+  ctx.fillStyle="#080C15";
+  ctx.beginPath();
+  ctx.moveTo(W/2-arcoR, base);
+  ctx.lineTo(W/2-arcoR, arcoY);
+  ctx.arc(W/2, arcoY, arcoR, Math.PI, 0);
+  ctx.lineTo(W/2+arcoR, base);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle="#28304A"; ctx.lineWidth=Math.max(2,u*0.8); ctx.stroke();
+  ctx.globalAlpha=.06; ctx.fillStyle="#F0D67A";
+  ctx.beginPath(); ctx.arc(W/2, arcoY, arcoR*0.92, Math.PI, 0); ctx.fill();
+  ctx.globalAlpha=1;
+
   for(let i=0;i<6;i++){
     const x = W*(0.04+i*0.19);
     ctx.fillStyle="#212739"; ctx.fillRect(x, base-u*26, u*4, u*26);
     ctx.fillStyle="#2B3348"; ctx.fillRect(x, base-u*26, u, u*26);
     ctx.fillStyle="#333C55"; ctx.fillRect(x-u, base-u*28, u*6, u*2);
   }
-  // vitral del fondo, entre las columnas del centro
-  ctx.strokeStyle="#2A3348"; ctx.lineWidth=Math.max(2,u*0.8);
-  ctx.beginPath(); ctx.arc(W/2, base-u*20, u*9, Math.PI, 0); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(W/2-u*9, base-u*20); ctx.lineTo(W/2-u*9, base-u*6);
-  ctx.moveTo(W/2+u*9, base-u*20); ctx.lineTo(W/2+u*9, base-u*6); ctx.stroke();
-  ctx.fillStyle="rgba(232,196,74,.05)";
-  ctx.fillRect(W/2-u*9, base-u*29, u*18, u*23);
-
-  const esc = Math.max(2, Math.round(H/46));
+  // el tamaño depende de cuántos son: con veinte teléfonos no pueden salir
+  // del tamaño de uno solo, o se montan unos encima de otros
+  const cuantos = Math.max(1, gente.size);
+  const filas = cuantos>10 ? 2 : 1;
+  const porFila = Math.ceil(cuantos/filas);
+  const anchoLibre = W/(porFila+0.6);
+  const esc = Math.max(2, Math.min(Math.round(H/34), Math.floor(anchoLibre/SP.personas.w)));
   const pw = SP.personas.w*esc, ph = SP.personas.h*esc;
   let i = 0;
   for(const g of gente.values()){
-    const destino = ranura(g.orden)*(W-pw);
+    const fila = Math.floor(i/porFila), col = i%porFila;
+    const destino = (W-pw)*((col+0.5)/porFila);
     g.x = lerp(g.x, destino, 0.06);
     const anda = Math.abs(g.x-destino) > u;
     const frame = anda ? ((Math.sin(t*9+g.orden)>0)?0:1) : 0;
     const salto = g.arriba>0 ? Math.abs(Math.sin(t*6))*u*4 : 0;
     if(g.arriba>0) g.arriba -= 1/60;
+    const py=Math.round(base-ph-salto-fila*ph*0.5);
+    if(escena===3 && g.luz>0.02){          // se le ve el aura al que está sosteniendo
+      ctx.globalAlpha=0.10+0.35*g.luz; ctx.fillStyle="#F0D67A";
+      ctx.beginPath(); ctx.arc(g.x+pw/2, py+ph*0.45, pw*0.9, 0, 7); ctx.fill();
+      ctx.globalAlpha=1;
+    }
     ctx.drawImage(imgPersonas, frame*SP.personas.w, g.p*SP.personas.h, SP.personas.w, SP.personas.h,
-                  Math.round(g.x), Math.round(base-ph-salto), pw, ph);
+                  Math.round(g.x), py, pw, ph);
+    if(escena===8 && g.voto){              // cómo votó, sobre la cabeza
+      ctx.fillStyle = g.voto==="fe" ? "#C0261E" : "#5FB8D8";
+      ctx.fillRect(Math.round(g.x+pw/2-esc*0.9), py-esc*3, esc*1.8, esc*1.8);
+    }
     if(g.arriba>0){                       // el que tiene el pedazo que se está leyendo
       ctx.globalAlpha = 0.35+0.35*Math.sin(t*7);
       ctx.fillStyle="#F0D67A";
-      ctx.fillRect(Math.round(g.x+pw/2-esc), Math.round(base-ph-salto-esc*4), esc*2, esc*2);
+      ctx.fillRect(Math.round(g.x+pw/2-esc), py-esc*4, esc*2, esc*2);
       ctx.globalAlpha = 1;
     }
     i++;
   }
+  // ── la franja de abajo cambia según el momento ──
+  if(escena===3 || escena===8){
+    const bh=u*8, by=H-bh;
+    ctx.fillStyle="#0E121C"; ctx.fillRect(0,by,W,bh);
+    if(escena===3){
+      ctx.fillStyle="#E8C44A"; ctx.fillRect(0,by,W*clamp(salaLuz,0,1),bh);
+      const cargando=[...gente.values()].filter(g=>(g.luz||0)>0.02).length;
+      ctx.fillStyle=salaLuz>0.5?"#17140E":"#8A8674";
+      ctx.font="700 "+(u*3.2)+"px "+TIPO; ctx.textAlign="left";
+      ctx.fillText("LA LUZ DE LA SALA  "+Math.round(salaLuz*100)+"%   ·   "+cargando+" de "+
+                   gente.size+" sosteniendo", u*2, by+bh*0.60);
+      ctx.fillStyle=salaLuz>0.5?"rgba(23,20,14,.75)":"#5A6274";
+      ctx.font=(u*2.1)+"px "+TIPO;
+      ctx.fillText("si no la sostienen entre todos, no se abre", u*2, by+bh*0.9);
+    }else{
+      const votos=[...gente.values()].filter(g=>g.voto);
+      const fe=votos.filter(g=>g.voto==="fe").length, em=votos.length-fe;
+      const tot=Math.max(1,votos.length);
+      ctx.fillStyle="#5FB8D8"; ctx.fillRect(0,by,W*(em/tot),bh*0.5);
+      ctx.fillStyle="#C0261E"; ctx.fillRect(0,by+bh*0.5,W*(fe/tot),bh*0.5);
+      ctx.font="700 "+(u*2.6)+"px "+TIPO; ctx.textAlign="left"; ctx.fillStyle="#FFF6E2";
+      ctx.fillText("OFRECIERON INCIENSO: "+em, u*2, by+bh*0.36);
+      ctx.fillText("MANTUVIERON LA FE: "+fe, u*2, by+bh*0.86);
+    }
+  }
   if(gente.size===0){
     ctx.fillStyle="#4A5268";
-    ctx.font = (u*4)+"px "+getComputedStyle(document.body).fontFamily;
+    ctx.font=(u*4)+"px "+TIPO;
     ctx.textAlign="center";
     ctx.fillText("esperando que escaneen el código…", W/2, base-u*10);
   }
@@ -454,6 +522,7 @@ imgPersonas.onload = ()=>requestAnimationFrame(dibujaSala);
 
 /* ── canal ────────────────────────────────────────────────────────── */
 let sala = null;
+let salaLuzInicial = 0;
 function conecta(){
   if(sala) sala.cerrar();
   gente.clear();
@@ -469,7 +538,7 @@ function conecta(){
     alRecibir(m){
       if(m.t==="hola"){
         if(!gente.has(m.id))
-          gente.set(m.id, {p:m.p|0, f:m.f|0, x:-40, orden:gente.size, arriba:0});
+          gente.set(m.id, {p:m.p|0, f:m.f|0, x:-40, orden:gente.size, arriba:0, luz:0, voto:null});
         else Object.assign(gente.get(m.id), {p:m.p|0, f:m.f|0});
         $("#cuenta").textContent = gente.size + (gente.size===1?" teléfono":" teléfonos");
         if(escena>0) sala.enviar({t:"escena", n:escena});   // el que llega tarde se pone al día
@@ -477,11 +546,130 @@ function conecta(){
       if(m.t==="arriba"){
         const g = gente.get(m.id); if(g) g.arriba = 6;
       }
+      if(m.t==="voto" || m.t==="luz"){
+        let g = gente.get(m.id);
+        if(!g){ g={p:0,f:0,x:-40,orden:gente.size,arriba:0,luz:0,voto:null}; gente.set(m.id,g); }
+        if(m.t==="voto") g.voto = m.v;
+        else { g.luz = clamp(+m.p||0,0,1); g.visto = Date.now(); }
+      }
     }
   });
   setTimeout(()=>sala.enviar({t:"quien"}), 1500);  // que se re-anuncien los que ya estaban
 }
 conecta();
+
+/* ══ LA MODULACIÓN COOPERATIVA ═════════════════════════════════════
+   La luz de la sala es el PROMEDIO de todos los teléfonos conectados, no
+   la suma: si entran veinte y sólo cargan cinco, se queda en el 25 % y la
+   escena no se abre. Eso es lo que obliga a que colaboren de verdad.
+   La cuenta la hace SÓLO esta computadora y se la reparte a todos, para
+   que las veinte pantallas muestren exactamente el mismo número. */
+let salaLuz = 0;
+function repartirLuz(){
+  if(!sala) return;
+  const todos=[...gente.values()];
+  if(!todos.length) return;
+  const ahora=Date.now();
+  // el que dejó de sostener hace rato se va apagando solo
+  todos.forEach(g=>{ if(g.visto && ahora-g.visto>2500) g.luz=Math.max(0,(g.luz||0)-0.15); });
+  const suma=todos.reduce((a,g)=>a+(g.luz||0),0);
+  salaLuz=clamp(suma/todos.length,0,1);
+  if(escena===3) sala.enviar({t:"salaLuz", p:+salaLuz.toFixed(2)});
+}
+setInterval(repartirLuz, 600);
+window.__repartir=()=>{ repartirLuz(); return {luz:salaLuz, gente:gente.size}; };  // para las pruebas
+window.__votos=()=>{                        // para las pruebas: el conteo del águila
+  const v=[...gente.values()].filter(g=>g.voto);
+  const fe=v.filter(g=>g.voto==="fe").length;
+  return {fe:fe, em:v.length-fe, total:gente.size};
+};
+/* Aviso para quien lo corra: si esta ventana queda tapada o minimizada,
+   Chrome frena sus temporizadores y deja de repartir la luz. Por eso el
+   teléfono tiene un seguro: si en 6 segundos no le llega nada, sigue con su
+   propia carga y nadie se queda trabado. Aun así, durante la escena de la
+   luz esta pantalla tiene que estar a la vista (va proyectada, así que sí). */
+
+/* ═══ MÚSICA ═══════════════════════════════════════════════════════
+   Sintetizada acá mismo con WebAudio: no hay archivos, no hay descargas y
+   no hay voces grabadas. Suena SÓLO en esta computadora — los teléfonos
+   quedan mudos a propósito, porque veinte altavoces desincronizados serían
+   un ruido, no música.
+   Arranca APAGADA: la tarea pide evitar sonidos, así que encenderla es una
+   decisión de ustedes (tecla M).
+   Cada momento tiene su acorde: menor y grave en el pecado, mayor y amplio
+   cuando baja la luz, brillante en el 380. El cambio es por rampa, así que
+   se desliza de uno a otro en vez de cortar. */
+const Musica=(function(){
+  let ctx=null, master=null, pad=[], on=false, sonando=false;
+  const ACORDES={
+    0:[146.83,220.00,293.66],   // re menor abierto · la pregunta
+    1:[174.61,261.63,349.23],   // fa mayor · la creación
+    2:[130.81,155.56,196.00],   // do menor · el pecado
+    3:[174.61,261.63,392.00],   // fa mayor amplio · baja la luz
+    4:[196.00,246.94,293.66],   // sol mayor · las tres frases
+    5:[196.00,293.66,392.00],
+    6:[174.61,261.63,349.23],
+    7:[220.00,277.18,329.63],
+    8:[138.59,164.81,207.65],   // tensión · el águila
+    9:[196.00,246.94,293.66],
+    10:[261.63,329.63,392.00],  // do mayor brillante · 380
+    11:[196.00,261.63,329.63],
+    12:[174.61,261.63,392.00]
+  };
+  function arranca(){
+    if(ctx) return;
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    ctx=new AC();
+    master=ctx.createGain(); master.gain.value=0.0001; master.connect(ctx.destination);
+    const filtro=ctx.createBiquadFilter();
+    filtro.type="lowpass"; filtro.frequency.value=950; filtro.Q.value=0.7;
+    filtro.connect(master);
+    for(let i=0;i<3;i++){
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type=(i===2)?"sine":"triangle";
+      g.gain.value=(i===2)?0.10:0.15;
+      o.frequency.value=(ACORDES[0])[i];
+      o.connect(g); g.connect(filtro); o.start();
+      pad.push(o);
+    }
+    sonando=true;
+  }
+  function acorde(freqs){
+    if(!ctx||!sonando) return;
+    pad.forEach((o,i)=>{
+      o.frequency.cancelScheduledValues(ctx.currentTime);
+      o.frequency.setTargetAtTime(freqs[i%freqs.length], ctx.currentTime, 0.9);
+    });
+  }
+  return {
+    alterna(){
+      arranca();
+      if(!ctx) return false;
+      if(ctx.state==="suspended") ctx.resume();
+      on=!on;
+      master.gain.setTargetAtTime(on?0.13:0.0001, ctx.currentTime, 0.7);
+      if(on) acorde(ACORDES[escena]||ACORDES[0]);
+      return on;
+    },
+    escena(n){ if(on) acorde(ACORDES[n]||ACORDES[0]); },
+    campana(){                       // un toque al leer cada pedazo del Credo
+      if(!on||!ctx) return;
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type="sine"; o.frequency.value=880;
+      g.gain.setValueAtTime(0.0001,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.11,ctx.currentTime+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+1.6);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime+1.7);
+    }
+  };
+})();
+$("#bMusica").onclick=()=>{
+  const on=Musica.alterna();
+  $("#bMusica").classList.toggle("on",on);
+  $("#bMusica").textContent=on?"Música: sonando (M)":"Música (M)";
+};
 
 /* ── control de escenas ───────────────────────────────────────────── */
 function vaA(n){
@@ -489,6 +677,7 @@ function vaA(n){
   $("#numEscena").textContent = "Escena "+(escena+1)+" de "+ESCENAS.length;
   $("#nomEscena").textContent = ESCENAS[escena];
   if(sala) sala.enviar({t:"escena", n:escena});
+  Musica.escena(escena);
 }
 vaA(0);
 $("#bAdelante").onclick = ()=>vaA(escena+1);
@@ -520,6 +709,7 @@ function llamaPedazo(i){
   $("#leyTxt").textContent = CREDO[i];
   $("#leyendo").classList.add("on");
   if(sala) sala.enviar({t:"credo", i:i});
+  Musica.campana();
 }
 $("#leyendo").onclick = ()=>$("#leyendo").classList.remove("on");
 
@@ -527,8 +717,9 @@ $("#leyendo").onclick = ()=>$("#leyendo").classList.remove("on");
 addEventListener("keydown", e=>{
   if(e.key==="ArrowRight"){ if($("#leyendo").classList.contains("on") && pedazoActual<CREDO.length-1) llamaPedazo(pedazoActual+1); else vaA(escena+1); }
   else if(e.key==="ArrowLeft"){ if($("#leyendo").classList.contains("on") && pedazoActual>0) llamaPedazo(pedazoActual-1); else vaA(escena-1); }
-  else if(e.key>="1" && e.key<="8") vaA(+e.key-1);
+  else if(e.key>="1" && e.key<="9") vaA(+e.key-1);
   else if(e.key.toLowerCase()==="g") $("#guion").classList.toggle("on");
+  else if(e.key.toLowerCase()==="m") $("#bMusica").click();
   else if(e.key==="Escape"){ $("#leyendo").classList.remove("on"); $("#guion").classList.remove("on"); }
 });
 $("#ojoSala").textContent = "· código " + codigo.toUpperCase();

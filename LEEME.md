@@ -102,74 +102,56 @@ es un lujo, nunca un requisito.
 
 ---
 
-## 3. Qué ve el que escanea (2 minutos de juego)
+## 3. Qué ve el que escanea · las trece escenas
 
-Ocho pantallas cortas. Ustedes hablan encima; el teléfono solo acompaña.
+Ustedes hablan encima; el teléfono acompaña. **Nunca hay dos cosas en pantalla a
+la vez**: cada escena vive sola, y eso está verificado midiendo (ver §6).
 
-1. **Portada** — «tres siglos en dos minutos».
-2. **Tu personaje** — le toca uno de 16: pescador de Galilea, esclava de una casa
-   rica, legionario, viuda de Tesalónica, catecúmena de Alejandría… con su ciudad y su año.
-3. **El camino** — la noticia viaja por las carreteras romanas, ciudad por ciudad,
-   hasta Roma. Dato: *katholikós* = universal (Ignacio de Antioquía, año 107).
-4. **La prueba** — «ofrecé un grano de incienso al emperador o negate».
-   Los que ceden son los *lapsi*; los que no, mártires. **Acá el corazón se ennegrece.**
-5. **Baja la luz** — mantienen el dedo en la pantalla y el corazón negro se vuelve
-   oro: es el **bautismo**, y con él la **Trinidad**.
-6. **313 · 325 · 380** — Milán, Nicea, Tesalónica. El mapa se enciende de oro.
-7. **Tu pedazo del Credo** — a cada uno le tocó una de las 16 frases. *«Cuando
-   escuches la tuya, levantá el teléfono.»*
-8. **Modo sala** — queda latiendo en oro con datos de hoy. Puede quedarse ahí todo
-   el rato que ustedes sigan hablando.
+**Apertura**
+1. **¿Qué significa salvarse?** — la Tierra girando en 3D, hecha de puntos.
+2. **Cae una semilla** — Dios crea por amor; a cada quien le toca uno de 16
+   personajes del siglo I y un corazón que late.
+3. **Uno se separa** — tocan el punto que se aleja: se apaga y su corazón se
+   ennegrece. *Pecado es dañar la relación con Dios.*
+4. **Y entonces baja** — sostienen el dedo para cargar la luz. **La barra es de
+   toda la sala**: si sólo carga la mitad, no se abre. Ese gesto es el bautismo.
+5. **Problema, respuesta, meta** — el pecado, Jesús, la salvación.
 
-Abajo del todo hay **+ VER TODO**: el resumen completo, la línea de tiempo, las
-fuentes y las tres confusiones típicas. Eso es para leer después, no en clase.
+**Los tres elementos**
+6. **Lo que creen** — la Trinidad, y la Iglesia que pasa la fe.
+7. **Cómo lo celebran** — los siete sacramentos, con la Eucaristía al centro.
+8. **Cómo se comportan** — amar a Dios y al prójimo: perdón, justicia, ayuda.
 
----
+**La historia**
+9. **El águila** — votan: ofrecer incienso o mantener la fe. El conteo sale en
+   vivo en la pantalla del presentador.
+10. **313** — Edicto de Milán, y Nicea en 325.
+11. **380** — Edicto de Tesalónica: religión oficial.
 
-## 4. El guion de 5 minutos
+**Cierre**
+12. **Hoy** — escuelas, hospitales, catedrales, y el salto a América.
+13. **Tu pedazo del Credo** — cuando el presentador lo lee, ese teléfono se pone
+    dorado y vibra. *Ninguno lo tiene entero; entre todos, sí.*
 
-Está también dentro de la pantalla del presentador (tecla `G`), para no tener papeles.
+Abajo hay **+ LA INVESTIGACIÓN**: el texto completo, la línea de tiempo y las
+referencias en APA. Es para leer después, no en clase.
 
-**Minuto 1 — qué es esto y por qué me importa.** Escenas 1–3.
-«Todos ustedes acaban de recibir un personaje: gente común del Imperio.» Año 33,
-matan a un maestro en una provincia chica y sus seguidores dicen que resucitó. La
-noticia viaja por las carreteras que Roma construyó para sus ejércitos: un solo
-territorio, un idioma comercial, caminos seguros. Nunca una idea había corrido tanto.
+### Cómo está hecho el dibujo
 
-**Minutos 2 a 4 — los hitos.** Escenas 4–6.
-- *La prueba*: que elijan en el teléfono. Preguntá en voz alta quién se negó.
-  Tertuliano: «la sangre de los mártires es semilla de cristianos».
-- *Baja la luz*: que sostengan el dedo. El corazón se limpia: eso es el bautismo,
-  la puerta de entrada, y ahí explicás la Trinidad.
-- *Las tres fechas*: **313** Edicto de Milán (Constantino y Licinio) — deja de ser
-  delito. **325** Nicea — unos 300 obispos meten la fe en una sola frase. **380**
-  Edicto de Tesalónica (Teodosio) — religión oficial.
-  Remarcá: **313 permite, 380 impone. No es lo mismo.**
+Dos capas que nunca se pisan, separadas por una línea de horizonte: **arriba 3D**
+—puntos en el espacio proyectados a mano sobre un canvas 2D, sin WebGL ni
+librerías, el mismo espíritu del vuelo de MAURYA— y **abajo el pixel art** de
+CCPP. Como cada punto 3D se pinta como un cuadrito, las dos técnicas hablan el
+mismo idioma.
 
-**Minuto 5 — cómo cambió el mundo.** Escenas 7–8.
-Abrís los pedazos del Credo y los vas leyendo en orden: cada quien levanta el
-teléfono cuando escucha el suyo. *«Ninguno lo tiene entero. Entre todos, sí.»*
-Cierre: el Credo de la misa es esa frase, el Papa es el obispo de Roma, el
-calendario cuenta desde Jesús, y hoy son unos 1,400 millones.
+### La música
 
-### Por qué nos tocaron esos tres elementos
-
-- **Dogmas** = *qué creo* → el Credo (y por eso el Credo es el centro del juego).
-- **Ritos** = *qué hago* → el bautismo (y por eso se “hace” con el dedo).
-- **Ética** = *cómo vivo* → la dignidad de toda persona, incluido el esclavo.
-
-### Tres cosas que conviene no confundir (si alguien pregunta)
-
-1. **21 son los concilios, no los dogmas.** Los dogmas están resumidos en el Credo.
-2. El Credo que se reza hoy es de **dos** concilios: Nicea (325) y Constantinopla (381).
-3. El «y del Hijo» (*Filioque*) es un **añadido latino posterior**; pesa en el cisma
-   con los ortodoxos.
-
-Reglas del trabajo que se están respetando: sin video, sin sonidos ni voces
-grabadas, con imágenes y animación, y sin leer la pantalla — la pantalla no tiene
-párrafos para leer, tiene cosas que pasan.
-
----
+La pantalla del presentador puede tocar música con la tecla **M**. Está
+sintetizada en el momento con WebAudio: no hay archivos, no hay descargas y no
+hay voces grabadas. Suena **sólo en la computadora** (veinte teléfonos
+desincronizados serían ruido) y **arranca apagada**, porque la tarea pide evitar
+sonidos: encenderla es decisión de ustedes. Cada momento tiene su acorde: menor
+y grave en el pecado, mayor y amplio cuando baja la luz.
 
 ## 5. Los archivos
 
@@ -219,19 +201,43 @@ desarrollo y cuesta media hora de fantasmas).
 
 ## 6. Qué está comprobado, y con qué
 
-- **Reparto a muchos teléfonos**: `node herramientas/prueba-sala.js http://IP:PUERTO 30`
-  → *30 de 30, entre 20 y 92 ms*. Por internet, 12 de 12 entre 84 y 325 ms.
-- **Sin internet**: con la página servida desde la laptop, el teléfono **no hace ni
-  un solo pedido a internet** (medido con el inspector de red: todo va a la IP de
-  la computadora).
-- **El QR**: `python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js`
-  compara módulo a módulo contra la librería `qrcode` de Python (7 casos, versiones
-  1 a 9), y `python herramientas/comprobar-qr.py --decodificar` los **lee con un
-  lector real** (zbar). Los 7 se leen.
-- **El hotspot de Windows**: responde y reporta su SSID y clave, con un tope de
-  **8 aparatos**.
+Nada de esto es "se ve bien": son mediciones, y se pueden repetir.
 
----
+```powershell
+node herramientas/comprobar-pantalla.js  http://127.0.0.1:8123 --fotos
+node herramientas/prueba-integracion.js  http://127.0.0.1:8123
+node herramientas/prueba-sala.js         http://127.0.0.1:8123 30
+python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
+python herramientas/comprobar-qr.py --decodificar
+```
+
+- **Que nada se solape** — `comprobar-pantalla.js` abre las dos páginas en un
+  Chrome sin ventana y mide, escena por escena, **todos** los elementos: si dos
+  se cruzan o alguno se sale, lo dice. Y mide también **dentro del lienzo**,
+  porque cada escena declara la caja de lo que dibuja. Resultado actual:
+  **28 pantallas limpias** (13 escenas × 390×800 y 360×640, más el presentador
+  en 1920×1080 y 1366×768). Esto encontró que el personaje se salía del lienzo
+  por la derecha, que a ojo parecía correcto.
+- **Que la sala funcione** — `prueba-integracion.js` levanta el presentador y
+  cuatro teléfonos de verdad y comprueba las **ocho** cosas que importan: que
+  entren, que SIGUIENTE los mueva a todos, que con media sala la luz **no** se
+  abra, que con toda la sala **sí**, que el pedazo del Credo encienda **sólo**
+  al teléfono que lo tiene, y que los votos lleguen. Las ocho pasan.
+- **Reparto a muchos** — 30 de 30 teléfonos, 20 ms, sin tocar internet.
+- **El QR** — idéntico a la librería de Python y leído por un lector real (zbar).
+- **Sin internet** — servida desde la laptop, la página no hace **ni un** pedido
+  a internet (medido con el inspector de red).
+
+Tres cosas que encontraron las pruebas y que a ojo no se veían:
+
+1. `canal` y `Musica` se usaban antes de declararse: eso **rompía la página
+   entera** al cargar (los botones no respondían).
+2. La carga de la luz iba con `setInterval`, y el navegador lo estrangula cuando
+   la pantalla no está al frente: tres segundos sosteniendo cargaban 0.09 en vez
+   de 1. Ahora va por tiempo real.
+3. Un mismo Chrome sólo admite **seis conexiones por origen**: con seis pestañas
+   abiertas, la séptima se queda en cola para siempre. En clase no pasa (cada
+   teléfono es un navegador distinto), pero por eso la prueba usa cuatro.
 
 ## 7. Fuentes
 
