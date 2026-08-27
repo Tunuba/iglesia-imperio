@@ -49,6 +49,18 @@ $proceso = Start-Process -FilePath "node" -ArgumentList @("`"$Servidor`"", "$Pue
 Set-Content -Path $Bandera -Value $proceso.Id -Encoding ascii
 Start-Sleep -Seconds 2
 
+# El servidor se corre de puerto si el que pedimos esta ocupado (el 8080 es de
+# XAMPP/GLPI en esta maquina). Se le pregunta cual agarro, en vez de suponerlo.
+$puertoReal = $null
+foreach ($p in $Puerto..($Puerto + 12)) {
+  try {
+    $r = Invoke-WebRequest -Uri "http://127.0.0.1:$p/sala/ping" -TimeoutSec 2 -UseBasicParsing
+    if ($r.Content -like "*`"sala`":true*") { $puertoReal = $p; break }
+  } catch { }
+}
+if ($puertoReal) { $Puerto = $puertoReal }
+else { Write-Output "  (no respondio el servidor; revisa que Node este instalado)" }
+
 # Direcciones reales de esta computadora (las que sirven para un telefono)
 $ips = @()
 foreach ($a in (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue)) {

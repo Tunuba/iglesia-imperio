@@ -28,7 +28,7 @@ const { execFile } = require("child_process");
 const QR = require(path.join(__dirname, "..", "assets", "qr.js"));
 
 const RAIZ = path.resolve(__dirname, "..");
-const PUERTO = parseInt(process.argv[2], 10) || 8080;
+const PUERTO = parseInt(process.argv[2], 10) || 8123;
 
 const TIPOS = {
   ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
@@ -41,7 +41,9 @@ const TIPOS = {
 // La pantalla del presentador lo muestra para que la gente sepa a qué red
 // conectarse ANTES de escanear el QR: si el teléfono no está en la misma red,
 // el QR abre una dirección que no existe para él.
-let redes = [];
+let redes = [];          // el WiFi al que está conectada la compu
+let hotspot = null;      // { encendido, ssid, clave } si la compu ES el punto de acceso
+
 function leeRedes() {
   execFile("netsh", ["wlan", "show", "interfaces"], { windowsHide: true }, (err, salida) => {
     if (err || !salida) return;
@@ -54,7 +56,31 @@ function leeRedes() {
     redes = Array.from(new Set(out));
   });
 }
-leeRedes();
+
+// El nombre del hotspot NO sale en netsh (el "hosted network" viejo está muerto):
+// hay que preguntárselo a la misma API de Windows que usa Configuración.
+const PS_HOTSPOT = [
+  "[Windows.Networking.Connectivity.NetworkInformation,Windows.Networking.Connectivity,ContentType=WindowsRuntime]|Out-Null",
+  "[Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager,Windows.Networking.NetworkOperators,ContentType=WindowsRuntime]|Out-Null",
+  "$p=[Windows.Networking.Connectivity.NetworkInformation]::GetInternetConnectionProfile()",
+  "if($null -eq $p){ foreach($q in [Windows.Networking.Connectivity.NetworkInformation]::GetConnectionProfiles()){ if($q.NetworkAdapter){ $p=$q; break } } }",
+  "$g=[Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager]::CreateFromConnectionProfile($p)",
+  "$c=$g.GetCurrentAccessPointConfiguration()",
+  "Write-Output ($g.TetheringOperationalState.ToString()+'|'+$c.Ssid+'|'+$c.Passphrase)"
+].join(";");
+
+function leeHotspot() {
+  execFile("powershell", ["-NoProfile", "-NonInteractive", "-Command", PS_HOTSPOT],
+    { windowsHide: true, timeout: 6000 }, (err, salida) => {
+      if (err || !salida) return;
+      const t = String(salida).trim().split("|");
+      if (t.length < 2) return;
+      hotspot = { encendido: /^on$/i.test(t[0]), ssid: t[1], clave: t[2] || "" };
+    });
+}
+
+leeRedes(); leeHotspot();
+setInterval(leeHotspot, 20000);
 setInterval(leeRedes, 15000);   // por si encienden el hotspot a medio camino
 
 // ── la sala: quién está escuchando y qué se dijo ──────────────────────
@@ -96,11 +122,12 @@ const servidor = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
     return res.end(JSON.stringify({
       sala: true,
-      puerto: PUERTO,
+      puerto: (servidor.address() || {}).port || PUERTO,
       // las direcciones de esta compu en la red: la página del presentador las
       // usa para que el QR NUNCA diga 127.0.0.1 (un teléfono no puede entrar ahí)
       ips: direcciones().map((d) => d.ip),
       redes: redes,
+      hotspot: hotspot,
       oyentes: [...oyentes.values()].reduce((a, s) => a + s.size, 0)
     }));
   }
@@ -190,17 +217,39 @@ function qrTerminal(texto) {
   return lineas.join("\n");
 }
 
-servidor.listen(PUERTO, "0.0.0.0", () => {
+function arranca(puerto) {
+  // listen() deja su callback como oyente de "listening"; si el primer intento
+  // falló, ese callback sigue ahí y al conectar el segundo puerto se imprime
+  // DOS veces, con el puerto equivocado en una de ellas.
+  servidor.removeAllListeners("listening");
+  servidor.listen(puerto, "0.0.0.0", () => {
   const ips = direcciones();
   const principal = ips.length ? ips[0].ip : "127.0.0.1";
-  const urlPresentador = "http://" + principal + ":" + PUERTO + "/presentador.html";
+  const urlPresentador = "http://" + principal + ":" + puerto + "/presentador.html";
   console.log("\n  LA COMPUTADORA YA ES EL CENTRO DE LA SALA");
   console.log("  ─────────────────────────────────────────");
-  console.log("  Presentador (esta compu):  http://localhost:" + PUERTO + "/presentador.html");
+  console.log("  Presentador (esta compu):  http://localhost:" + puerto + "/presentador.html");
   ips.forEach((d) => console.log("  Teléfonos (" + d.nombre + "):".padEnd(28) +
-                                 "http://" + d.ip + ":" + PUERTO + "/index.html"));
+                                 "http://" + d.ip + ":" + puerto + "/index.html"));
   console.log("\n  El QR de la página del presentador ya lleva la dirección correcta.");
   console.log("  Si Windows pregunta por el firewall: permitir REDES PRIVADAS.\n");
   try { console.log(qrTerminal(urlPresentador)); } catch (e) {}
   console.log("\n  (Ctrl+C para parar)\n");
+  });
+}
+
+// Si el puerto está ocupado (XAMPP y GLPI viven en el 8080), se prueba el
+// siguiente en vez de morir con un EADDRINUSE que nadie va a leer en clase.
+let puertoActual = PUERTO, intentosRestantes = 12;
+servidor.on("error", (e) => {
+  if (e.code === "EADDRINUSE" && intentosRestantes > 0) {
+    intentosRestantes--;
+    puertoActual++;
+    console.log("  (el " + (puertoActual - 1) + " está ocupado, probando el " + puertoActual + ")");
+    setTimeout(() => arranca(puertoActual), 150);
+  } else {
+    console.log("  No se pudo abrir el servidor: " + e.message);
+    process.exit(1);
+  }
 });
+arranca(puertoActual);

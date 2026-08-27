@@ -46,11 +46,35 @@ La página elige sola, sin que nadie configure nada. Los tres están medidos:
 | Camino | Necesita internet | Cuántos | Retraso medido |
 |---|---|---|---|
 | **1. Esta computadora** (`arrancar.ps1`) | **No** | todos los que quepan en el WiFi | **20 ms** |
-| **2. Hotspot de la laptop** (`herramientas/hotspot.ps1 -Encender`) | **No** | **máximo 8** (límite de Windows) | 20 ms |
+| **2. Hotspot de la laptop** (`herramientas/hotspot.ps1 -Encender`) — red **IMPERIO**, clave **12345678** | **No** | **máximo 8** (límite de Windows) | 20 ms |
 | **3. Internet** (GitHub Pages + relé público) | Sí, en cada teléfono | sin límite | ~90 ms |
 
 *(Medido con `node herramientas/prueba-sala.js`: 30 de 30 teléfonos recibieron cada
 mensaje por el camino 1, y 12 de 12 por el camino 3.)*
+
+### Los dos códigos de la pantalla
+
+Cuando esta computadora es el punto de acceso, la pantalla muestra **dos QR en orden**:
+
+1. **Conectate al WiFi** — es un código de red (formato `WIFI:T:WPA;S:…;P:…;;`, el que
+   entienden las cámaras de Android y iPhone). Al escanearlo el teléfono **se une a la
+   red sin que nadie escriba la clave**.
+2. **Abrí la página** — la dirección de la computadora en esa red.
+
+**¿Un solo QR que haga las dos cosas?** No existe: ningún estándar mete una red WiFi y
+una dirección web en el mismo código. Por eso van dos, uno al lado del otro.
+Lo más cerca sería el aviso de «iniciar sesión en la red» que sale a veces al conectarse;
+el servidor ya responde a esas sondas (`/generate_204`, `/hotspot-detect.html`), pero
+depende de a qué DNS pregunte el teléfono y **no se puede prometer**.
+
+**¿Y sin contraseña?** Windows **no permite** un hotspot abierto: exige clave de 8
+caracteres o más. Por eso está puesta la más simple posible y, sobre todo, por eso está
+el QR de la red: nadie la escribe. Para cambiarla:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File herramientas\hotspot.ps1 -Nombre "IMPERIO" -Clave "12345678" -Encender
+powershell -ExecutionPolicy Bypass -File herramientas\hotspot.ps1 -Apagar
+```
 
 **Lo importante:** el teléfono y la computadora tienen que verse. Eso pasa si:
 

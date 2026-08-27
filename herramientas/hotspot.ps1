@@ -18,7 +18,9 @@
 # ═══════════════════════════════════════════════════════════════════════
 param(
   [switch]$Encender,
-  [switch]$Apagar
+  [switch]$Apagar,
+  [string]$Nombre,          # cambia el SSID (ej: -Nombre "IMPERIO")
+  [string]$Clave            # cambia la clave (Windows EXIGE 8 caracteres o mas)
 )
 
 $ErrorActionPreference = "Stop"
@@ -70,6 +72,25 @@ try {
   Write-Output ""
   Write-Output "  También podés abrirlo a mano:  start ms-settings:network-mobilehotspot"
   exit 1
+}
+
+# Windows NO permite un hotspot sin clave: el minimo son 8 caracteres. Lo mas
+# cerca de "sin contrasena" es una clave facil y grande en pantalla.
+if ($Nombre -or $Clave) {
+  $cfg = $g.GetCurrentAccessPointConfiguration()
+  if ($Nombre) { $cfg.Ssid = $Nombre }
+  if ($Clave) {
+    if ($Clave.Length -lt 8) { Write-Output "  La clave necesita 8 caracteres o mas."; exit 1 }
+    $cfg.Passphrase = $Clave
+  }
+  Write-Output "  Cambiando la configuracion del punto de acceso..."
+  $op = $g.ConfigureAccessPointAsync($cfg)
+  $limite = (Get-Date).AddSeconds(15)
+  while ((Get-Date) -lt $limite) {
+    $ahora = $g.GetCurrentAccessPointConfiguration()
+    if ((-not $Nombre -or $ahora.Ssid -eq $Nombre) -and (-not $Clave -or $ahora.Passphrase -eq $Clave)) { break }
+    Start-Sleep -Milliseconds 500
+  }
 }
 
 if ($Encender) {

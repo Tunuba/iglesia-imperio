@@ -43,16 +43,34 @@ main{display:grid;grid-template-columns:minmax(210px,24vw) minmax(0,1fr);gap:cla
 .rotulo{font-family:var(--mono);font-size:clamp(9px,.8vw,11px);letter-spacing:.24em;
   text-transform:uppercase;color:var(--oro);margin-bottom:10px}
 
-#qr{background:#FFF6E2;border-radius:10px;padding:9px;line-height:0;align-self:center;
-  width:100%;max-width:min(34vh,300px);flex:0 1 auto}
-#qr svg{width:100%;height:auto;display:block}
+.dosQR{display:flex;align-items:center;justify-content:center;gap:clamp(6px,1vw,14px);
+  flex:0 1 auto;min-height:0}
+.unQR{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;flex:1 1 0}
+.flecha{font-size:clamp(18px,2.4vw,34px);color:var(--oro);opacity:.55;flex:0 0 auto}
+.paso{font-family:var(--mono);font-size:clamp(8.5px,.78vw,11px);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--apagado);white-space:nowrap}
+.paso b{color:var(--oro);font-size:1.15em}
+.lienzoQR{background:#FFF6E2;border-radius:10px;padding:8px;line-height:0;width:100%;
+  max-width:min(30vh,260px)}
+.lienzoQR svg{width:100%;height:auto;display:block}
+.pieQR{font-family:var(--mono);font-size:clamp(9px,.85vw,12px);color:var(--tinta2);
+  text-align:center;word-break:break-all;line-height:1.4}
 .url{font-family:var(--mono);font-size:clamp(10px,.95vw,13px);color:var(--tinta2);
   margin-top:12px;text-align:center;word-break:break-all;line-height:1.45}
 .codigo{font-family:var(--serif);font-size:clamp(22px,3vw,40px);color:var(--oro2);
   text-align:center;letter-spacing:.06em;margin-top:6px}
 .nota{font-size:clamp(10.5px,1vw,14px);color:var(--tinta2);text-align:center;margin-top:10px;
   line-height:1.55}
-.nota .resalta{color:var(--oro2);font-size:1.18em;letter-spacing:.02em}
+.nota .resalta{color:var(--oro2);font-size:1.2em;letter-spacing:.02em}
+.nota .clave{font-family:var(--mono);font-size:.86em;color:var(--apagado)}
+.nota .pasos2{text-align:left;line-height:1.75}
+.nota .chiquito{font-size:.85em;color:var(--apagado);margin-top:7px;line-height:1.4}
+.otrasIps{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:center;margin-top:9px}
+.otrasIps span{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--apagado);
+  text-transform:uppercase}
+.otrasIps button{font-family:var(--mono);font-size:10px;border:1px solid var(--linea);
+  border-radius:7px;padding:4px 7px;color:var(--apagado)}
+.otrasIps button.sel{border-color:var(--oro);color:var(--oro2)}
 
 #sala{flex:1;min-height:0;image-rendering:pixelated;width:100%;display:block}
 
@@ -122,9 +140,20 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   <main>
     <section class="tarjeta">
       <div class="rotulo">Escaneá para entrar</div>
-      <div id="qr"></div>
+      <div class="dosQR">
+        <div class="unQR" id="cajaWifi" hidden>
+          <div class="paso"><b>1</b> conectate al wifi</div>
+          <div class="lienzoQR" id="qrWifi"></div>
+          <div class="pieQR" id="datosWifi">—</div>
+        </div>
+        <div class="flecha" id="flecha" hidden>›</div>
+        <div class="unQR">
+          <div class="paso" id="pasoPagina"><b>2</b> abrí la página</div>
+          <div class="lienzoQR" id="qr"></div>
+          <div class="pieQR" id="url">—</div>
+        </div>
+      </div>
       <div class="codigo" id="codigo">—</div>
-      <div class="url" id="url">—</div>
       <div class="nota" id="nota">Cada quien recibe un personaje distinto y un pedazo del Credo.</div>
     </section>
 
@@ -245,11 +274,42 @@ localStorage.setItem("imperio-sala", codigo);
 let ipDeLaCompu = null;   // la que anuncia el servidor local, si hay
 function urlTelefono(){
   let base = location.href.replace(/presentador\.html.*$/, "").replace(/[^/]*$/, "");
-  // Si esta página se abrió en localhost, el QR NO puede decir localhost: un
-  // teléfono que lo escanee se apuntaría a sí mismo. Se cambia por la IP real.
-  if(ipDeLaCompu && /^https?:\/\/(localhost|127\.0\.0\.1)/.test(base))
-    base = base.replace(/^(https?:\/\/)(localhost|127\.0\.0\.1)/, "$1" + ipDeLaCompu);
+  // La dirección del QR es SIEMPRE la que elegimos, no la que tenga la barra
+  // del navegador: si la compu está sirviendo el hotspot, los teléfonos que se
+  // conecten ahí sólo la ven por 192.168.137.1, aunque yo abrí la página por
+  // otra IP. (Y si abrí en localhost, un teléfono jamás podría entrar.)
+  if(ipDeLaCompu){
+    try{
+      const u = new URL(base);
+      u.hostname = ipDeLaCompu;
+      base = u.href;
+    }catch(e){}
+  }
   return base + "index.html#s=" + codigo;
+}
+
+function textoWifi(ssid, clave){
+  // sin expresiones regulares a propósito: la barra invertida dentro de una
+  // cadena dentro de HTML se pierde con demasiada facilidad
+  const BARRA = String.fromCharCode(92);
+  const especiales = [BARRA, ";", ",", ":", '"'];
+  const esc = (t) => String(t).split("").map(
+    (c) => (especiales.indexOf(c) >= 0 ? BARRA + c : c)).join("");
+  return "WIFI:T:" + (clave ? "WPA" : "nopass") + ";S:" + esc(ssid) +
+         ";P:" + esc(clave || "") + ";;";
+}
+function pintaWifi(ssid, clave){
+  const caja = $("#cajaWifi");
+  if(!ssid){ caja.hidden = true; $("#flecha").hidden = true;
+             $("#pasoPagina").innerHTML = "escaneá para entrar"; return; }
+  caja.hidden = false; $("#flecha").hidden = false;
+  $("#pasoPagina").innerHTML = "<b>2</b> abrí la página";
+  try{
+    $("#qrWifi").innerHTML = QR.svg(textoWifi(ssid, clave),
+      {escala:8, borde:2, claro:"#FFF6E2", oscuro:"#14110A"});
+  }catch(e){ caja.hidden = true; return; }
+  $("#datosWifi").innerHTML = "<b style='color:var(--oro2)'>" + ssid + "</b>" +
+    (clave ? "<br>clave " + clave : "<br>sin clave");
 }
 
 function pintaQR(){
@@ -276,21 +336,53 @@ function preguntaIP(){
     .then(r => r.ok ? r.json() : null)
     .then(j => {
       if(!j || !j.ips || !j.ips.length) return;
-      // se prefiere una IP de red casera/hotspot (192.168.x / 172.20-31 / 10.x)
-      const buenas = j.ips.filter(ip => /^192\.168\./.test(ip)) .concat(
-                     j.ips.filter(ip => /^10\./.test(ip)));
-      ipDeLaCompu = (buenas[0] || j.ips[0]);
+      const hs = j.hotspot && j.hotspot.encendido ? j.hotspot : null;
+      // Si esta compu ES el punto de acceso, la dirección buena es la del
+      // hotspot (192.168.137.x): las otras son de redes donde los teléfonos
+      // que se conecten al hotspot NO están.
+      const delHotspot = j.ips.filter(ip => /^192\.168\.137\./.test(ip));
+      const caseras   = j.ips.filter(ip => /^192\.168\./.test(ip) && !/^192\.168\.137\./.test(ip));
+      const otras     = j.ips.filter(ip => !/^192\.168\./.test(ip));
+      const orden = (hs ? delHotspot : []).concat(caseras, hs ? [] : delHotspot, otras);
+      ipDeLaCompu = orden[0] || j.ips[0];
       pintaQR();
-      const red = (j.redes && j.redes.length) ? j.redes[0] : null;
-      $("#nota").innerHTML = red
-        ? "<b>1.</b> Conectate al WiFi <b class='resalta'>" + red + "</b>  ·  <b>2.</b> escaneá el código."
-        : "Conectate al mismo WiFi que esta computadora y escaneá el código.";
-      $("#nota").innerHTML += "<br><span style='opacity:.7'>Sin internet: los teléfonos entran "+
-        "directo a esta computadora (" + ipDeLaCompu + ").</span>";
+
+      pintaWifi(hs ? hs.ssid : null, hs ? hs.clave : null);
+      const paso1 = hs
+        ? "Conectate al WiFi <b class='resalta'>" + hs.ssid + "</b>" +
+          (hs.clave ? " <span class='clave'>clave " + hs.clave + "</span>" : "")
+        : "Conectate al WiFi <b class='resalta'>" +
+          ((j.redes && j.redes[0]) || "de esta computadora") + "</b>";
+      $("#nota").innerHTML = hs
+        ? "<div class='chiquito'>Los dos códigos van en orden: el primero mete el teléfono " +
+          "a la red de esta computadora, el segundo abre la página. Sin internet.</div>"
+        : "<div class='pasos2'>" + paso1 + " y escaneá el código.</div>" +
+          "<div class='chiquito'>Sin internet: los teléfonos entran directo a esta computadora.</div>";
+
+      // Si hay varias direcciones, que se pueda cambiar sin tocar código:
+      // la correcta depende de por dónde entren los teléfonos.
+      if(orden.length > 1){
+        const caja = document.createElement("div");
+        caja.className = "otrasIps";
+        caja.innerHTML = "<span>otra dirección:</span>";
+        orden.forEach(ip => {
+          const b = document.createElement("button");
+          b.textContent = ip;
+          b.className = (ip === ipDeLaCompu ? "sel" : "");
+          b.onclick = () => {
+            ipDeLaCompu = ip; pintaQR();
+            Array.from(caja.querySelectorAll("button")).forEach(x =>
+              x.className = (x.textContent === ip ? "sel" : ""));
+          };
+          caja.appendChild(b);
+        });
+        $("#nota").appendChild(caja);
+      }
     })
     .catch(()=>{});
 }
 preguntaIP();
+setInterval(preguntaIP, 20000);   // por si encienden el hotspot a media clase
 
 /* ── la sala: cada teléfono conectado es un personaje ─────────────── */
 const SP = window.SPRITES;
