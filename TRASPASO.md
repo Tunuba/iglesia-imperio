@@ -1,4 +1,4 @@
-# TRASPASO — estado al 2026-08-27, 09:10
+# TRASPASO — estado al 2026-08-27, 10:05
 
 **Se presenta HOY.** Esto es lo que hay, lo que falta y las trampas que ya se pagaron.
 
@@ -10,6 +10,11 @@
 - **El teléfono acompaña** (`index.html`): su personaje, su corazón (late → se ennegrece
   → se vuelve oro) y su pedazo del Credo. **No tiene forma de avanzar**: eso lo manda
   la computadora.
+- **El teléfono casi no tiene letra, a propósito** (lo pidió José David: *«que no se vea
+  sobrecargado de info, mejor casi nada de info»*). El nombre del curso se apaga después
+  de la primera pantalla; el personaje se presenta en el momento *«este corazón es el
+  tuyo»*, vuelve cuando toca elegir y se queda al final. En el resto queda el corazón
+  solo, con brasas de fondo del color del momento.
 - Arrancar todo: `powershell -ExecutionPolicy Bypass -File arrancar.ps1`
 
 ## Cómo se corre
@@ -54,15 +59,28 @@ python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
 - **28 pantallas sin solapes ni desbordes** (13 escenas en dos tamaños de teléfono +
   el presentador en 1920×1080 y 1366×768). Mide también **dentro del lienzo**, con las
   cajas que declara cada escena.
-- **12 de 12 pruebas de integración**: que entren, que SIGUIENTE los mueva a todos, que
+- **13 de 13 pruebas de integración**: que entren, que SIGUIENTE los mueva a todos, que
   **los botones del teléfono aparezcan en su escena** (2 apagar, 3 sostener, 8 votar),
-  que con media sala la luz **no** se abra, que con toda **sí**, que el pedazo del Credo
+  que **tocando el corazón** se apague, que con media sala la luz **no** se abra, que con toda **sí**, que el pedazo del Credo
   encienda **sólo** al que lo tiene, que los votos lleguen, y que **la pantalla hable por
   la propia computadora** y no por un relé.
   Ojo al correrlas: si hay pestañas abiertas contra la misma sala, cuentan como teléfonos
   y la primera prueba falla diciendo «5 teléfonos» cuando entraron 4.
 - **30 de 30 teléfonos, 20 ms**, sin tocar internet.
 - El QR: idéntico a la librería de Python y **leído por un lector real** (zbar).
+
+## Lo que hace el teléfono con el dedo
+
+- **El corazón se toca.** En *«tocá para apagarlo»* se apaga tocando el corazón mismo
+  (el botón de abajo sigue: es el que dice QUÉ hacer). En *«sostené»* se carga con el
+  dedo sobre el corazón o sobre el botón, da igual. En cualquier otro momento, tocarlo
+  suelta unas chispas: nunca se siente muerto.
+- **Un anillo alrededor del corazón** muestra lo que llevás cargado, sin números.
+- **Vibra**: corto al tocar, un golpe al apagarse, tres tiempos al votar y un patrón
+  largo cuando llaman **tu** pedazo del Credo.
+- **Brasas**: polvo que sube despacio, del color del cielo de cada momento; al tocar
+  salen chispas desde el centro del corazón (ceniza al apagarlo, oro al purificarlo).
+- Todo esto es sólo del teléfono. **La pantalla del presentador no cambió.**
 
 ## Lo que falta
 
@@ -93,6 +111,11 @@ python herramientas/comprobar-qr.py && node herramientas/comprobar-qr.js
 - **El teléfono de demostración (`D`) no cabía en la laptop.** 600 px de alto + barra +
   el control de abajo: la barra con la **✕** se dibujaba *arriba* del borde de la
   pantalla y no había forma de cerrarlo. Su alto ahora es `calc(100vh - 190px)`.
+- **Traer una pestaña al frente en las pruebas rompe a las otras.** Se intentó
+  `bringToFront()` para poder medir el ennegrecido: la pestaña medida quedó bien y las
+  otras tres se congelaron (una se quedó en la escena 2 mientras la pantalla iba en la
+  9) y cayeron tres pruebas que no tenían nada que ver. Lo que se mide del toque es su
+  efecto **inmediato** (el rótulo cambia, el botón se retira), no la animación.
 - **`rAF` congelado miente sobre el corazón.** Midiendo sin foco en la ventana, el
   corazón «no se ennegrecía» (`negrura` quedaba en 0) y parecía un bug: era el navegador
   frenando `requestAnimationFrame` a 1 cuadro por segundo. Con un clic real del mouse

@@ -105,6 +105,17 @@ function comprueba(nombre, ok, detalle) {
     comprueba("en la escena " + n + " el telefono muestra su boton",
               ESPERADOS[n].test(txt), JSON.stringify(txt));
   }
+  // y el corazon mismo se toca: la mano va al corazon, no al boton de abajo.
+  // Se mide lo que pasa EN EL ACTO (el rotulo y que el boton se retire), no que
+  // se vea negro: el ennegrecido va por requestAnimationFrame y Chrome lo
+  // congela en las pestanas de segundo plano — mediria el navegador, no el codigo.
+  await pres.evaluate("window.__ir(2)");
+  await espera(1100);
+  await tels[0].evaluate("document.getElementById(String.fromCharCode(108,97,116,105,100,111)).dispatchEvent(new PointerEvent(String.fromCharCode(112,111,105,110,116,101,114,100,111,119,110),{bubbles:true,cancelable:true}))");
+  await espera(400);
+  const trasToque = await tels[0].evaluate("document.getElementById('dice').textContent + '|' + document.getElementById('acciones').innerText");
+  comprueba("tocando el corazon se apaga", /se apag/i.test(trasToque) && /\|$/.test(trasToque), trasToque);
+
   await pres.evaluate("window.__ir(3)");
   await espera(1100);
 

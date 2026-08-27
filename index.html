@@ -24,6 +24,9 @@ body{background:var(--noche);color:var(--tinta);font-family:var(--sans);
 #app{position:fixed;inset:0;display:flex;flex-direction:column;height:100dvh}
 #cielo{position:absolute;inset:0;z-index:0;transition:background 1s var(--ease)}
 #destello{position:absolute;inset:0;z-index:9;pointer-events:none;background:#FFF6E2;opacity:0}
+/* brasas: polvo que sube despacio y toma el color del cielo de cada momento.
+   Da vida al fondo sin agregar una sola palabra. */
+#brasas{position:absolute;inset:0;z-index:1;pointer-events:none}
 #vineta{position:absolute;inset:0;z-index:2;pointer-events:none;
   background:radial-gradient(ellipse 92% 74% at 50% 44%,transparent 46%,rgba(0,0,0,.7) 100%)}
 
@@ -33,7 +36,11 @@ header{position:relative;z-index:10;display:flex;align-items:center;gap:9px;flex
 .luzSala.ok{background:var(--verde);box-shadow:0 0 8px var(--verde)}
 .luzSala.busca{background:var(--oro);opacity:.5}
 .marca{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--apagado);
-  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  opacity:1;transition:opacity .8s var(--ease)}
+/* el nombre del curso se ve al entrar y despues se apaga: cuanto menos letra
+   haya en el telefono, mas mira la clase la pantalla grande */
+body.calla .marca{opacity:0}
 .pasos{margin-left:auto;display:flex;gap:3px;flex:0 0 auto}
 .pip{width:7px;height:3px;border-radius:2px;background:#222939;transition:background .4s}
 .pip.on{background:var(--oro)} .pip.done{background:#6A5A28}
@@ -41,14 +48,20 @@ header{position:relative;z-index:10;display:flex;align-items:center;gap:9px;flex
 /* ── EL CORAZÓN es el protagonista de esta pantalla ── */
 main{position:relative;z-index:10;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:clamp(8px,2vh,18px);padding:0 20px}
-#latido{flex:0 0 auto;display:block;image-rendering:pixelated}
-#quien{text-align:center;flex:0 0 auto}
+#latido{flex:0 0 auto;display:block;image-rendering:pixelated;touch-action:none}
+/* el personaje se presenta y se retira: aparece cuando el corazon es "tuyo",
+   cuando te toca elegir y al final. En el resto, el corazon manda solo. */
+#quien{text-align:center;flex:0 0 auto;opacity:0;transform:translateY(9px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#quien.on{opacity:1;transform:none}
 #quien .nom{font-family:var(--serif);font-size:clamp(17px,5vw,24px);line-height:1.15}
 #quien .sub{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--apagado);
   text-transform:uppercase;margin-top:5px}
 #dice{font-family:var(--mono);font-size:clamp(10.5px,3vw,13px);letter-spacing:.14em;
   text-transform:uppercase;color:var(--oro2);text-align:center;flex:0 0 auto;min-height:1.4em;
-  line-height:1.5}
+  line-height:1.5;transition:color .6s var(--ease),opacity .6s var(--ease)}
+/* cuando no hay nada que tocar, la indicacion se apaga a un susurro */
+#dice.mira{color:var(--apagado);opacity:.62}
 @keyframes lat{0%,100%{opacity:.4}50%{opacity:1}}
 .lat{animation:lat 1.6s ease-in-out infinite}
 
@@ -60,6 +73,7 @@ main{position:relative;z-index:10;flex:1 1 auto;min-height:0;display:flex;flex-d
   transition:width .3s ease}
 #barraSala span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+#barraSala i{box-shadow:0 0 22px rgba(245,222,147,.55)}
 
 /* el pedazo del Credo */
 #pedazo{border:1px solid #4A3C14;border-radius:13px;padding:12px 15px;flex:0 0 auto;width:100%;
@@ -83,14 +97,28 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .btn .relleno{position:absolute;left:0;top:0;bottom:0;width:0%;
   background:linear-gradient(90deg,rgba(232,196,74,.32),rgba(255,244,200,.16));pointer-events:none}
 .btn .rotulo{position:relative;z-index:1}
-#acciones{display:flex;flex-direction:column;gap:8px}
-#pie{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:#4A5268;
-  text-transform:uppercase;text-align:center}
+#acciones{display:flex;flex-direction:column;gap:10px}
+/* los botones llaman: respiran despacio hasta que se tocan */
+@keyframes respira{0%,100%{box-shadow:0 0 0 0 rgba(232,196,74,0)}
+  50%{box-shadow:0 0 26px 0 rgba(232,196,74,.30)}}
+.btn{animation:respira 2.8s var(--ease) infinite}
+.btn.sangre{animation-name:respiraS}
+@keyframes respiraS{0%,100%{box-shadow:0 0 0 0 rgba(192,38,30,0)}
+  50%{box-shadow:0 0 26px 0 rgba(192,38,30,.34)}}
+.btn.grande{padding:19px 16px;font-size:17px;flex-direction:column;gap:3px}
+.btn.grande .k{margin-left:0}
 
 /* el aviso de "es tuyo" */
 #tuyo{position:fixed;inset:0;z-index:30;display:none;place-items:center;text-align:center;
   padding:8vw 7vw;background:radial-gradient(ellipse 90% 70% at 50% 42%,#3A2C08 0%,#05060B 78%)}
 #tuyo.on{display:grid;animation:entra .45s var(--ease)}
+#tuyo::before{content:"";position:absolute;inset:-40%;z-index:-1;opacity:.30;
+  /* rayos apenas insinuados: si se ven "a propósito" parecen calcomanía */
+  background:repeating-conic-gradient(from 0deg,rgba(245,222,147,.10) 0deg 3deg,transparent 3deg 17deg);
+  mask-image:radial-gradient(circle at 50% 50%,#000 12%,transparent 62%);
+  -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 12%,transparent 62%);
+  animation:gira 40s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
 @keyframes entra{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
 #tuyo .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:var(--oro);text-transform:uppercase}
 #tuyo .frase{font-family:var(--serif);font-size:clamp(26px,8vw,48px);line-height:1.14;color:var(--oro2);margin-top:16px}
@@ -100,6 +128,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 <body>
 <div id="app">
   <div id="cielo"></div>
+  <canvas id="brasas"></canvas>
 
   <header>
     <span class="luzSala" id="luzSala"></span>
@@ -123,7 +152,6 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
   <footer>
     <div id="acciones"></div>
-    <div id="pie">esto acompaña · la presentación está en la pantalla</div>
   </footer>
 
   <div id="vineta"></div>
@@ -181,6 +209,54 @@ function sorteo(){
 }
 function guardar(){ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){} }
 
+/* ── vibrar: el teléfono contesta al dedo ───────────────────────── */
+function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+
+/* ── las brasas del fondo ───────────────────────────────────────────
+   Polvo que sube despacio, del color del cielo de cada momento. Al tocar
+   el corazón salen chispas desde el centro. Es todo lo "bonito" que se
+   puede agregar sin escribir una palabra más. */
+const TINTES={ vacio:[126,146,204], calido:[150,172,224], oscuro:[128,96,150],
+  luz:[245,222,147], sangre:[204,96,84], oro:[240,205,110], templo:[142,174,232] };
+let tinte=TINTES.vacio, motas=[];
+function nuevaMota(x,y,chispa){
+  return { x:x, y:y, vx:(Math.random()-0.5)*(chispa?1.9:0.22),
+           vy:chispa?-(0.9+Math.random()*2.2):-(0.10+Math.random()*0.28),
+           r:(chispa?1.4:0.9)+Math.random()*1.7, vida:chispa?1:1,
+           chispa:!!chispa };
+}
+function chispea(n,color){
+  const cv=document.getElementById("latido"); if(!cv) return;
+  const r=cv.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, d=r.width*(0.12+Math.random()*0.22);
+    const m=nuevaMota(cx+Math.cos(a)*d, cy+Math.sin(a)*d, true);
+    if(color) m.color=color;
+    motas.push(m);
+  }
+}
+function pintaBrasas(){
+  const cv=document.getElementById("brasas"); if(!cv) return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const w=Math.round(innerWidth*dpr), h=Math.round(innerHeight*dpr);
+  if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h;
+    cv.style.width=innerWidth+"px"; cv.style.height=innerHeight+"px"; }
+  const ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,w,h);
+  while(motas.length<34) motas.push(nuevaMota(Math.random()*innerWidth, innerHeight*(0.4+Math.random()*0.75), false));
+  for(let i=motas.length-1;i>=0;i--){
+    const m=motas[i];
+    m.x+=m.vx; m.y+=m.vy;
+    if(m.chispa){ m.vy+=0.035; m.vida-=0.016; if(m.vida<=0){ motas.splice(i,1); continue; } }
+    else if(m.y<-10||m.x<-10||m.x>innerWidth+10){ motas[i]=nuevaMota(Math.random()*innerWidth, innerHeight+8, false); continue; }
+    const c=m.color||tinte;
+    const op=(m.chispa?m.vida*0.85:0.13+0.16*Math.sin((m.y+m.x)/70))*(0.6+0.4*luz);
+    ctx.fillStyle="rgba("+c[0]+","+c[1]+","+c[2]+","+Math.max(0,op).toFixed(3)+")";
+    ctx.beginPath(); ctx.arc(m.x*dpr,m.y*dpr,m.r*dpr,0,6.2832); ctx.fill();
+  }
+}
+
 /* ── el corazón, que es lo que se mira acá ──────────────────────── */
 let negrura=0, luz=0, luzSala=0;
 function pintaLatido(){
@@ -208,7 +284,22 @@ function pintaLatido(){
   g.addColorStop(1,"rgba(255,244,200,0)");
   ctx.fillStyle=g; ctx.fillRect(0,0,lado,lado);
   ctx.drawImage(img,0,0,lado,lado);
+  // el anillo: lo cargado se ve ALREDEDOR del corazón, no en un número
+  if(anillo){
+    const R=lado*0.365, gr=-Math.PI/2;   // el sprite deja aire: mas afuera, el anillo se despega del corazon
+    ctx.lineCap="round";
+    ctx.strokeStyle="rgba(255,246,226,.10)"; ctx.lineWidth=lado*0.020;
+    ctx.beginPath(); ctx.arc(lado/2,lado/2,R,0,6.2832); ctx.stroke();
+    if(luz>0){
+      ctx.strokeStyle="rgba(245,222,147,"+(0.55+0.4*luz).toFixed(2)+")";
+      ctx.lineWidth=lado*0.026;
+      ctx.beginPath(); ctx.arc(lado/2,lado/2,R,gr,gr+6.2832*luz); ctx.stroke();
+    }
+  }
+  pintaBrasas();
 }
+// el anillo sólo existe en el momento de la luz
+let anillo=false;
 
 /* ── lo que hace el teléfono en cada momento ────────────────────── */
 const MOMENTOS=[
@@ -235,8 +326,15 @@ function ir(n){
   S.escena=n; guardar();
   const m=MOMENTOS[n];
   $("#dice").textContent=m.dice;
+  $("#dice").className="lat"+(m.accion?"":" mira");
   $("#pedazo").className=m.pedazo?"on":"";
   $("#barraSala").className=m.barra?"on":"";
+  anillo=(m.accion==="luz");
+  tinte=TINTES[m.cielo]||TINTES.vacio;
+  // el personaje se presenta cuando el corazón pasa a ser "tuyo", vuelve
+  // cuando te toca elegir y se queda al final. En el resto, estorba.
+  $("#quien").className=(n===1||n===8||n===TOTAL-1)?"on":"";
+  document.body.classList.toggle("calla",n>0);
   if(window.Escenas) Escenas.cielo(m.cielo);
   Array.from($("#pasos").children).forEach((p,i)=>{
     p.className="pip"+(i<n?" done":(i===n?" on":""));
@@ -244,8 +342,27 @@ function ir(n){
   if(n<2){ negrura=0; luz=0; listoLuz=false; }
   pintaAcciones(m.accion);
 }
+/* El corazón es tocable: en el momento del pecado se apaga tocándolo, y en
+   el de la luz se carga manteniendo el dedo encima. El botón de abajo sigue
+   estando (es el que dice QUÉ hacer); esto es para que la mano vaya al
+   corazón, que es lo que se mira. */
+(function corazonTocable(){
+  const cv=document.getElementById("latido");
+  let dentro=false;
+  cv.addEventListener("pointerdown",(e)=>{
+    if(e.cancelable) e.preventDefault();
+    const m=MOMENTOS[S.escena]||{};
+    if(m.accion==="pecado"&&negrura<1){ apagaCorazon(); return; }
+    if(m.accion==="luz"&&!listoLuz){ dentro=true; sostener(true); return; }
+    chispea(7); vibra(8);            // en cualquier otro momento: sólo late
+  });
+  const suelta=()=>{ if(dentro){ dentro=false; sostener(false); } };
+  addEventListener("pointerup",suelta);
+  addEventListener("pointercancel",suelta);
+})();
 window.__ir=ir;
 window.__escena=()=>S.escena;
+window.__avisa=(i)=>avisaPedazo(i);   // para las fotos y las pruebas
 window.__estado=()=>({persona:S.persona,pedazo:S.pedazo,voto:S.voto,luz:luz,luzSala:luzSala,negrura:negrura,listoLuz:listoLuz});
 
 /* ── las acciones, una por momento ──────────────────────────────── */
@@ -260,26 +377,41 @@ function pintaAcciones(cual){
   c.innerHTML="";
   if(cual==="pecado"&&negrura<1){
     const b=boton("TOCÁ PARA APAGARLO","sangre");
-    b.onclick=()=>{ animar(v=>negrura=v,1,1500); $("#dice").textContent="se apagó"; pintaAcciones(null); };
+    b.onclick=apagaCorazon;
     c.appendChild(b);
   }
   if(cual==="luz"&&!listoLuz){
     const b=boton("","oro");
     b.innerHTML='<span class="relleno" id="relleno"></span><span class="rotulo">MANTENÉ EL DEDO AQUÍ</span>';
-    const on=(e)=>{ if(listoLuz) return; if(e&&e.cancelable) e.preventDefault(); sostiene=true; };
-    const off=()=>{ sostiene=false; };
+    const on=(e)=>{ if(listoLuz) return; if(e&&e.cancelable) e.preventDefault(); sostener(true); };
+    const off=()=>{ sostener(false); };
     b.addEventListener("touchstart",on,{passive:false});
     b.addEventListener("touchend",off); b.addEventListener("touchcancel",off);
     b.addEventListener("mousedown",on); addEventListener("mouseup",off);
     c.appendChild(b);
   }
   if(cual==="voto"&&!S.voto){
-    const a=boton("ADORAR AL EMPERADOR",""), b=boton("MANTENER MI FE","sangre");
+    const a=boton("ADORAR AL EMPERADOR","grande"), b=boton("MANTENER MI FE","sangre grande");
     a.id="bEmperador"; b.id="bFe";     // con nombre, para poder probarlos
     a.innerHTML+='<span class="k">vivís</span>'; b.innerHTML+='<span class="k">no vivís</span>';
     a.onclick=()=>vota("emperador"); b.onclick=()=>vota("fe");
     c.appendChild(a); c.appendChild(b);
   }
+}
+/* apagar el corazón: es el momento del pecado, y tiene que SENTIRSE */
+function apagaCorazon(){
+  if(negrura>=1) return;
+  animar(v=>negrura=v,1,1500);
+  chispea(26,[90,80,74]);            // ceniza
+  vibra([28,50,120]);
+  $("#dice").textContent="se apagó";
+  pintaAcciones(null);
+}
+/* sostener: el dedo puede estar en el botón o en el corazón, da igual */
+function sostener(v){
+  if(listoLuz) return;
+  if(v&&!sostiene) vibra(10);
+  sostiene=!!v;
 }
 function animar(set,hasta,ms){
   const t0=performance.now(), desde=(hasta===1?0:1);
@@ -291,6 +423,8 @@ function animar(set,hasta,ms){
 }
 function vota(cual){
   S.voto=cual; guardar();
+  chispea(24, cual==="fe"?[245,222,147]:[204,96,84]);
+  vibra(cual==="fe"?[30,40,30,40,180]:[120]);
   $("#dice").textContent = cual==="fe" ? "te llamaron mártir" : "te llamaron lapsi, «caído»";
   pintaAcciones("voto");
   if(canal) canal.enviar({t:"voto",id:idTelefono,v:cual});
@@ -323,7 +457,8 @@ const idTelefono=(function(){
     const ms=Date.now();
     if(canal&&ms-ultimoAviso>700){ ultimoAviso=ms; canal.enviar({t:"luz",id:idTelefono,p:+luz.toFixed(2)}); }
     if(luz>=1&&luzSala>=0.6){
-      listoLuz=true; negrura=0;
+      listoLuz=true; negrura=0; anillo=false;
+      chispea(40,[255,244,200]); vibra([40,40,40,40,160]);
       $("#dice").textContent="limpio";
       if(window.Escenas) Escenas.destello(800);
       pintaAcciones(null);
@@ -351,7 +486,8 @@ function avisaPedazo(i){
   $("#tuyoN").textContent="Pedazo "+(i+1)+" de "+CREDO.length;
   $("#tuyoTxt").textContent=CREDO[i];
   $("#tuyo").classList.add("on");
-  try{ if(navigator.vibrate) navigator.vibrate([90,60,90]); }catch(e){}
+  vibra([90,60,90,60,220]);
+  chispea(48,[245,222,147]);
   if(canal) canal.enviar({t:"arriba",id:idTelefono});
   clearTimeout(avisaPedazo.t);
   avisaPedazo.t=setTimeout(()=>$("#tuyo").classList.remove("on"),14000);
