@@ -1,0 +1,56 @@
+[
+  {
+    "paso": 1,
+    "mp3": "p1.mp3",
+    "segundos": 8.304,
+    "voz": "Esta es la presentación: la pantalla de la computadora. Los trece momentos van acá, a pantalla completa, y los teléfonos sólo acompañan."
+  },
+  {
+    "paso": 2,
+    "mp3": "p2.mp3",
+    "segundos": 10.464,
+    "voz": "Se reparten dos códigos, en orden. El primero mete el teléfono a la red de la laptop; el segundo abre la página. No hace falta internet: la computadora es la red."
+  },
+  {
+    "paso": 3,
+    "mp3": "p3.mp3",
+    "segundos": 10.176,
+    "voz": "Cada quien escanea y entra. En su teléfono aparece su personaje del siglo uno, su corazón, y su pedazo del Credo. En la pantalla grande aparecen ellos mismos."
+  },
+  {
+    "paso": 4,
+    "mp3": "p4.mp3",
+    "segundos": 8.544,
+    "voz": "La computadora manda. Un toque en siguiente mueve la presentación y todos los teléfonos a la vez. Desde el teléfono nadie puede adelantarse."
+  },
+  {
+    "paso": 5,
+    "mp3": "p5.mp3",
+    "segundos": 8.352,
+    "voz": "Cada quien apaga su propio corazón con el dedo. La pantalla grande no se apaga sola: se va apagando al ritmo de la sala, y muestra cuántos van."
+  },
+  {
+    "paso": 6,
+    "mp3": "p6.mp3",
+    "segundos": 8.472,
+    "voz": "La luz se carga entre todos. Si sólo la sostiene uno, la barra se queda a la mitad; cuando la sala entera colabora, el corazón se limpia."
+  },
+  {
+    "paso": 7,
+    "mp3": "p7.mp3",
+    "segundos": 8.688,
+    "voz": "Los siete gestos se encienden tocando. Lo que enciende cada teléfono se suma en la pantalla: los símbolos se van prendiendo con la sala, no con un temporizador."
+  },
+  {
+    "paso": 8,
+    "mp3": "p8.mp3",
+    "segundos": 8.448,
+    "voz": "Después cada quien elige: ofrecer incienso al emperador, o mantener la fe. Cada uno lleva encima lo que eligió, y el conteo sale en vivo."
+  },
+  {
+    "paso": 9,
+    "mp3": "p9.mp3",
+    "segundos": 9.408,
+    "voz": "Al final, cada quien tiene un pedazo del Credo. El presentador lo lee en grande, y ese teléfono se pone dorado y vibra. Ninguno lo tiene entero."
+  }
+]

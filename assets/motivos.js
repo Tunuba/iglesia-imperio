@@ -154,7 +154,11 @@ function iglesita(g, cx, pies, f) {
    Se encienden de a uno tocando, y al final «la copa crece al
    centro». Cada teléfono enciende los suyos y la computadora suma
    los de toda la sala. */
-const SIMBOLOS = ["agua", "fuego", "manos", "anillos", "copa", "aceite", "cruz"];
+/* El orden es el de la pantalla grande: bautismo, confirmación, eucaristía,
+   confesión, unción, orden, matrimonio. Los dos lados dibujan lo mismo. */
+const SIMBOLOS = ["agua", "fuego", "copa", "cruz", "aceite", "manos", "anillos"];
+const NOMBRES7 = ["BAUTISMO", "CONFIRMACIÓN", "EUCARISTÍA", "CONFESIÓN",
+                  "UNCIÓN", "ORDEN", "MATRIMONIO"];
 /* Cada gesto en su cuadrito de 5×5. En arco quedaban pegados y las manos y
    los anillos se leían como una sola mancha; en círculo (que además es lo que
    pide el guion para el cierre) cada uno tiene su aire. El color los separa
@@ -168,8 +172,11 @@ const DIBUJO = {
   aceite:  [".1...", ".1...", "111..", "11111", ".111."],
   cruz:    ["..1..", "..1..", "11111", "..1..", "..1.."]
 };
-const TONO = { agua: AGUA, fuego: FUEGO, manos: ORO2, anillos: ORO2,
-               copa: ORO2, aceite: "#9AA05A", cruz: ORO2 };
+/* cada gesto con su color: el agua azul, el fuego naranja, la confesión
+   violeta (el morado penitencial), la unción aceituna, el matrimonio rosado.
+   Siete manchas doradas iguales no se distinguen de lejos. */
+const TONO = { agua: AGUA, fuego: FUEGO, copa: ORO2, cruz: "#9A7FD8",
+               aceite: "#9AA05A", manos: "#F0D67A", anillos: "#E0A0B8" };
 
 function siete(g, t, e) {
   const n = e.toques | 0, todo = n >= 7;
@@ -447,6 +454,15 @@ function pinta(ctx, clave, lado, t, extra) {
   return true;
 }
 
+/* los mismos siete, para que los dibuje también la pantalla grande */
+function simbolo7(ctx, i, x, y, lado, t, encendido) {
+  const g = { ctx: ctx, lado: lado, u: lado / 5 };   // el dibujo es de 5×5
+  ctx.save(); ctx.translate(x - lado / 2, y - lado / 2);
+  ctx.imageSmoothingEnabled = false;
+  simbolo(g, SIMBOLOS[i], 2.5, 2.5, !!encendido, t || 0, i);
+  ctx.restore();
+}
 raiz.Motivos = { pinta: pinta, pregunta: pregunta, icono: icono, absorbe: absorbe,
+                 simbolo7: simbolo7, SIMBOLOS: SIMBOLOS, NOMBRES7: NOMBRES7,
                  claves: Object.keys(MOTIVOS) };
 })(window);

@@ -25,6 +25,13 @@ body.limpia{cursor:none}
   pointer-events:none;display:none}
 /* de transparente a negro de un salto se veía el canto del óvalo sobre el
    dibujo; las paradas intermedias lo funden */
+
+/* EL GRANO. Un degradado oscuro y grande en 8 bits da SALTOS de color: se ven
+   franjas, y en el proyector parecen cortes o una hoja pegada encima. Un grano
+   finísimo encima rompe los escalones y el degradado se vuelve continuo.
+   Va por encima del cielo y por debajo de todo lo demás. */
+#grano{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");background-size:160px 160px}
 #vineta{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:radial-gradient(ellipse 106% 90% at 50% 46%,transparent 32%,
     rgba(0,0,0,.20) 60%,rgba(0,0,0,.46) 80%,rgba(0,0,0,.74) 100%)}
@@ -183,6 +190,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 </head>
 <body>
   <div id="cielo"></div>
+  <div id="grano"></div>
   <canvas id="lienzo"></canvas>
   <canvas id="sala"></canvas>
   <div id="vineta"></div>
@@ -619,6 +627,12 @@ function conecta(){
   });
   setTimeout(()=>{ if(sala) sala.enviar({t:"quien"}); },1500);
 }
+/* Se vuelve a preguntar cada tanto: si el saludo de alguien se perdio (o si
+   alguien entra tarde, que en clase pasa siempre), aparece en la cuenta a los
+   pocos segundos en vez de quedar invisible toda la presentacion. */
+setInterval(()=>{ if(sala) sala.enviar({t:"quien"}); },5000);
+function __noop(){
+}
 
 /* ══ LA MODULACIÓN COOPERATIVA ══════════════════════════════════════
    La luz de la sala es el PROMEDIO de los teléfonos conectados, no la suma:
@@ -630,9 +644,16 @@ function repartirLuz(){
   const todos=[...gente.values()];
   if(!todos.length) return;
   const ahora=Date.now();
-  todos.forEach(g=>{ if(g.visto&&ahora-g.visto>2500) g.luz=Math.max(0,(g.luz||0)-0.15); });
+  // el que YA llegó al 100 % deja de mandar avisos (su carga terminó): si se
+  // le baja por silencio, el número de la pantalla empieza a caer mientras en
+  // el teléfono dice 100 %. Sólo se baja a quien todavía estaba a medias.
+  todos.forEach(g=>{ if(g.visto&&ahora-g.visto>2500&&(g.luz||0)<0.99)
+    g.luz=Math.max(0,(g.luz||0)-0.15); });
   salaLuz=clamp(todos.reduce((a,g)=>a+(g.luz||0),0)/todos.length,0,1);
-  if(escena===3) sala.enviar({t:"salaLuz",p:+salaLuz.toFixed(2)});
+  // Se reparte SIEMPRE, no solo en la escena de la luz. Si se calla, a los 6 s
+  // el telefono cree que no hay nadie repartiendo y sigue su propia luz: el
+  // primero que carga abre la escena el solo, sin esperar al salon.
+  sala.enviar({t:"salaLuz",p:+salaLuz.toFixed(2)});
 }
 setInterval(repartirLuz,600);
 window.__repartir=()=>{ repartirLuz(); return {luz:salaLuz,gente:gente.size}; };

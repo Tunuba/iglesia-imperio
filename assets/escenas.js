@@ -435,14 +435,18 @@ const DIBUJOS={
   /* 6 · los siete sacramentos */
   sacramentos(g,t){
     const {ctx,W,H,u}=g, cx=W/2, cy=H*0.48, r=Math.min(W,H)*0.34;
-    const nombres=["BAUTISMO","CONFIRM.","EUCARISTÍA","CONFESIÓN","UNCIÓN","ORDEN","MATRIMONIO"];
+    // los mismos siete dibujos y los mismos colores que en el teléfono: si acá
+    // eran rectángulos dorados y allá otra cosa, no se leían como lo mismo
+    const nombres=(self.Motivos&&Motivos.NOMBRES7)
+      ||["BAUTISMO","CONFIRM.","EUCARISTÍA","CONFESIÓN","UNCIÓN","ORDEN","MATRIMONIO"];
     for(let i=0;i<7;i++){
       const a=-Math.PI/2+i*(Math.PI*2/7);
       const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*0.84;
       const on=i<EST.anim.sacra;
       ctx.globalAlpha=on?1:0.25;
       ctx.fillStyle=on?"#F0D67A":"#3A4260";
-      simbolo(ctx,i,x,y,u*1.5);
+      if(self.Motivos&&Motivos.simbolo7) Motivos.simbolo7(ctx,i,x,y,u*5,t,on);
+      else simbolo(ctx,i,x,y,u*1.5);
       if(on){ ctx.globalAlpha=0.55; ctx.fillStyle="#8A8674";
         ctx.font=fuente(u*1.5,"700"); ctx.textAlign="center";
         rotulo(ctx,nombres[i],x,y+u*4.4); }

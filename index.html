@@ -29,6 +29,11 @@ body{background:var(--noche);color:var(--tinta);font-family:var(--sans);
 #brasas{position:absolute;inset:0;z-index:1;pointer-events:none}
 /* la viñeta pasaba de transparente a negro de golpe y se veía el canto del
    óvalo; con paradas intermedias el borde desaparece */
+
+/* el mismo grano del proyector: sin él, el degradado del cielo se ve a
+   escalones en las pantallas oscuras */
+#grano{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");background-size:160px 160px}
 #vineta{position:absolute;inset:0;z-index:2;pointer-events:none;
   background:radial-gradient(ellipse 104% 88% at 50% 44%,transparent 30%,
     rgba(0,0,0,.18) 58%,rgba(0,0,0,.44) 78%,rgba(0,0,0,.72) 100%)}
@@ -138,6 +143,7 @@ body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
 <body>
 <div id="app">
   <div id="cielo"></div>
+  <div id="grano"></div>
   <canvas id="brasas"></canvas>
 
   <header>
@@ -278,6 +284,7 @@ function pintaBrasas(){
    ve en vivo. Ninguno de estos toques detiene la presentación — la
    computadora siempre puede seguir. */
 let toques=0, entroEn=0;
+const arranque=Date.now();   // cuando abrio esta pagina
 
 /* ── el corazón, que es lo que se mira acá ──────────────────────── */
 let negrura=0, luz=0, luzSala=0;
@@ -316,14 +323,19 @@ function pintaLatido(){
   // resplandor detrás: si no, el corazón negro sobre fondo negro no se ve
   // el resplandor pierde fuerza de a poco: con dos paradas se veía el corte
   // del círculo, como una hoja pegada encima
+  // El halo se pintaba hasta 0.62 del lado dentro de un lienzo CUADRADO: por
+   // los costados lo cortaba el borde y quedaba un cuadrado de luz alrededor
+   // del corazón. Ahora muere justo en el borde (0.5) y el corazón se dibuja
+   // con aire alrededor, así el resplandor sale redondo y suave.
   const fuerza=0.10+0.26*(M.oro?1:luz)+0.05*Math.sin(t*2);
-  const g=ctx.createRadialGradient(lado/2,lado/2,lado*0.05,lado/2,lado/2,lado*0.62);
+  const g=ctx.createRadialGradient(lado/2,lado/2,lado*0.04,lado/2,lado/2,lado*0.50);
   g.addColorStop(0,"rgba(255,244,200,"+fuerza.toFixed(3)+")");
   g.addColorStop(0.35,"rgba(255,244,200,"+(fuerza*0.55).toFixed(3)+")");
   g.addColorStop(0.65,"rgba(255,244,200,"+(fuerza*0.20).toFixed(3)+")");
   g.addColorStop(1,"rgba(255,244,200,0)");
   ctx.fillStyle=g; ctx.fillRect(0,0,lado,lado);
-  ctx.drawImage(img,0,0,lado,lado);
+  const dib=Math.round(lado*0.78), off=Math.round((lado-dib)/2);
+  ctx.drawImage(img,off,off,dib,dib);
   // el cierre: los siete gestos giran y caen dentro del corazón de oro
   if(M.oro && window.Motivos) Motivos.absorbe(ctx,lado,t);
   // «en los celulares aparece un signo de interrogación» (el guion): está
@@ -332,7 +344,7 @@ function pintaLatido(){
     Motivos.pregunta(ctx,lado,t,1-luz/0.25);
   // el anillo: lo cargado se ve ALREDEDOR del corazón, no en un número
   if(anillo){
-    const R=lado*0.365, gr=-Math.PI/2;   // el sprite deja aire: mas afuera, el anillo se despega del corazon
+    const R=lado*0.30, gr=-Math.PI/2;   // el sprite deja aire: mas afuera, el anillo se despega del corazon
     ctx.lineCap="round";
     ctx.strokeStyle="rgba(255,246,226,.10)"; ctx.lineWidth=lado*0.020;
     ctx.beginPath(); ctx.arc(lado/2,lado/2,R,0,6.2832); ctx.stroke();
@@ -474,6 +486,9 @@ function avisaAporte(ya){
   canal.enviar({t:"aporte",id:idTelefono,e:S.escena,n:toques,m:m.meta});
 }
 setInterval(()=>avisaAporte(false),1500);
+/* el que ya cargó su luz sigue diciendo 100 cada dos segundos: si se calla,
+   la computadora lo da por ido y el porcentaje de la sala empieza a bajar */
+setInterval(()=>{ if(listoLuz&&canal) canal.enviar({t:"luz",id:idTelefono,p:1}); },2000);
 
 /* apagar el corazón: es el momento del pecado, y tiene que SENTIRSE */
 function apagaCorazon(){
@@ -535,7 +550,11 @@ const idTelefono=(function(){
     if(r) r.style.width=(luz*100).toFixed(1)+"%";
     // sin canal (o si la computadora no informa en 6 s) la barra sigue a la
     // tuya: nadie se queda trabado esperando a un salón que no contesta
-    const mudo=!canal||(ultimaSalaLuz===0||Date.now()-ultimaSalaLuz>6000);
+    // "todavia no llego ninguno" no es lo mismo que "dejo de llegar": recien
+    // conectado hay que darle unos segundos a la computadora antes de decidir
+    // que no hay nadie repartiendo, o el primero que carga se abre solo
+    const desde=ultimaSalaLuz||arranque;
+    const mudo=!canal||(Date.now()-desde>6000);
     if(mudo) luzSala=Math.max(luzSala,luz);
     $("#barraLlena").style.width=(luzSala*100).toFixed(1)+"%";
     $("#barraTxt").textContent="la luz de la sala · "+Math.round(luzSala*100)+"%";
@@ -543,6 +562,9 @@ const idTelefono=(function(){
     if(canal&&ms-ultimoAviso>700){ ultimoAviso=ms; canal.enviar({t:"luz",id:idTelefono,p:+luz.toFixed(2)}); }
     if(luz>=1&&luzSala>=0.6){
       listoLuz=true; negrura=0; anillo=false;
+      // avisar que llegó al 100 %: si el teléfono se calla, la computadora
+      // cree que se desconectó y le baja la luz a la sala
+      if(canal) canal.enviar({t:"luz",id:idTelefono,p:1});
       chispea(40,[255,244,200]); vibra([40,40,40,40,160]);
       $("#dice").textContent="limpio";
       if(window.Escenas) Escenas.destello(800);
