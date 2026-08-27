@@ -152,39 +152,36 @@ es un lujo, nunca un requisito.
 
 ---
 
-## 3. Qué ve el que escanea · las trece escenas
+## 3. Quién muestra qué
 
-Ustedes hablan encima; el teléfono acompaña. **Nunca hay dos cosas en pantalla a
-la vez**: cada escena vive sola, y eso está verificado midiendo (ver §6).
+**La presentación es la pantalla de la computadora.** Ahí van los trece momentos, a
+pantalla completa, con el visual grande y **sin párrafos**: el texto son ustedes
+hablando. Con `T` se quitan hasta los títulos y queda sólo la imagen; con `H` se
+esconde la barra de control; con `F`, pantalla completa.
 
-**Apertura**
-1. **¿Qué significa salvarse?** — la Tierra girando en 3D, hecha de puntos.
-2. **Cae una semilla** — Dios crea por amor; a cada quien le toca uno de 16
-   personajes del siglo I y un corazón que late.
-3. **Uno se separa** — tocan el punto que se aleja: se apaga y su corazón se
-   ennegrece. *Pecado es dañar la relación con Dios.*
-4. **Y entonces baja** — sostienen el dedo para cargar la luz. **La barra es de
-   toda la sala**: si sólo carga la mitad, no se abre. Ese gesto es el bautismo.
-5. **Problema, respuesta, meta** — el pecado, Jesús, la salvación.
+**El teléfono acompaña.** Cada quien tiene tres cosas suyas y nada más:
 
-**Los tres elementos**
-6. **Lo que creen** — la Trinidad, y la Iglesia que pasa la fe.
-7. **Cómo lo celebran** — los siete sacramentos, con la Eucaristía al centro.
-8. **Cómo se comportan** — amar a Dios y al prójimo: perdón, justicia, ayuda.
+- su **personaje** (uno de 16 del siglo I, con su ciudad y su año),
+- su **corazón**, que late, se ennegrece con el pecado y se vuelve oro con la luz,
+- su **pedazo del Credo**, que se enciende y vibra cuando el presentador lo lee.
 
-**La historia**
-9. **El águila** — votan: ofrecer incienso o mantener la fe. El conteo sale en
-   vivo en la pantalla del presentador.
-10. **313** — Edicto de Milán, y Nicea en 325.
-11. **380** — Edicto de Tesalónica: religión oficial.
+Y toca cuando toca: apagar el punto, sostener la luz, votar. Nada de párrafos a
+propósito — si hubiera texto, la clase leería el teléfono en vez de mirar y escuchar.
 
-**Cierre**
-12. **Hoy** — escuelas, hospitales, catedrales, y el salto a América.
-13. **Tu pedazo del Credo** — cuando el presentador lo lee, ese teléfono se pone
-    dorado y vibra. *Ninguno lo tiene entero; entre todos, sí.*
+### Los trece momentos
 
-Abajo hay **+ LA INVESTIGACIÓN**: el texto completo, la línea de tiempo y las
-referencias en APA. Es para leer después, no en clase.
+**Apertura.** 1 · ¿Qué significa salvarse? (la Tierra girando) · 2 · Cae una semilla ·
+3 · Uno se separa (el pecado) · 4 · Y entonces baja (**la luz es de toda la sala**) ·
+5 · Problema, respuesta, meta.
+
+**Los tres elementos.** 6 · Lo que creen (la Trinidad) · 7 · Cómo lo celebran (los siete
+sacramentos) · 8 · Cómo se comportan (perdón, justicia, ayuda).
+
+**La historia.** 9 · El águila (votan, y el conteo sale en la pantalla grande) ·
+10 · 313, Edicto de Milán · 11 · 380, Edicto de Tesalónica.
+
+**Cierre.** 12 · Hoy (escuelas, hospitales, catedrales, y el salto a América) ·
+13 · El Credo, repartido.
 
 ### Cómo está hecho el dibujo
 

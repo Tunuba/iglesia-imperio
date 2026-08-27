@@ -55,8 +55,9 @@ function comprueba(nombre, ok, detalle) {
   const pres = await navegador.newPage();
   vigila(pres, "presentador");
   await pres.setViewport({ width: 1600, height: 900 });
-  const codigo = "test" + (Math.floor(Date.now() / 1000) % 1000);
-  await pres.evaluateOnNewDocument((c) => { localStorage.setItem("imperio-sala", c); }, codigo);
+  // El código de la sala lo decide el SERVIDOR, así que se le pregunta a él
+  // en vez de inventarlo: si la prueba usara otro, entraría a una sala vacía.
+  const codigo = await fetch(BASE + "/sala/ping").then(r => r.json()).then(j => j.codigo);
   await pres.goto(BASE + "/presentador.html", { waitUntil: "domcontentloaded" });
   await pres.waitForFunction("document.getElementById('txtEstado').textContent==='sala abierta'", { timeout: 15000 });
   console.log("\nSala «" + codigo + "» abierta. Entrando " + N + " teléfonos…");
@@ -82,7 +83,7 @@ function comprueba(nombre, ok, detalle) {
   await pres.evaluate("(function(){for(let i=0;i<3;i++) document.getElementById('bAdelante').click();})()");
   await espera(2200);
   const escenas = [];
-  for (const p of tels) escenas.push(await p.evaluate("+document.querySelector('.escena.on').dataset.e"));
+  for (const p of tels) escenas.push(await p.evaluate("window.__escena()"));
   comprueba("SIGUIENTE mueve a todos a la escena 3", escenas.every(e => e === 3), "escenas: " + escenas.join(","));
 
   // ── 3. la luz es de la sala ──
@@ -98,7 +99,7 @@ function comprueba(nombre, ok, detalle) {
   comprueba("con " + mitad + " de " + N + " sosteniendo, la sala va al " + Math.round(esperado * 100) + "%",
             Math.abs(luzSala - esperado) <= 0.16, "medido " + luzSala);
   const abiertos = [];
-  for (const p of tels) abiertos.push(await p.evaluate("document.getElementById('tLuz').textContent"));
+  for (const p of tels) abiertos.push(await p.evaluate("window.__estado().listoLuz ? 'Limpio.' : 'esperando'"));
   comprueba("con media sala, la escena NO se abre",
             abiertos.filter(x => x === "Limpio.").length === 0, abiertos.join(" / "));
 
@@ -113,7 +114,7 @@ function comprueba(nombre, ok, detalle) {
   await espera(1200);
   for (const p of tels) await p.evaluate("window.__paso(0.1)");
   const abiertos2 = [];
-  for (const p of tels) abiertos2.push(await p.evaluate("document.getElementById('tLuz').textContent"));
+  for (const p of tels) abiertos2.push(await p.evaluate("window.__estado().listoLuz ? 'Limpio.' : 'esperando'"));
   comprueba("con toda la sala sosteniendo, se abre",
             abiertos2.every(x => x === "Limpio."), abiertos2.join(" / "));
 
@@ -121,8 +122,7 @@ function comprueba(nombre, ok, detalle) {
   // el pedazo se lee de la PANTALLA, no de localStorage: en un mismo Chrome
   // todas las pestañas comparten el almacenamiento y se pisan entre ellas
   // (en clase no pasa: cada quien tiene su teléfono)
-  const leePedazo = (pag) => pag.evaluate(
-    "parseInt(document.getElementById('pedN').textContent.replace(/[^0-9]+/,''),10)-1");
+  const leePedazo = (pag) => pag.evaluate("window.__estado().pedazo");
   const mio = await leePedazo(tels[0]);
   await pres.evaluate("document.querySelectorAll('#credos .p')[" + mio + "].click()");
   await espera(2000);

@@ -4,14 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#05060B">
-<title>El catolicismo For Dummies — desde tu teléfono</title>
-<meta name="description" content="Experiencia interactiva: qué cree, qué celebra y cómo vive el catolicismo, y cómo pasó de perseguido a religión oficial del Imperio romano. Claves del Pensamiento 1, Universidad del Istmo.">
+<title>Tu corazón — El catolicismo For Dummies</title>
+<meta name="description" content="Acompañamiento en el teléfono para la presentación sobre el cristianismo católico en el Imperio romano. Claves del Pensamiento 1, Universidad del Istmo.">
 <style>
 :root{
   --noche:#05060B; --piedra:#151926; --linea:#2A3145;
   --tinta:#FFF6E2; --tinta2:#C8C4B6; --apagado:#8A8674;
-  --oro:#E8C44A; --oro2:#F5DE93; --purpura:#8E2A6E; --sangre:#C0261E;
-  --agua:#5FB8D8; --verde:#3E8E4A;
+  --oro:#E8C44A; --oro2:#F5DE93; --sangre:#C0261E; --verde:#3E8E4A;
   --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
   --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
   --mono:"Cascadia Mono",Consolas,"Courier New",monospace;
@@ -25,103 +24,77 @@ body{background:var(--noche);color:var(--tinta);font-family:var(--sans);
 #app{position:fixed;inset:0;display:flex;flex-direction:column;height:100dvh}
 #cielo{position:absolute;inset:0;z-index:0;transition:background 1s var(--ease)}
 #destello{position:absolute;inset:0;z-index:9;pointer-events:none;background:#FFF6E2;opacity:0}
-#vineta{position:absolute;inset:0;z-index:8;pointer-events:none;
-  background:radial-gradient(ellipse 92% 74% at 50% 44%,transparent 46%,rgba(0,0,0,.74) 100%)}
+#vineta{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 92% 74% at 50% 44%,transparent 46%,rgba(0,0,0,.7) 100%)}
 
 header{position:relative;z-index:10;display:flex;align-items:center;gap:9px;flex:0 0 auto;
-  padding:calc(env(safe-area-inset-top) + 9px) 15px 6px}
-.marca{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--apagado);
-  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 4px}
 .luzSala{width:7px;height:7px;border-radius:50%;background:#2A3145;flex:0 0 auto;transition:background .4s}
 .luzSala.ok{background:var(--verde);box-shadow:0 0 8px var(--verde)}
 .luzSala.busca{background:var(--oro);opacity:.5}
+.marca{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--apagado);
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pasos{margin-left:auto;display:flex;gap:3px;flex:0 0 auto}
-.pip{width:8px;height:3px;border-radius:2px;background:#222939;transition:background .4s}
+.pip{width:7px;height:3px;border-radius:2px;background:#222939;transition:background .4s}
 .pip.on{background:var(--oro)} .pip.done{background:#6A5A28}
 
-/* UNA escena a la vez, en flujo normal. Las otras están en display:none,
-   así que es imposible que dos dibujos o dos textos se solapen. */
-main{position:relative;z-index:10;flex:1 1 auto;min-height:0;display:flex;
-  flex-direction:column;padding:0 clamp(15px,5vw,26px)}
-.escena{display:none;flex-direction:column;min-height:0;flex:1 1 auto;
-  gap:clamp(6px,1.5vh,13px);padding-bottom:4px}
-.escena.on{display:flex;animation:entra .45s var(--ease)}
-@keyframes entra{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+/* ── EL CORAZÓN es el protagonista de esta pantalla ── */
+main{position:relative;z-index:10;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:clamp(8px,2vh,18px);padding:0 20px}
+#latido{flex:0 0 auto;display:block;image-rendering:pixelated}
+#quien{text-align:center;flex:0 0 auto}
+#quien .nom{font-family:var(--serif);font-size:clamp(17px,5vw,24px);line-height:1.15}
+#quien .sub{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--apagado);
+  text-transform:uppercase;margin-top:5px}
+#dice{font-family:var(--mono);font-size:clamp(10.5px,3vw,13px);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--oro2);text-align:center;flex:0 0 auto;min-height:1.4em;
+  line-height:1.5}
+@keyframes lat{0%,100%{opacity:.4}50%{opacity:1}}
+.lat{animation:lat 1.6s ease-in-out infinite}
 
-.ojo{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--oro);display:flex;align-items:center;gap:9px;flex:0 0 auto}
-.ojo::before{content:"";width:16px;height:1px;background:currentColor;opacity:.6;flex:0 0 auto}
-h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,7.6vw,44px);line-height:1.05;
-  letter-spacing:-.02em;flex:0 0 auto}
-h2{font-family:var(--serif);font-weight:400;font-size:clamp(20px,5.8vw,32px);line-height:1.1;
-  letter-spacing:-.015em;flex:0 0 auto}
-p{font-size:clamp(13px,3.7vw,15.5px);line-height:1.45;color:var(--tinta2);flex:0 0 auto}
-b,strong{color:var(--tinta);font-weight:600}
-.dato{font-family:var(--mono);font-size:10.5px;line-height:1.45;color:var(--oro2);
-  border-left:2px solid var(--purpura);padding:5px 0 5px 9px;flex:0 0 auto}
+/* la barra de la sala, sólo en el momento de la luz */
+#barraSala{width:100%;max-width:420px;height:26px;border:1px solid var(--linea);border-radius:9px;
+  background:#0C1018;overflow:hidden;position:relative;display:none;flex:0 0 auto}
+#barraSala.on{display:block}
+#barraSala i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#B8912A,#F5DE93);
+  transition:width .3s ease}
+#barraSala span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
 
-.marco{flex:1 1 auto;min-height:60px;position:relative}
-canvas.arte{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* el pedazo del Credo */
+#pedazo{border:1px solid #4A3C14;border-radius:13px;padding:12px 15px;flex:0 0 auto;width:100%;
+  max-width:460px;background:linear-gradient(180deg,rgba(40,33,12,.95),rgba(20,17,8,.95));display:none}
+#pedazo.on{display:block}
+#pedazo .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--oro);text-transform:uppercase}
+#pedazo .frase{font-family:var(--serif);font-size:clamp(19px,5.6vw,27px);line-height:1.15;
+  color:var(--oro2);margin-top:7px}
 
-.acciones{display:flex;flex-direction:column;gap:7px;flex:0 0 auto}
+footer{position:relative;z-index:10;flex:0 0 auto;display:flex;flex-direction:column;gap:8px;
+  padding:6px 16px calc(env(safe-area-inset-bottom) + 12px)}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .btn{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
-  padding:13px 16px;border:1px solid var(--linea);border-radius:12px;background:var(--piedra);
-  font-size:14.5px;font-weight:600;transition:transform .12s var(--ease),border-color .3s}
+  padding:15px 16px;border:1px solid var(--linea);border-radius:13px;background:var(--piedra);
+  font-size:15px;font-weight:600;transition:transform .12s var(--ease),border-color .3s}
 .btn:active{transform:scale(.975)}
 .btn.oro{border-color:var(--oro);background:linear-gradient(180deg,#231D0C,#171308);color:var(--oro2)}
 .btn.sangre{border-color:#5A211C;background:linear-gradient(180deg,#241110,#180B0A)}
 .btn .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--apagado);
   text-transform:uppercase;margin-left:8px}
 .btn .relleno{position:absolute;left:0;top:0;bottom:0;width:0%;
-  background:linear-gradient(90deg,rgba(232,196,74,.30),rgba(255,244,200,.15));
-  pointer-events:none;transition:width .1s linear}
-.btn .rotulo{position:relative;z-index:1;display:flex;align-items:center}
-.pista{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--apagado);
-  text-transform:uppercase;text-align:center;flex:0 0 auto}
-@keyframes lat{0%,100%{opacity:.35}50%{opacity:1}}
-.lat{animation:lat 1.5s ease-in-out infinite}
+  background:linear-gradient(90deg,rgba(232,196,74,.32),rgba(255,244,200,.16));pointer-events:none}
+.btn .rotulo{position:relative;z-index:1}
+#acciones{display:flex;flex-direction:column;gap:8px}
+#pie{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:#4A5268;
+  text-transform:uppercase;text-align:center}
 
-.tarjeta{border:1px solid #4A3C14;border-radius:13px;padding:12px 14px;flex:0 0 auto;
-  background:linear-gradient(180deg,rgba(40,33,12,.95),rgba(20,17,8,.95))}
-.tarjeta .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--oro);
-  text-transform:uppercase}
-.tarjeta .frase{font-family:var(--serif);font-size:clamp(18px,5.4vw,26px);line-height:1.15;
-  color:var(--oro2);margin-top:6px}
-.cedula{display:flex;align-items:center;gap:11px;border:1px solid var(--linea);flex:0 0 auto;
-  border-radius:12px;background:rgba(21,25,38,.8);padding:9px 12px}
-.cedula .nom{font-family:var(--serif);font-size:clamp(15px,4.4vw,20px);line-height:1.1}
-.cedula .sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--apagado);
-  text-transform:uppercase;margin-top:3px}
-
-footer{position:relative;z-index:10;display:flex;align-items:center;gap:10px;flex:0 0 auto;
-  padding:5px 15px calc(env(safe-area-inset-bottom) + 9px)}
-footer button{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--apagado);
-  text-transform:uppercase;padding:6px 9px;border:1px solid var(--linea);border-radius:8px}
-footer .sep{margin-left:auto}
-
-.encima{position:fixed;inset:0;z-index:30;display:none;place-items:center;text-align:center;padding:8vw 7vw}
-.encima.on{display:grid;animation:entra .45s var(--ease)}
-#tuyo{background:radial-gradient(ellipse 90% 70% at 50% 42%,#3A2C08 0%,#05060B 78%)}
+/* el aviso de "es tuyo" */
+#tuyo{position:fixed;inset:0;z-index:30;display:none;place-items:center;text-align:center;
+  padding:8vw 7vw;background:radial-gradient(ellipse 90% 70% at 50% 42%,#3A2C08 0%,#05060B 78%)}
+#tuyo.on{display:grid;animation:entra .45s var(--ease)}
+@keyframes entra{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
 #tuyo .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:var(--oro);text-transform:uppercase}
 #tuyo .frase{font-family:var(--serif);font-size:clamp(26px,8vw,48px);line-height:1.14;color:var(--oro2);margin-top:16px}
 #tuyo .pie{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--tinta);margin-top:20px}
-
-#mas{position:fixed;inset:0;z-index:40;background:rgba(4,5,9,.985);overflow-y:auto;display:none;
-  -webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 16px) 17px calc(env(safe-area-inset-bottom) + 34px)}
-#mas.on{display:block}
-#mas h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:24px 0 8px}
-#mas h3:first-of-type{margin-top:10px}
-#mas p,#mas li{font-size:14px;line-height:1.55;color:var(--tinta2);margin-bottom:8px}
-#mas ul{margin:6px 0 10px 17px}
-#mas .ref{font-size:11.5px;color:var(--apagado);line-height:1.5;word-break:break-word}
-.cerrar{position:sticky;top:0;float:right;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
-  color:var(--oro);border:1px solid var(--linea);border-radius:9px;padding:7px 11px;background:var(--piedra)}
-.tabla{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:13px}
-.tabla th,.tabla td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--linea);vertical-align:top;color:var(--tinta2)}
-.tabla th{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--oro);font-weight:400}
-
-@media (prefers-reduced-motion:reduce){ .escena.on,.encima.on{animation:none} .lat{animation:none;opacity:1} }
 </style>
 </head>
 <body>
@@ -129,181 +102,35 @@ footer .sep{margin-left:auto}
   <div id="cielo"></div>
 
   <header>
-    <span class="luzSala" id="luzSala" title="conexión con la sala"></span>
+    <span class="luzSala" id="luzSala"></span>
     <div class="marca">Claves del Pensamiento 1 · UNIS</div>
     <div class="pasos" id="pasos"></div>
   </header>
 
   <main>
-    <!-- ═════ PRIMERA PARTE ═════════════════════════════════════════ -->
-
-    <!-- 0 · LA PREGUNTA -->
-    <section class="escena on" data-e="0">
-      <div class="ojo">El catolicismo, para dummies</div>
-      <h1>¿Qué significa<br>salvarse?</h1>
-      <div class="marco"><canvas class="arte" data-dibujo="tierra"></canvas></div>
-      <p>Cuando pensamos en catolicismo se nos viene una iglesia, un sacerdote,
-         Semana Santa. Pero todo empieza con <b>esa pregunta</b>.</p>
-      <div class="acciones"><button class="btn oro" data-va="1">EMPEZAR</button></div>
-      <div class="pista lat">nosotros explicamos · vos solo tocá</div>
-    </section>
-
-    <!-- 1 · LA SEMILLA -->
-    <section class="escena" data-e="1">
-      <div class="ojo" id="ojoSemilla">Dios crea por amor</div>
-      <h2 id="tSemilla">Cae una semilla</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="semilla"></canvas></div>
-      <div class="cedula">
-        <div>
-          <div class="nom" id="perNombre">—</div>
-          <div class="sub" id="perLugar">—</div>
-        </div>
-      </div>
-      <p id="pSemilla">De ahí crece gente y ciudades. Vos sos una de esas personas,
-         y ese corazón que late <b>es el tuyo</b>.</p>
-      <div class="acciones"><button class="btn" data-va="2">SEGUIR ›</button></div>
-    </section>
-
-    <!-- 2 · EL PECADO -->
-    <section class="escena" data-e="2">
-      <div class="ojo">La libertad tiene precio</div>
-      <h2 id="tPecado">Uno se separa</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="pecado" data-toca="1"></canvas></div>
-      <p id="pPecado">El ser humano es libre, y a veces usa esa libertad para hacer daño.
-         <b>Tocá el punto que se está yendo.</b></p>
-      <div class="acciones">
-        <button class="btn sangre" id="bApagar">APAGARLO</button>
-      </div>
-    </section>
-
-    <!-- 3 · JESÚS · LA LUZ COOPERATIVA -->
-    <section class="escena" data-e="3">
-      <div class="ojo" id="ojoLuz">La respuesta</div>
-      <h2 id="tLuz">Y entonces baja</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="luz"></canvas></div>
-      <p id="pLuz">Jesús viene a reparar esa relación. <b>Sostené el dedo</b> para cargar la luz
-         — pero mirá la barra: <b>no se llena solo</b>, se llena con todo el salón.</p>
-      <div class="acciones">
-        <button class="btn oro" id="bLuz"><span class="relleno"></span><span class="rotulo">MANTENÉ EL DEDO AQUÍ</span></button>
-      </div>
-      <div class="dato" id="dLuz" style="display:none">Ese gesto tiene nombre: <b>bautismo</b>.
-        Agua, y «en el nombre del Padre, del Hijo y del Espíritu Santo».</div>
-    </section>
-
-    <!-- 4 · LAS TRES FRASES -->
-    <section class="escena" data-e="4">
-      <div class="ojo">Toda la historia, en tres líneas</div>
-      <h2>Problema, respuesta, meta</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="tres"></canvas></div>
-      <p>Si entendés estas tres, entendiste el catolicismo entero.
-         Lo demás son los detalles.</p>
-      <div class="acciones"><button class="btn" data-va="5">¿QUÉ CREEN? ›</button></div>
-    </section>
-
-    <!-- ═════ SEGUNDA PARTE ═════════════════════════════════════════ -->
-
-    <!-- 5 · LO QUE CREEN -->
-    <section class="escena" data-e="5">
-      <div class="ojo">1 · Lo que creen</div>
-      <h2>Un solo Dios<br>en tres personas</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="trinidad"></canvas></div>
-      <p>Padre, Hijo y Espíritu Santo: eso es la <b>Trinidad</b>. Que Jesús murió y
-         resucitó, y que hay vida después de la muerte. La <b>Iglesia</b> pasa esa fe
-         de generación en generación.</p>
-      <div class="acciones"><button class="btn" data-va="6">¿Y CÓMO LO CELEBRAN? ›</button></div>
-    </section>
-
-    <!-- 6 · CÓMO LO CELEBRAN -->
-    <section class="escena" data-e="6">
-      <div class="ojo">2 · Cómo lo celebran</div>
-      <h2 id="tRitos">Siete gestos</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="sacramentos"></canvas></div>
-      <p id="pRitos">Si creés todo eso, ¿cómo lo vivís? Con <b>sacramentos</b>: bautismo,
-         confesión, matrimonio… y el más importante, la <b>Eucaristía</b>.</p>
-      <div class="acciones"><button class="btn" id="bSacra">TOCÁ PARA ENCENDERLOS</button></div>
-    </section>
-
-    <!-- 7 · CÓMO SE COMPORTAN -->
-    <section class="escena" data-e="7">
-      <div class="ojo">3 · Cómo se comportan</div>
-      <h2>Amar a Dios<br>y amar a los demás</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="moral"></canvas></div>
-      <p>De ahí nacen el <b>perdón</b>, la <b>justicia</b> y <b>ayudar</b> a quien lo
-         necesita: pobres, enfermos, viudas, huérfanos.</p>
-      <div class="acciones"><button class="btn" data-va="8">¿Y QUÉ COSTABA? ›</button></div>
-    </section>
-
-    <!-- 8 · CUÁNTO COSTABA CREER -->
-    <section class="escena" data-e="8">
-      <div class="ojo" id="ojoAguila">4 · Cuánto costaba creer esto</div>
-      <h2 id="tAguila">Elegí vos</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="aguila"></canvas></div>
-      <p id="pAguila">En el Imperio, adorar al emperador era obligatorio. Los cristianos
-         se negaban: para ellos había un solo Dios.</p>
-      <div class="acciones" id="accVoto">
-        <button class="btn" id="bEmperador">ADORAR AL EMPERADOR<span class="k">vivís</span></button>
-        <button class="btn sangre" id="bFe">MANTENER MI FE<span class="k">no vivís</span></button>
-      </div>
-      <div class="acciones" id="accVoto2" style="display:none">
-        <button class="btn" data-va="9">¿Y ENTONCES? ›</button>
-      </div>
-    </section>
-
-    <!-- 9 · 313 -->
-    <section class="escena" data-e="9">
-      <div class="ojo">Año 313 · Edicto de Milán</div>
-      <h2>De prohibidos<br>a permitidos</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="a313"></canvas></div>
-      <p>Constantino y Licinio hacen legal ser cristiano. Doce años después convoca el
-         <b>Concilio de Nicea</b> (325): ahí se define que Jesucristo es verdadero Dios
-         y verdadero hombre, y de ahí sale el <b>Credo</b>.</p>
-      <div class="acciones"><button class="btn" data-va="10">Y EN EL 380… ›</button></div>
-    </section>
-
-    <!-- 10 · 380 -->
-    <section class="escena" data-e="10">
-      <div class="ojo">Año 380 · Edicto de Tesalónica</div>
-      <h2>De permitidos<br>a ser el Imperio</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="a380"></canvas></div>
-      <p>Teodosio lo convierte en la <b>religión oficial</b>. En menos de setenta años
-         pasaron de esconderse a mandar. <b>313 permite; 380 impone.</b></p>
-      <div class="acciones"><button class="btn" data-va="11">¿Y HOY? ›</button></div>
-    </section>
-
-    <!-- 11 · HOY -->
-    <section class="escena" data-e="11">
-      <div class="ojo">5 · Cómo lo vemos hoy</div>
-      <h2>Escuelas, hospitales,<br>catedrales</h2>
-      <div class="marco"><canvas class="arte" data-dibujo="hoy"></canvas></div>
-      <p>Con el respaldo del imperio esto se volvió la base de Europa. Y cuando llegó a
-         América se volvió parte de nuestra identidad: procesiones, fiestas patronales
-         y el nombre de casi cada municipio de Guatemala.</p>
-      <div class="acciones"><button class="btn oro" data-va="12">CERRAR EL CÍRCULO ›</button></div>
-    </section>
-
-    <!-- 12 · CIERRE -->
-    <section class="escena" data-e="12">
-      <div class="ojo">Tu pedazo del Credo</div>
-      <div class="marco"><canvas class="arte" data-dibujo="cierre"></canvas></div>
-      <div class="tarjeta">
-        <div class="n" id="pedN">Pedazo — de —</div>
-        <div class="frase" id="pedTxt">—</div>
-      </div>
-      <p><b>Cuando escuches tu pedazo, levantá el teléfono.</b> Ese Credo salió de Nicea
-         en el 325 y se sigue rezando hoy. Ninguno lo tiene entero; entre todos, sí.</p>
-    </section>
+    <canvas id="latido"></canvas>
+    <div id="quien">
+      <div class="nom" id="perNombre">—</div>
+      <div class="sub" id="perLugar">—</div>
+    </div>
+    <div id="barraSala"><i id="barraLlena"></i><span id="barraTxt">la luz de la sala · 0%</span></div>
+    <div id="pedazo">
+      <div class="n" id="pedN">Pedazo — de —</div>
+      <div class="frase" id="pedTxt">—</div>
+    </div>
+    <div id="dice" class="lat">mirá la pantalla grande</div>
   </main>
 
   <footer>
-    <button id="bMas">+ LA INVESTIGACIÓN</button>
-    <button class="sep" id="bReiniciar">REINICIAR</button>
+    <div id="acciones"></div>
+    <div id="pie">esto acompaña · la presentación está en la pantalla</div>
   </footer>
 
   <div id="vineta"></div>
   <div id="destello"></div>
 </div>
 
-<div id="tuyo" class="encima">
+<div id="tuyo">
   <div>
     <div class="n" id="tuyoN">Pedazo — de —</div>
     <div class="frase" id="tuyoTxt">—</div>
@@ -311,102 +138,25 @@ footer .sep{margin-left:auto}
   </div>
 </div>
 
-<div id="mas">
-  <button class="cerrar" id="bCerrar">CERRAR ✕</button>
-
-  <h3>En una frase</h3>
-  <p>El cristianismo nació en el siglo I en <b>Judea</b>, provincia del Imperio romano, a
-  partir de la vida, muerte y resurrección de Jesús de Nazaret. <i>Católico</i> viene del
-  griego <i>katholikós</i>: <b>universal</b>. Se expandió rápido por una razón práctica:
-  Roma tenía un territorio enorme unido por caminos y rutas de comercio, y la gente se
-  movía constantemente entre regiones.</p>
-
-  <h3>Por qué estos tres elementos</h3>
-  <p>Los <b>dogmas</b> son lo que la comunidad cree, los <b>ritos</b> lo que practica y la
-  <b>moral</b> cómo vive. Sin los tres no hay una religión organizada, solo ideas sueltas.
-  Fueron lo que le dio identidad al grupo dentro del imperio: creer en un solo Dios los
-  separó de la religión romana, sus ritos los mantuvieron unidos aunque estuvieran
-  escondidos, y su forma de vivir hizo que otros los notaran.</p>
-
-  <h3>1 · Dogmas</h3>
-  <p>Un dogma es una verdad que la Iglesia considera definitiva. Los principales: la
-  <b>Trinidad</b> (un solo Dios en tres personas), <b>Jesucristo</b> como Dios encarnado,
-  la autoridad de la Iglesia y del Papa, y cuatro dogmas dedicados a la Virgen María.</p>
-  <p>No se definieron todos a la vez: se fijaron en los <b>concilios ecuménicos</b>,
-  reuniones solemnes de obispos convocadas para resolver controversias sobre la fe.
-  La Iglesia católica reconoce <b>21 concilios</b>, desde Nicea (325) hasta el Vaticano II.
-  Los cuatro primeros ocurrieron dentro del Imperio romano: Nicea I (325),
-  Constantinopla I (381), Éfeso (431) y Calcedonia (451).</p>
-
-  <h3>2 · Ritos</h3>
-  <p>El <b>bautismo</b> era la manera en que alguien entraba oficialmente a la comunidad.
-  La <b>Eucaristía</b> —hoy la misa— reunía a los cristianos los domingos a compartir pan y
-  vino recordando la última cena. La <b>confesión</b> servía para reconocer las faltas y
-  recibir el perdón. Con el tiempo se organizaron en <b>siete sacramentos</b>. Durante los
-  primeros siglos todo esto se celebraba de forma clandestina, en casas particulares.</p>
-
-  <h3>3 · Ética y costumbres</h3>
-  <p>Amar a Dios y amar al prójimo; de ahí, perdonar en lugar de vengarse y ayudar a
-  pobres, enfermos, viudas y huérfanos, más los diez mandamientos. Y la negativa a rendir
-  culto al emperador: ese punto es el que generó el conflicto con el Estado.</p>
-
-  <h3>La línea de tiempo</h3>
-  <table class="tabla">
-    <tr><th>Año</th><th>Qué pasa</th></tr>
-    <tr><td>c. 30–33</td><td>Muerte y resurrección de Jesús en Judea.</td></tr>
-    <tr><td>c. 107</td><td>Muere en Roma <b>Ignacio de Antioquía</b>, mártir y obispo.</td></tr>
-    <tr><td>c. 202</td><td>Muere <b>Ireneo de Lión</b>, otro obispo clave.</td></tr>
-    <tr><td><b>313</b></td><td><b>Edicto de Milán</b>: Constantino y Licinio dan tolerancia religiosa.</td></tr>
-    <tr><td><b>325</b></td><td><b>Concilio de Nicea</b>: Jesucristo es verdadero Dios y verdadero hombre, frente al arrianismo.</td></tr>
-    <tr><td>381 · 431 · 451</td><td>Constantinopla I, Éfeso y Calcedonia.</td></tr>
-    <tr><td><b>380</b></td><td><b>Edicto de Tesalónica</b>: Teodosio lo hace religión oficial.</td></tr>
-    <tr><td>476</td><td>Cae el Imperio de occidente; la sede de Roma queda de pie.</td></tr>
-  </table>
-
-  <h3>El Credo, repartido</h3>
-  <p id="credoLargo" style="font-family:var(--serif);color:var(--tinta)"></p>
-
-  <h3>Referencias</h3>
-  <p class="ref">
-    Enciclopedia Católica. (s. f.). <i>Los 21 concilios ecuménicos</i>. ACI Prensa.<br><br>
-    Holyart. (s. f.). <i>La historia de los dogmas de la Iglesia Católica</i>. Holyart Blog.<br><br>
-    Iglesia Católica. (1992). <i>Catecismo de la Iglesia Católica</i>. Libreria Editrice Vaticana.<br><br>
-    Juan Pablo II. (1988, 9 de marzo). <i>Audiencia general. La formulación de la fe de la
-    Iglesia en Jesucristo, definiciones conciliares (I)</i>. La Santa Sede.<br><br>
-    Ricardo, R. (2025). <i>Catolicismo romano. Historia, creencias y símbolos</i>. Estudyando.<br><br>
-    Vatican News. (2025, abril). <i>El Credo de Nicea, documento de identidad del cristiano</i>.
-  </p>
-</div>
-
-<script src="assets/sprites.js?v=5"></script>
-<script src="assets/sala.js?v=5"></script>
+<script src="assets/sprites.js?v=6"></script>
+<script src="assets/escenas.js?v=6"></script>
+<script src="assets/sala.js?v=6"></script>
 <script>
 "use strict";
 /* ═══════════════════════════════════════════════════════════════════
-   EL CATOLICISMO FOR DUMMIES — lo que corre en el teléfono.
+   EL TELÉFONO — acompañamiento, no la presentación.
 
-   Dos decisiones que mandan sobre todo el archivo:
+   La presentación es la pantalla grande. Acá cada quien tiene tres cosas
+   suyas: su personaje, su corazón (que late, se ennegrece y se purifica)
+   y su pedazo del Credo. Y toca cuando le toca.
 
-   1. En pantalla vive UNA sola escena; las demás están en display:none.
-      No hay posiciones absolutas peleándose, así que es imposible que
-      dos dibujos o dos textos se solapen en ningún momento.
-
-   2. Los fondos son 3D de verdad, pero por software: puntos en el
-      espacio proyectados a mano sobre un canvas 2D (mismo espíritu que
-      el vuelo de MAURYA, sin WebGL). Cada punto se pinta como un
-      cuadrito, así el 3D y el pixel art hablan el mismo idioma.
-
-   Sin audio y sin video, como pide la tarea.
+   Nada de párrafos a propósito: si hubiera texto, la clase leería el
+   teléfono en vez de mirar y escuchar.
    ═══════════════════════════════════════════════════════════════════ */
-const $  = (s)=>document.querySelector(s);
-const $$ = (s)=>Array.from(document.querySelectorAll(s));
+const $=(s)=>document.querySelector(s);
 const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
-const lerp=(a,b,t)=>a+(b-a)*t;
-const easeOut=(t)=>1-Math.pow(1-t,3);
-const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
-const TOTAL_ESCENAS = 13;
 
-const CREDO = [
+const CREDO=[
   "Creo en un solo Dios,","Padre todopoderoso,","Creador del cielo y de la tierra,",
   "de todo lo visible y lo invisible.","Creo en un solo Señor, Jesucristo,",
   "Hijo único de Dios,","Dios de Dios, Luz de Luz,","engendrado, no creado,",
@@ -416,12 +166,13 @@ const CREDO = [
   "Creo en la Iglesia, que es una, santa, católica y apostólica.",
   "Confieso que hay un solo bautismo para el perdón de los pecados."
 ];
+const TOTAL=13;
 
-/* ── estado ─────────────────────────────────────────────────────── */
-const LS="catolicismo-v3";
+/* ── quién sos ──────────────────────────────────────────────────── */
+const LS="catolicismo-tel-v1";
 let S={ persona:0, pedazo:0, voto:null, escena:0 };
 try{ const g=JSON.parse(localStorage.getItem(LS)||"null");
-     if(g && typeof g.persona==="number") S=Object.assign(S,g); else sorteo();
+     if(g&&typeof g.persona==="number") S=Object.assign(S,g); else sorteo();
 }catch(e){ sorteo(); }
 function sorteo(){
   S.persona=Math.floor(Math.random()*window.SPRITES.catalogo.length);
@@ -430,750 +181,158 @@ function sorteo(){
 }
 function guardar(){ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){} }
 
-/* ── sprites (los personajes y el corazón de CCPP) ──────────────── */
-const SP=window.SPRITES;
-const imgPersonas=new Image(), imgCorazon=new Image();
-let cargadas=0;
-function alCargar(fn){ const t=()=>{ if(++cargadas>=2) fn(); };
-  imgPersonas.onload=t; imgCorazon.onload=t;
-  imgPersonas.src=SP.personas.src; imgCorazon.src=SP.corazon.src; }
-
-const PAL={
-  vivo:[[0x7A,0x0C,0x2E],[0xC8,0x18,0x50],[0xF0,0x3C,0x84],[0xFF,0x8C,0xC0]],
-  negro:[[0x09,0x09,0x0D],[0x16,0x16,0x1C],[0x26,0x24,0x2C],[0x38,0x35,0x3F]],
-  oro:[[0x7A,0x54,0x10],[0xD8,0xA8,0x2A],[0xF2,0xD2,0x6A],[0xFF,0xF4,0xC8]]
-};
-const cacheCor={};
-function corazon(i,tono){
-  const k=i+"|"+tono; if(cacheCor[k]) return cacheCor[k];
-  const w=SP.corazon.w,h=SP.corazon.h;
-  const c=document.createElement("canvas"); c.width=w;c.height=h;
-  const x=c.getContext("2d",{willReadFrequently:true});
-  x.drawImage(imgCorazon,0,i*h,w,h,0,0,w,h);
-  if(tono!=="vivo"){
-    const d=x.getImageData(0,0,w,h),p=d.data,pal=PAL[tono];
-    for(let j=0;j<p.length;j+=4){
-      if(p[j+3]===0) continue;
-      const l=(0.299*p[j]+0.587*p[j+1]+0.114*p[j+2])/255;
-      const t=pal[l<0.28?0:(l<0.5?1:(l<0.75?2:3))];
-      p[j]=t[0];p[j+1]=t[1];p[j+2]=t[2];
-    }
-    x.putImageData(d,0,0);
-  }
-  cacheCor[k]=c; return c;
-}
-function corazonMezcla(i,a,b,t){
-  const w=SP.corazon.w,h=SP.corazon.h;
-  const c=document.createElement("canvas"); c.width=w;c.height=h;
-  const x=c.getContext("2d");
-  x.drawImage(corazon(i,a),0,0);
-  x.globalAlpha=clamp(t,0,1); x.drawImage(corazon(i,b),0,0);
-  return c;
-}
-function persona(ctx,idx,frame,x,y,esc){
-  const w=SP.personas.w,h=SP.personas.h;
-  ctx.drawImage(imgPersonas, frame*w, idx*h, w, h, Math.round(x), Math.round(y), w*esc, h*esc);
-}
-
-/* ═══ MOTOR 3D MÍNIMO ══════════════════════════════════════════════
-   Un punto es {x,y,z} en un cubo centrado en el origen. Se gira en Y
-   (y algo en X), se proyecta con perspectiva y se pinta como cuadrito.
-   Se ordena por profundidad para que lo de adelante tape lo de atrás. */
-const CAM={ dist:3.2, lente:1.15 };
-function esferaFib(n,r){          // puntos repartidos parejo sobre una esfera
-  const pts=[], phi=Math.PI*(3-Math.sqrt(5));
-  for(let i=0;i<n;i++){
-    const y=1-(i/(n-1))*2, rad=Math.sqrt(Math.max(0,1-y*y)), th=phi*i;
-    pts.push({x:Math.cos(th)*rad*r, y:y*r, z:Math.sin(th)*rad*r, i:i});
-  }
-  return pts;
-}
-function proyecta(p,giroY,giroX,W,H,zoom){
-  const cy=Math.cos(giroY), sy=Math.sin(giroY);
-  let x=p.x*cy - p.z*sy, z=p.x*sy + p.z*cy, y=p.y;
-  const cx2=Math.cos(giroX), sx2=Math.sin(giroX);
-  const y2=y*cx2 - z*sx2, z2=y*sx2 + z*cx2;
-  const zc=z2+CAM.dist;
-  if(zc<=0.05) return null;
-  const f=CAM.lente/zc;
-  const esc=Math.min(W,H)*zoom;
-  return { sx:W/2+x*f*esc, sy:H/2-y2*f*esc, f:f, z:zc };
-}
-function pintaNube(ctx,pts,giroY,giroX,W,H,zoom,color,tam){
-  const listos=[];
-  for(const p of pts){
-    const q=proyecta(p,giroY,giroX,W,H,zoom);
-    if(q) listos.push({q:q,p:p});
-  }
-  listos.sort((a,b)=>b.q.z-a.q.z);          // lo lejano primero
-  for(const it of listos){
-    const {q,p}=it;
-    const prof=clamp((CAM.dist+1.2-q.z)/2.2,0,1);   // 1 = cerca
-    const s=Math.max(1,Math.round(tam*q.f*(0.55+0.75*prof)));
-    ctx.globalAlpha=0.16+0.84*prof*(p.a==null?1:p.a);
-    ctx.fillStyle=(typeof color==="function")?color(p,prof):color;
-    ctx.fillRect(Math.round(q.sx-s/2),Math.round(q.sy-s/2),s,s);
-  }
-  ctx.globalAlpha=1;
-  return listos;
-}
-
-/* ── cielo ──────────────────────────────────────────────────────── */
-const CIELOS={
-  vacio:"radial-gradient(ellipse 120% 85% at 50% 46%, #0D1226 0%, #05060B 62%)",
-  calido:"radial-gradient(ellipse 120% 85% at 50% 10%, #1D2440 0%, #05060B 60%)",
-  oscuro:"radial-gradient(ellipse 120% 90% at 50% 44%, #150F1C 0%, #020204 70%)",
-  luz:"radial-gradient(ellipse 110% 78% at 50% 0%, #6B5A22 0%, #17140E 50%, #05060B 100%)",
-  sangre:"radial-gradient(ellipse 120% 90% at 50% 18%, #2A1418 0%, #05060B 62%)",
-  oro:"radial-gradient(ellipse 120% 82% at 50% 6%, #4A3A12 0%, #14110C 54%, #05060B 100%)",
-  templo:"radial-gradient(ellipse 120% 82% at 50% 18%, #18203A 0%, #05060B 62%)"
-};
-function cielo(k){ $("#cielo").style.background=CIELOS[k]||CIELOS.vacio; }
-function destello(ms){
-  if(reduce) return;
-  const d=$("#destello");
-  d.style.transition="none"; d.style.opacity=".9";
-  requestAnimationFrame(()=>{ d.style.transition="opacity "+ms+"ms ease-out"; d.style.opacity="0"; });
-}
-
-/* ── el lienzo de la escena visible ─────────────────────────────── */
-function medir(cv){
-  CAJAS.length=0;
-  const r=cv.getBoundingClientRect();
+/* ── el corazón, que es lo que se mira acá ──────────────────────── */
+let negrura=0, luz=0, luzSala=0;
+function pintaLatido(){
+  requestAnimationFrame(pintaLatido);
+  const cv=$("#latido");
+  if(!window.Escenas || !Escenas.listo()) return;
+  const alto=Math.max(110, Math.min(innerHeight*0.40, innerWidth*0.74));
   const dpr=Math.min(window.devicePixelRatio||1,2.5);
-  const w=Math.max(1,Math.round(r.width*dpr)), h=Math.max(1,Math.round(r.height*dpr));
-  if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; }
+  const lado=Math.round(alto*dpr);
+  if(cv.width!==lado){ cv.width=lado; cv.height=lado; }
+  cv.style.width=alto+"px"; cv.style.height=alto+"px";
   const ctx=cv.getContext("2d");
   ctx.imageSmoothingEnabled=false;
-  ctx.clearRect(0,0,w,h);
-  return {ctx,W:w,H:h,u:Math.max(1,Math.round(h/56))};
-}
-function fuente(px,peso){ return (peso||"600")+" "+Math.round(px)+"px "+getComputedStyle(document.body).fontFamily; }
-
-/* ── mundos 3D que se arman una sola vez ────────────────────────── */
-const MUNDO={};
-function mundo(){
-  if(MUNDO.tierra) return MUNDO;
-  MUNDO.tierra=esferaFib(300,1);
-  MUNDO.tierra.forEach((p,i)=>{ p.ciudad=(i%9===0); });
-  MUNDO.almas=esferaFib(120,1.02);
-  MUNDO.almas.forEach((p,i)=>{ p.nace=(i%3)/3; p.a=1; });
-  MUNDO.polvo=[];
-  for(let i=0;i<90;i++) MUNDO.polvo.push({
-    x:(Math.random()*2-1)*2.4, y:(Math.random()*2-1)*1.6, z:(Math.random()*2-1)*2.4, a:Math.random()*0.6+0.2});
-  return MUNDO;
+  ctx.clearRect(0,0,lado,lado);
+  const t=performance.now()/1000;
+  const SP=Escenas.sprites();
+  const fr=Math.floor((t*(11+7*luz))%SP.corazon.n);
+  let img;
+  if(luz>0) img=Escenas.corazonMezcla(fr,"negro","oro",luz);
+  else if(negrura>0) img=Escenas.corazonMezcla(fr,"vivo","negro",negrura);
+  else img=Escenas.corazon(fr,"vivo");
+  // resplandor detrás: si no, el corazón negro sobre fondo negro no se ve
+  const g=ctx.createRadialGradient(lado/2,lado/2,lado*0.12,lado/2,lado/2,lado*0.52);
+  g.addColorStop(0,"rgba(255,244,200,"+(0.10+0.26*luz+0.05*Math.sin(t*2))+")");
+  g.addColorStop(1,"rgba(255,244,200,0)");
+  ctx.fillStyle=g; ctx.fillRect(0,0,lado,lado);
+  ctx.drawImage(img,0,0,lado,lado);
 }
 
-let anim={ pecado:0, luz:0, luzSala:0, sacra:0, oro313:0, oro380:0, semilla:0, votoHecho:false };
-/* El canal de la sala se declara ACÁ ARRIBA a propósito: la carga de la luz
-   lo consulta en su primer paso, y si se declara más abajo con let, ese
-   primer paso revienta con "Cannot access 'canal' before initialization" y
-   se cae el resto del script. */
-let canal=null;
-let huboCaida=false;
-let ultimaSalaLuz=0;      // cuándo informó la computadora por última vez
+/* ── lo que hace el teléfono en cada momento ────────────────────── */
+const MOMENTOS=[
+  {dice:"mirá la pantalla grande", cielo:"vacio"},
+  {dice:"este corazón es el tuyo", cielo:"calido"},
+  {dice:"tocá para apagarlo", cielo:"oscuro", accion:"pecado"},
+  {dice:"sostené para cargar la luz", cielo:"luz", accion:"luz", barra:true},
+  {dice:"mirá la pantalla grande", cielo:"oscuro"},
+  {dice:"mirá la pantalla grande", cielo:"templo"},
+  {dice:"mirá la pantalla grande", cielo:"templo"},
+  {dice:"mirá la pantalla grande", cielo:"calido"},
+  {dice:"elegí", cielo:"sangre", accion:"voto"},
+  {dice:"de prohibidos a permitidos", cielo:"oro"},
+  {dice:"de permitidos a ser el imperio", cielo:"oro"},
+  {dice:"mirá la pantalla grande", cielo:"calido"},
+  {dice:"cuando escuches tu pedazo, levantá el teléfono", cielo:"oro", pedazo:true}
+];
 
-/* ── Cajas: cada cosa que se dibuja encima (figura, corazón, barra) anota
-      dónde quedó. Así el mismo verificador que revisa el HTML puede revisar
-      el interior del lienzo: que nada se salga y que nada pise a nada.
-      Ver herramientas/pruebas/comprobar-pantalla.js ── */
-let CAJAS=[];
-function caja(id,x,y,w,h){ CAJAS.push({id:id,x:x,y:y,w:w,h:h}); return CAJAS[CAJAS.length-1]; }
-window.__cajas=()=>CAJAS.slice();
-window.__anim=()=>anim;   // para poder probar estados intermedios
-
-/* Coloca un personaje sobre la línea de horizonte sin salirse jamás:
-   cx es el centro deseado (0 a 1) y alto la fracción de la franja de suelo. */
-function figura(ctx,W,H,u,hy,idx,frame,cx,alto){
-  const franja=H-hy;
-  const esc=Math.max(2, Math.round(franja*(alto||0.72)/SP.personas.h));
-  const pw=SP.personas.w*esc, ph=SP.personas.h*esc;
-  const x=clamp(W*cx-pw/2, u, W-pw-u);
-  const y=hy-ph+Math.round(u*0.4);
-  persona(ctx,idx,frame,x,y,esc);
-  caja("figura",x,y,pw,ph);
-  return {x:x,y:y,w:pw,h:ph,esc:esc};
-}
-/* Y un corazón, con las mismas garantías. */
-function corazonEn(ctx,W,H,u,hy,img,cx,alto){
-  const franja=H-hy;
-  const lado=Math.max(8, Math.round(franja*(alto||0.55)));
-  const x=clamp(W*cx-lado/2, u, W-lado-u);
-  const y=hy-lado+Math.round(u*0.4);
-  ctx.drawImage(img,x,y,lado,lado);
-  caja("corazon",x,y,lado,lado);
-  return {x:x,y:y,w:lado,h:lado};
-}
-
-/* ═══ LOS DIBUJOS ══════════════════════════════════════════════════ */
-const DIBUJOS={
-
-  /* ── Las cuatro primeras escenas van en DOS CAPAS, y esa es toda la
-        gracia: arriba el 3D de puntos, abajo el pixel art de CCPP, con
-        una línea de horizonte entre medio. Cada capa se recorta contra
-        su mitad, así que jamás se pisan aunque cambie el tamaño. ── */
-
-  /* 0 · la Tierra girando, y vos mirándola desde abajo */
-  tierra(g,t){
-    const {ctx,W,H,u}=g, M=mundo(), hy=H*0.82;
-    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,hy); ctx.clip();
-    pintaNube(ctx,M.polvo,t*0.05,0.1,W,hy,0.40,"#3E5B8C",u*0.9);
-    ctx.globalAlpha=.07; ctx.fillStyle="#6FA8FF";
-    ctx.beginPath(); ctx.arc(W/2,hy*0.50,Math.min(W,hy)*0.34,0,7); ctx.fill(); ctx.globalAlpha=1;
-    pintaNube(ctx,M.tierra,t*0.22,-0.28,W,hy*1.04,0.34,
-      (p,prof)=> p.ciudad ? (prof>0.55?"#F5DE93":"#8A7A3A") : (prof>0.5?"#4E7FC4":"#25406E"), u*1.25);
-    ctx.restore();
-    suelo(ctx,W,H,u,hy);
-    // la figura, chiquita y a un lado: da escala al planeta sin taparlo
-    figura(ctx,W,H,u,hy,S.persona,0,0.80,0.72);
-  },
-
-  /* 1 · la semilla cae, y de ahí crece gente */
-  semilla(g,t){
-    const {ctx,W,H,u}=g, M=mundo(), hy=H*0.86, p=anim.semilla;
-    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,hy); ctx.clip();
-
-    // la figura de luz: un resplandor de verdad, no un disco gris
-    const ly=hy*0.14, r=Math.min(W,hy)*0.30;
-    const gl=ctx.createRadialGradient(W/2,ly,0,W/2,ly,r);
-    gl.addColorStop(0,"rgba(255,246,226,.95)");
-    gl.addColorStop(.18,"rgba(255,240,190,.45)");
-    gl.addColorStop(1,"rgba(255,236,170,0)");
-    ctx.fillStyle=gl; ctx.fillRect(0,0,W,hy);   // toda la zona: el borde del
-    // rectángulo se notaba como una caja gris alrededor del resplandor
-    if(!reduce){                                  // rayos que respiran
-      ctx.globalAlpha=.30;
-      for(let i=0;i<10;i++){
-        const a=i*(Math.PI*2/10)+t*0.15, largo=r*(0.55+0.22*Math.sin(t*2+i));
-        ctx.fillStyle="#FFF4C8";
-        ctx.fillRect(W/2+Math.cos(a)*largo, ly+Math.sin(a)*largo*0.7, u, u);
-      }
-      ctx.globalAlpha=1;
-    }
-
-    // el planeta abajo, recibiendo
-    ctx.save(); ctx.translate(0,hy*0.40);
-    pintaNube(ctx,M.tierra,t*0.20,-0.30,W,hy,0.24,
-      (q,prof)=> q.ciudad ? (prof>0.55?"#F5DE93":"#8A7A3A") : (prof>0.5?"#3E6BAF":"#1F3560"), u*1.1);
-    if(p>0){                                      // las almas que brotan
-      pintaNube(ctx,M.almas.filter(a=>a.nace<p),t*0.20,-0.30,W,hy,0.24*(1+0.12*p),
-        (q,prof)=> prof>0.5?"#FFF4C8":"#7A6A3A", u*1.0);
-    }
-    ctx.restore();
-
-    // la semilla, cayendo de la luz al planeta
-    if(p<1){
-      const caida=(t*0.75)%1, cy=ly+u*4+caida*(hy*0.42);
-      for(let k=0;k<5;k++){                      // estela corta detrás
-        ctx.globalAlpha=0.30*(1-k/5);
-        ctx.fillStyle="#F5DE93";
-        ctx.fillRect(W/2-u*0.5, cy-k*u*1.6, u, u*1.2);
-      }
-      ctx.globalAlpha=1; ctx.fillStyle="#FFF6E2";
-      ctx.fillRect(W/2-u*0.8, cy, u*1.6, u*1.6);
-    }
-    ctx.restore();
-
-    suelo(ctx,W,H,u,hy);
-    figura(ctx,W,H,u,hy,S.persona,(Math.sin(t*3)>0)?0:1,0.26,0.86);
-    corazonEn(ctx,W,H,u,hy,corazon(Math.floor((t*12)%SP.corazon.n),"vivo"),0.74,0.80);
-  },
-
-  /* 2 · uno se separa del grupo y se apaga */
-  pecado(g,t){
-    const {ctx,W,H,u}=g, M=mundo(), hy=H*0.86, p=anim.pecado;
-    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,hy); ctx.clip();
-    ctx.save(); ctx.translate(0,hy*0.16);
-    pintaNube(ctx,M.tierra,t*0.16,-0.30,W,hy,0.24,
-      (q,prof)=> prof>0.5?"#25406E":"#16294A", u*1.05);
-    pintaNube(ctx,M.almas.filter(a=>a.i%2===0),t*0.16,-0.30,W,hy,0.26,
-      (q,prof)=> prof>0.5?"#F0D67A":"#7A6A3A", u*1.0);
-    ctx.restore();
-
-    // EL que se va: sale del grupo, deja estela y se apaga. Tiene que verse
-    // grande y solo, porque es el punto entero de la escena.
-    const q=proyecta({x:0.85,y:0.40,z:0.35}, t*0.16, -0.30, W, hy, 0.26);
-    if(q){
-      const ox=q.sx, oy=q.sy+hy*0.16;
-      const sx=ox+p*W*0.30, sy=oy+p*hy*0.30;
-      const s=Math.max(3,Math.round(u*2.4));
-      if(p>0.02 && !reduce){                       // la estela del que se aleja
-        for(let k=1;k<=6;k++){
-          const f=p*(k/7);
-          ctx.globalAlpha=0.16*(1-k/7);
-          ctx.fillStyle="#F0D67A";
-          ctx.fillRect(ox+f*W*0.30-s/2, oy+f*hy*0.30-s/2, s, s);
-        }
-      }
-      ctx.globalAlpha=1;
-      if(p<0.65){                                  // todavía brilla
-        const rr=s*2.6;
-        const gg=ctx.createRadialGradient(sx,sy,0,sx,sy,rr);
-        gg.addColorStop(0,"rgba(255,244,200,"+(0.55*(0.65-p))+")");
-        gg.addColorStop(1,"rgba(255,244,200,0)");
-        ctx.fillStyle=gg; ctx.fillRect(sx-rr,sy-rr,rr*2,rr*2);
-      }
-      ctx.fillStyle = p>0.55 ? "#2E2A34" : "#FFF4C8";
-      ctx.fillRect(Math.round(sx-s/2),Math.round(sy-s/2),s,s);
-    }
-    ctx.restore();
-
-    suelo(ctx,W,H,u,hy);
-    figura(ctx,W,H,u,hy,S.persona,0,0.26,0.86);
-    corazonEn(ctx,W,H,u,hy,
-      corazonMezcla(Math.floor((t*(12-6*p))%SP.corazon.n),"vivo","negro",easeOut(p)),0.74,0.84);
-  },
-
-  /* 3 · baja la luz, y se carga entre todos.
-        Acá NO va la figura a propósito: el protagonista es el corazón, y
-        meter un personaje al lado sólo robaba espacio y dejaba un hueco. */
-  luz(g,t){
-    const {ctx,W,H,u}=g, p=anim.luz, sala=anim.luzSala;
-    const bh=Math.max(u*3,14), by=H-bh;        // la barra manda: es su franja
-    const alto=by-u;                            // lo que le queda al dibujo
-    ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,alto); ctx.clip();
-    if(p>0.02){
-      const grad=ctx.createLinearGradient(0,0,0,alto);
-      grad.addColorStop(0,"rgba(255,244,200,"+(0.55*p)+")");
-      grad.addColorStop(1,"rgba(255,244,200,0)");
-      ctx.fillStyle=grad;
-      const a=u*4+u*13*p;
-      ctx.beginPath(); ctx.moveTo(W/2-a,0); ctx.lineTo(W/2+a,0);
-      ctx.lineTo(W/2+u*17,alto); ctx.lineTo(W/2-u*17,alto); ctx.closePath(); ctx.fill();
-    }
-    if(!reduce && p>0.05){
-      for(let i=0;i<8;i++){
-        const y=((t*130+i*53)%alto);
-        ctx.globalAlpha=0.6*p; ctx.fillStyle="#9FD8EC";
-        ctx.fillRect(Math.round(W/2+Math.sin(i*2.1)*u*9), y|0, u, u*2);
-      }
-      ctx.globalAlpha=1;
-    }
-    const lado=Math.round(Math.min(alto*0.62, W*0.52));
-    const cx=Math.round(W/2-lado/2), cy=Math.round(alto*0.50-lado/2);
-    const img=corazonMezcla(Math.floor((t*(10+8*p))%SP.corazon.n),"negro","oro",easeOut(p));
-    // un resplandor detrás SIEMPRE: si no, el corazón negro sobre fondo
-    // oscuro no se distingue y la escena parece vacía
-    const gh=ctx.createRadialGradient(W/2,cy+lado/2,lado*0.12,W/2,cy+lado/2,lado*0.85);
-    gh.addColorStop(0,"rgba(255,244,200,"+(0.10+0.22*p)+")");
-    gh.addColorStop(1,"rgba(255,244,200,0)");
-    ctx.fillStyle=gh; ctx.fillRect(cx-lado*0.5,cy-lado*0.4,lado*2,lado*1.9);
-    if(p>0.45&&!reduce){
-      ctx.save(); ctx.globalAlpha=(p-0.45)*1.1; ctx.filter="blur(8px)";
-      ctx.drawImage(img,cx,cy,lado,lado); ctx.restore(); ctx.filter="none";
-    }
-    ctx.drawImage(img,cx,cy,lado,lado);
-    caja("corazon",cx,cy,lado,lado);
-    ctx.restore();
-    // LA BARRA DE LA SALA: lo que llevan cargado entre todos
-    caja("barra",0,by,W,bh);
-    ctx.fillStyle="#12151F"; ctx.fillRect(0,by,W,bh);
-    ctx.fillStyle="#E8C44A"; ctx.fillRect(0,by,W*clamp(sala,0,1),bh);
-    ctx.globalAlpha=.30; ctx.fillStyle="#FFF4C8";
-    ctx.fillRect(0,by,W*clamp(p,0,1),Math.max(2,u*0.8)); ctx.globalAlpha=1;
-    ctx.fillStyle= sala>0.55?"#17140E":"#8A8674";
-    ctx.font=fuente(bh*0.55,"700"); ctx.textAlign="left";
-    ctx.fillText("LA LUZ DE LA SALA  "+Math.round(sala*100)+"%", u, by+bh*0.72);
-  },
-
-  /* 4 · problema / respuesta / meta */
-  tres(g,t){
-    const {ctx,W,H,u}=g;
-    const filas=[["EL PROBLEMA","el pecado","#C0261E"],
-                 ["LA RESPUESTA","Jesús","#F0D67A"],
-                 ["LA META","la salvación","#7FD8A0"]];
-    const alto=H/3;
-    filas.forEach((f,i)=>{
-      const y=alto*i+alto/2, on=((t*0.9)%3.6)>=i;
-      ctx.globalAlpha=on?1:0.22;
-      ctx.fillStyle=f[2]; ctx.fillRect(0,y-u*1.8,u*1.4,u*3.6);
-      ctx.textAlign="left";
-      ctx.fillStyle="#8A8674"; ctx.font=fuente(u*1.9,"700");
-      ctx.fillText(f[0],u*3,y-u*0.8);
-      ctx.fillStyle=f[2]; ctx.font=fuente(u*3.8,"600");
-      ctx.fillText(f[1],u*3,y+u*2.6);
-      ctx.globalAlpha=1;
-    });
-  },
-
-  /* 5 · la Trinidad */
-  trinidad(g,t){
-    const {ctx,W,H,u}=g, cx=W/2, cy=H*0.38, r=Math.min(W,H)*0.24;
-    const pts=[[cx,cy-r],[cx-r*0.87,cy+r*0.5],[cx+r*0.87,cy+r*0.5]];
-    const nom=["PADRE","HIJO","ESPÍRITU"];
-    ctx.strokeStyle="rgba(232,196,74,.45)"; ctx.lineWidth=Math.max(1,u*0.6);
-    ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
-    ctx.lineTo(pts[1][0],pts[1][1]); ctx.lineTo(pts[2][0],pts[2][1]);
-    ctx.closePath(); ctx.stroke();
-    const pulso=0.5+0.5*Math.sin(t*2.2);
-    pts.forEach((p,i)=>{
-      ctx.globalAlpha=0.16+0.14*pulso; ctx.fillStyle="#F0D67A";
-      ctx.beginPath(); ctx.arc(p[0],p[1],u*5,0,7); ctx.fill();
-      ctx.globalAlpha=1; ctx.fillStyle="#FFF4C8";
-      ctx.fillRect(p[0]-u*1.3,p[1]-u*1.3,u*2.6,u*2.6);
-      ctx.fillStyle="#C8C4B6"; ctx.font=fuente(u*1.8,"700"); ctx.textAlign="center";
-      ctx.fillText(nom[i],p[0],p[1]+(i===0?-u*3.2:u*5));
-    });
-    ctx.globalAlpha=0.55+0.3*pulso; ctx.fillStyle="#F0D67A";
-    ctx.fillRect(cx-u*0.6,cy-u*0.6,u*1.2,u*1.2); ctx.globalAlpha=1;
-    const by=H-u*2;
-    ctx.fillStyle="#2A3044"; ctx.fillRect(cx-u*5,by-u*6,u*10,u*6);
-    ctx.beginPath(); ctx.moveTo(cx-u*6.5,by-u*6); ctx.lineTo(cx,by-u*10.5);
-    ctx.lineTo(cx+u*6.5,by-u*6); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="#E8C44A"; ctx.fillRect(cx-u*0.5,by-u*13.5,u,u*3.2);
-    ctx.fillRect(cx-u*1.6,by-u*12.4,u*3.2,u);
-  },
-
-  /* 6 · los siete sacramentos */
-  sacramentos(g,t){
-    const {ctx,W,H,u}=g, cx=W/2, cy=H*0.48, r=Math.min(W,H)*0.34;
-    const nombres=["BAUTISMO","CONFIRM.","EUCARISTÍA","CONFESIÓN","UNCIÓN","ORDEN","MATRIMONIO"];
-    for(let i=0;i<7;i++){
-      const a=-Math.PI/2+i*(Math.PI*2/7);
-      const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*0.84;
-      const on=i<anim.sacra;
-      ctx.globalAlpha=on?1:0.25;
-      ctx.fillStyle=on?"#F0D67A":"#3A4260";
-      simbolo(ctx,i,x,y,u*1.5);
-      if(on){ ctx.globalAlpha=0.55; ctx.fillStyle="#8A8674";
-        ctx.font=fuente(u*1.5,"700"); ctx.textAlign="center";
-        ctx.fillText(nombres[i],x,y+u*4.4); }
-      ctx.globalAlpha=1;
-    }
-    const gr=1+(anim.sacra>=3?0.35:0)+0.05*Math.sin(t*3);
-    ctx.fillStyle=anim.sacra>=3?"#F5DE93":"#4A5268";
-    copa(ctx,cx,cy,u*2.4*gr);
-  },
-
-  /* 7 · dos personas y el corazón entre ellas */
-  moral(g,t){
-    const {ctx,W,H,u}=g, base=H-u*3;
-    const esc=Math.max(2, Math.min(Math.round(H/52), Math.floor(W*0.22/SP.personas.w)));
-    const pw=SP.personas.w*esc, ph=SP.personas.h*esc;
-    const x1=Math.round(W*0.16-pw/2), x2=Math.round(W*0.84-pw/2);
-    persona(ctx,S.persona,0,x1,base-ph,esc);
-    persona(ctx,(S.persona+7)%SP.catalogo.length,0,x2,base-ph,esc);
-    caja("izquierda",x1,base-ph,pw,ph); caja("derecha",x2,base-ph,pw,ph);
-
-    // el corazón, grande y al centro: es lo que pasa entre los dos
-    const lado=Math.round(Math.min(H*0.34, W*0.30));
-    const cx=Math.round(W/2-lado/2), cy=Math.round(base-ph*0.55-lado/2);
-    const halo=ctx.createRadialGradient(cx+lado/2,cy+lado/2,lado*0.15,cx+lado/2,cy+lado/2,lado*0.8);
-    halo.addColorStop(0,"rgba(240,214,122,"+(0.16+0.08*Math.sin(t*2.4))+")");
-    halo.addColorStop(1,"rgba(240,214,122,0)");
-    ctx.fillStyle=halo; ctx.fillRect(cx-lado*0.4,cy-lado*0.4,lado*1.8,lado*1.8);
-    ctx.drawImage(corazon(Math.floor((t*11)%SP.corazon.n),"oro"),cx,cy,lado,lado);
-    caja("corazon",cx,cy,lado,lado);
-
-    // UNA palabra a la vez: las tres juntas se amontonaban y no se leía ninguna
-    const palabras=["PERDÓN","JUSTICIA","AYUDA"];
-    const cual=Math.floor(t/1.8)%3, f=(t/1.8)%1;
-    ctx.globalAlpha=Math.min(1,Math.sin(f*Math.PI)*1.6);
-    ctx.fillStyle="#F5DE93"; ctx.font=fuente(u*3.4,"700"); ctx.textAlign="center";
-    ctx.fillText(palabras[cual], W/2, cy-u*2);
-    ctx.globalAlpha=1;
-  },
-
-  /* 8 · el estandarte del imperio: el águila sobre el asta */
-  aguila(g,t){
-    const {ctx,W,H,u}=g;
-    // las figuras primero, para saber cuánto sitio queda arriba
-    const cuantos=5, hueco=W/cuantos;
-    const escA=Math.max(2, Math.min(Math.round(H/58), Math.floor(hueco*0.62/SP.personas.w)));
-    const pwA=SP.personas.w*escA, phA=SP.personas.h*escA;
-    const base=H-u;
-    for(let i=0;i<cuantos;i++){
-      const x=Math.round(hueco*(i+0.5)-pwA/2);
-      ctx.globalAlpha=(S.voto&&i===2)?1:0.55;
-      persona(ctx,(S.persona+i*3)%SP.catalogo.length,0, x, base-phA, escA);
-      ctx.globalAlpha=1;
-      caja("gente"+i, x, base-phA, pwA, phA);
-    }
-
-    const cx=W/2, suelo=base-phA-u*1.5;
-    const alto=Math.max(u*10, suelo-u*2);
-    const oro=anim.votoHecho?"#8E7A2E":"#E8C44A", oro2=anim.votoHecho?"#6E5E22":"#F5DE93";
-    // el asta
-    ctx.fillStyle="#6B4A22"; ctx.fillRect(cx-u*0.6, suelo-alto*0.62, u*1.2, alto*0.62);
-    // la placa SPQR
-    ctx.fillStyle="#8E2A2A"; ctx.fillRect(cx-u*4, suelo-alto*0.46, u*8, u*3.4);
-    ctx.fillStyle=oro2; ctx.font=fuente(u*2.1,"700"); ctx.textAlign="center";
-    ctx.fillText("S·P·Q·R", cx, suelo-alto*0.46+u*2.5);
-    // el águila: cuerpo, alas en escalones hacia arriba, cabeza y pico
-    const ay=suelo-alto*0.62;
-    ctx.fillStyle=oro;
-    ctx.fillRect(cx-u*1.2, ay-u*4, u*2.4, u*4.2);                    // cuerpo
-    for(let k=0;k<4;k++){                                            // alas
-      const dx=u*(1.2+k*1.6), dy=ay-u*(3.4+k*1.5), alt=u*(3.2-k*0.4);
-      ctx.fillRect(cx-dx-u*1.6, dy, u*1.6, alt);
-      ctx.fillRect(cx+dx,       dy, u*1.6, alt);
-    }
-    ctx.fillStyle=oro2;
-    ctx.fillRect(cx-u*1, ay-u*6.4, u*2, u*2.4);                      // cabeza
-    ctx.fillRect(cx+u*0.8, ay-u*5.8, u*1.4, u*0.9);                  // pico
-    ctx.fillStyle="#3A2A10";
-    ctx.fillRect(cx+u*0.1, ay-u*5.9, u*0.6, u*0.6);                  // ojo
-    // la corona de laurel bajo el águila
-    ctx.strokeStyle=anim.votoHecho?"#4E4420":"#3E8E4A";
-    ctx.lineWidth=Math.max(1,u*0.6);
-    ctx.beginPath(); ctx.arc(cx, ay+u*0.4, u*3.2, 0.15*Math.PI, 0.85*Math.PI); ctx.stroke();
-    caja("estandarte", cx-u*8, ay-u*7, u*16, alto*0.7);
-  },
-
-  a313(g,t){ mapa(g,t,anim.oro313,"313"); },
-  a380(g,t){ mapa(g,t,anim.oro380,"380"); },
-
-  /* 11 · hoy */
-  hoy(g,t){
-    const {ctx,W,H,u}=g, base=H-u*4;
-    ctx.fillStyle="#101625"; ctx.fillRect(0,base,W,H-base);
-    ["escuela","hospital","catedral"].forEach((c,i)=>{
-      const x=W*(0.2+i*0.3), on=((t*0.8)%3.6)>=i;
-      ctx.globalAlpha=on?1:0.35; edificio(ctx,c,x,base,u);
-      ctx.globalAlpha=on?0.7:0.25; ctx.fillStyle="#8A8674";
-      ctx.font=fuente(u*1.7,"700"); ctx.textAlign="center";
-      ctx.fillText(c.toUpperCase(),x,base+u*2.8); ctx.globalAlpha=1;
-    });
-    const y=H*0.18;
-    ctx.strokeStyle="rgba(240,214,122,.7)"; ctx.lineWidth=Math.max(1,u*0.6);
-    ctx.setLineDash([u*1.5,u*1.5]); ctx.lineDashOffset=-t*u*6;
-    ctx.beginPath(); ctx.moveTo(W*0.84,y);
-    ctx.quadraticCurveTo(W*0.5,y-u*5,W*0.13,y+u*3); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle="#F0D67A"; ctx.fillRect(W*0.84-u,y-u,u*2,u*2);
-    ctx.globalAlpha=0.5+0.5*Math.sin(t*3);
-    ctx.fillRect(W*0.13-u,y+u*2,u*2.4,u*2.4); ctx.globalAlpha=1;
-  },
-
-  /* 12 · el cierre: todo se junta en un punto */
-  cierre(g,t){
-    const {ctx,W,H,u}=g, cx=W/2, cy=H*0.5;
-    const junta=clamp((t%10)/7,0,1);
-    const r=Math.min(W,H)*0.34*(1-easeOut(junta)*0.85);
-    for(let i=0;i<7;i++){
-      const a=-Math.PI/2+i*(Math.PI*2/7);
-      ctx.globalAlpha=0.3+0.7*(1-junta); ctx.fillStyle="#F0D67A";
-      simbolo(ctx,i,cx+Math.cos(a)*r,cy+Math.sin(a)*r*0.9,u*1.2*(1-junta*0.5));
-    }
-    ctx.globalAlpha=1;
-    const cw=Math.min(SP.corazon.w*Math.max(3,Math.round(H/42)),W*0.34);
-    const img=corazon(Math.floor((t*11)%SP.corazon.n),"oro");
-    if(!reduce){ ctx.save(); ctx.globalAlpha=0.4+0.3*Math.sin(t*2)+junta*0.25;
-      ctx.filter="blur(8px)"; ctx.drawImage(img,cx-cw/2,cy-cw/2,cw,cw);
-      ctx.restore(); ctx.filter="none"; }
-    ctx.drawImage(img,cx-cw/2,cy-cw/2,cw,cw);
-  }
-};
-
-/* piezas del dibujo */
-function suelo(ctx,W,H,u,hy){
-  // el piso de piedra donde se para el pixel art; marca la frontera entre
-  // la capa 3D (arriba) y la capa 2D (abajo)
-  ctx.fillStyle="#0A0D16"; ctx.fillRect(0,hy,W,H-hy);
-  ctx.fillStyle="#1A2032"; ctx.fillRect(0,hy,W,Math.max(1,u*0.6));
-  ctx.fillStyle="#141A29";
-  for(let x=(-u*2);x<W;x+=u*7) ctx.fillRect(x,hy+u,u*5,Math.max(1,u*0.8));
-}
-function simbolo(ctx,i,x,y,s){
-  x=Math.round(x); y=Math.round(y);
-  switch(i){
-    case 0: ctx.fillRect(x-s,y-s*0.3,s*2,s*0.8); ctx.fillRect(x-s*0.4,y-s*1.2,s*0.8,s*0.9); break;
-    case 1: ctx.fillRect(x-s*0.3,y-s,s*0.6,s*2); ctx.fillRect(x-s*0.9,y,s*1.8,s*0.6); break;
-    case 2: copa(ctx,x,y,s); break;
-    case 3: ctx.fillRect(x-s,y-s*0.25,s*2,s*0.5); ctx.fillRect(x-s*0.25,y-s,s*0.5,s*2); break;
-    case 4: ctx.fillRect(x-s*0.7,y-s*0.7,s*1.4,s*1.4); break;
-    case 5: ctx.fillRect(x-s*0.25,y-s,s*0.5,s*2); ctx.fillRect(x-s,y-s*0.3,s*2,s*0.5); break;
-    default: ctx.fillRect(x-s,y-s*0.4,s*0.8,s*0.8); ctx.fillRect(x+s*0.2,y-s*0.4,s*0.8,s*0.8);
-  }
-}
-function copa(ctx,x,y,s){
-  x=Math.round(x); y=Math.round(y);
-  ctx.fillRect(x-s,y-s,s*2,s*0.5);
-  ctx.fillRect(x-s*0.75,y-s*0.5,s*1.5,s*0.9);
-  ctx.fillRect(x-s*0.2,y+s*0.4,s*0.4,s*0.7);
-  ctx.fillRect(x-s*0.8,y+s*1.1,s*1.6,s*0.4);
-}
-function edificio(ctx,tipo,x,base,u){
-  x=Math.round(x);
-  if(tipo==="escuela"){
-    ctx.fillStyle="#2A3044"; ctx.fillRect(x-u*4,base-u*8,u*8,u*8);
-    ctx.fillStyle="#F0D67A"; for(let i=0;i<3;i++) ctx.fillRect(x-u*3+i*u*2.5,base-u*6,u*1.5,u*1.5);
-    ctx.fillStyle="#3A4260"; ctx.fillRect(x-u*5,base-u*9.5,u*10,u*1.5);
-  }else if(tipo==="hospital"){
-    ctx.fillStyle="#2A3044"; ctx.fillRect(x-u*4,base-u*10,u*8,u*10);
-    ctx.fillStyle="#E8E8E8"; ctx.fillRect(x-u*0.7,base-u*8,u*1.4,u*4);
-    ctx.fillRect(x-u*2,base-u*6.7,u*4,u*1.4);
-  }else{
-    ctx.fillStyle="#2A3044"; ctx.fillRect(x-u*4,base-u*9,u*8,u*9);
-    ctx.beginPath(); ctx.moveTo(x-u*5,base-u*9); ctx.lineTo(x,base-u*13);
-    ctx.lineTo(x+u*5,base-u*9); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="#E8C44A"; ctx.fillRect(x-u*0.4,base-u*16,u*0.8,u*3);
-    ctx.fillRect(x-u*1.3,base-u*15,u*2.6,u*0.8);
-    ctx.fillStyle="#F0D67A"; ctx.globalAlpha=.55;
-    ctx.fillRect(x-u*1.2,base-u*7,u*2.4,u*3.4); ctx.globalAlpha=1;
-  }
-}
-function mapa(g,t,oro,anio){
-  const {ctx,W,H,u}=g;
-  ctx.fillStyle="#080D1A"; ctx.fillRect(0,0,W,H);
-  ctx.fillStyle="#19212F";
-  ctx.fillRect(0,0,W,H*0.24); ctx.fillRect(0,H*0.74,W,H*0.26);
-  ctx.fillRect(W*0.02,H*0.20,W*0.30,H*0.16); ctx.fillRect(W*0.62,H*0.17,W*0.24,H*0.20);
-  const pts=[[0.14,0.44],[0.28,0.36],[0.42,0.48],[0.55,0.38],[0.68,0.52],
-             [0.80,0.34],[0.35,0.63],[0.62,0.66],[0.88,0.56],[0.20,0.66]];
-  pts.forEach((p,i)=>{
-    const on=(i/pts.length)<oro, pulso=on&&!reduce?(0.7+0.3*Math.sin(t*3+i)):1;
-    ctx.globalAlpha=on?pulso:0.4;
-    ctx.fillStyle=on?"#F0D67A":"#3A4260";
-    const s=on?u*1.7:u;
-    ctx.fillRect(p[0]*W-s/2,p[1]*H-s/2,s,s);
-    if(on){ ctx.globalAlpha=pulso*0.20; ctx.fillRect(p[0]*W-s*1.6,p[1]*H-s*1.6,s*3.2,s*3.2); }
-  });
-  ctx.globalAlpha=0.12; ctx.fillStyle="#F0D67A";
-  ctx.font=fuente(H*0.55,"700"); ctx.textAlign="center";
-  ctx.fillText(anio,W/2,H*0.76); ctx.globalAlpha=1;
-}
-
-/* ── bucle: solo se dibuja la escena visible ────────────────────── */
-(function bucle(){
-  const sec=$(".escena.on");
-  if(sec && cargadas>=2){
-    const cv=sec.querySelector("canvas.arte");
-    if(cv){
-      const fn=DIBUJOS[cv.dataset.dibujo];
-      if(fn){ try{ fn(medir(cv), performance.now()/1000); }catch(e){} }
-    }
-  }
-  requestAnimationFrame(bucle);
-})();
-
-/* ── navegación ─────────────────────────────────────────────────── */
 (function pips(){ const c=$("#pasos");
-  for(let i=0;i<TOTAL_ESCENAS;i++){ const d=document.createElement("div"); d.className="pip"; c.appendChild(d);} })();
-const AMBIENTE=["vacio","calido","oscuro","luz","oscuro","templo","templo","calido",
-                "sangre","oro","oro","calido","oro"];
-function animar(clave,hasta,ms){
-  const desde=anim[clave], t0=performance.now();
+  for(let i=0;i<TOTAL;i++){ const d=document.createElement("div"); d.className="pip"; c.appendChild(d);} })();
+
+function ir(n){
+  n=clamp(n,0,TOTAL-1);
+  S.escena=n; guardar();
+  const m=MOMENTOS[n];
+  $("#dice").textContent=m.dice;
+  $("#pedazo").className=m.pedazo?"on":"";
+  $("#barraSala").className=m.barra?"on":"";
+  if(window.Escenas) Escenas.cielo(m.cielo);
+  Array.from($("#pasos").children).forEach((p,i)=>{
+    p.className="pip"+(i<n?" done":(i===n?" on":""));
+  });
+  if(n<2){ negrura=0; luz=0; listoLuz=false; }
+  pintaAcciones(m.accion);
+}
+window.__ir=ir;
+window.__escena=()=>S.escena;
+window.__estado=()=>({persona:S.persona,pedazo:S.pedazo,voto:S.voto,luz:luz,luzSala:luzSala,negrura:negrura,listoLuz:listoLuz});
+
+/* ── las acciones, una por momento ──────────────────────────────── */
+let sostiene=false, listoLuz=false;
+function boton(txt,clase){
+  const b=document.createElement("button");
+  b.className="btn"+(clase?" "+clase:""); b.textContent=txt;
+  return b;
+}
+function pintaAcciones(cual){
+  const c=$("#acciones");
+  c.innerHTML="";
+  if(cual==="pecado"&&negrura<1){
+    const b=boton("TOCÁ PARA APAGARLO","sangre");
+    b.onclick=()=>{ animar(v=>negrura=v,1,1500); $("#dice").textContent="se apagó"; pintaAcciones(null); };
+    c.appendChild(b);
+  }
+  if(cual==="luz"&&!listoLuz){
+    const b=boton("","oro");
+    b.innerHTML='<span class="relleno" id="relleno"></span><span class="rotulo">MANTENÉ EL DEDO AQUÍ</span>';
+    const on=(e)=>{ if(listoLuz) return; if(e&&e.cancelable) e.preventDefault(); sostiene=true; };
+    const off=()=>{ sostiene=false; };
+    b.addEventListener("touchstart",on,{passive:false});
+    b.addEventListener("touchend",off); b.addEventListener("touchcancel",off);
+    b.addEventListener("mousedown",on); addEventListener("mouseup",off);
+    c.appendChild(b);
+  }
+  if(cual==="voto"&&!S.voto){
+    const a=boton("ADORAR AL EMPERADOR",""), b=boton("MANTENER MI FE","sangre");
+    a.id="bEmperador"; b.id="bFe";     // con nombre, para poder probarlos
+    a.innerHTML+='<span class="k">vivís</span>'; b.innerHTML+='<span class="k">no vivís</span>';
+    a.onclick=()=>vota("emperador"); b.onclick=()=>vota("fe");
+    c.appendChild(a); c.appendChild(b);
+  }
+}
+function animar(set,hasta,ms){
+  const t0=performance.now(), desde=(hasta===1?0:1);
   (function paso(){
     const k=clamp((performance.now()-t0)/ms,0,1);
-    anim[clave]=lerp(desde,hasta,easeOut(k));
+    set(desde+(hasta-desde)*(1-Math.pow(1-k,3)));
     if(k<1) requestAnimationFrame(paso);
   })();
 }
-function ir(n){
-  n=clamp(n,0,TOTAL_ESCENAS-1);
-  S.escena=n; guardar();
-  $$(".escena").forEach(s=>s.classList.toggle("on",+s.dataset.e===n));
-  $$("#pasos .pip").forEach((p,i)=>{ p.className="pip"+(i<n?" done":(i===n?" on":"")); });
-  cielo(AMBIENTE[n]);
-  if(n===1 && anim.semilla<1) animar("semilla",1,2600);
-  if(n===9){ anim.oro313=0; destello(700); animar("oro313",0.6,1500); }
-  if(n===10){ anim.oro380=0; destello(900); animar("oro380",1,1700); }
-}
-window.__ir=ir;
-
-function pintaDatos(){
-  const p=SP.catalogo[S.persona];
-  $("#perNombre").textContent=p.nombre;
-  $("#perLugar").textContent=p.lugar+" · "+p.ano;
-  $("#pedN").textContent="Pedazo "+(S.pedazo+1)+" de "+CREDO.length;
-  $("#pedTxt").textContent=CREDO[S.pedazo];
-  $("#credoLargo").textContent=CREDO.join(" ");
-}
-
-/* ── botones ────────────────────────────────────────────────────── */
-$$("[data-va]").forEach(b=> b.onclick=()=>ir(+b.dataset.va));
-function apagaElPunto(){
-  if(anim.pecado>0) return;
-  animar("pecado",1,1600);
-  $("#tPecado").textContent="Se apagó.";
-  $("#pPecado").innerHTML="Ese punto sos vos cuando elegís mal. El corazón no deja de latir, "+
-    "pero se apaga: <b>eso es el pecado</b>, dañar la relación con Dios.";
-  const b=$("#bApagar"); b.textContent="¿Y AHORA? ›"; b.onclick=()=>ir(3);
-}
-$("#bApagar").onclick=apagaElPunto;
-$$('canvas[data-toca]').forEach(cv=> cv.addEventListener("click",apagaElPunto));
-$("#bSacra").onclick=()=>{
-  anim.sacra=Math.min(7,anim.sacra+1);
-  if(anim.sacra>=7){
-    $("#tRitos").textContent="Siete, y uno central";
-    $("#pRitos").innerHTML="La <b>Eucaristía</b> es el centro: la misa del domingo repite la "+
-      "última cena. En los primeros siglos esto se hacía <b>escondido, en casas</b>, porque "+
-      "reunirse era arriesgarse a que te arrestaran.";
-    const b=$("#bSacra"); b.textContent="¿Y CÓMO SE COMPORTAN? ›"; b.onclick=()=>ir(7);
-  }
-};
 function vota(cual){
-  S.voto=cual; guardar(); anim.votoHecho=true;
-  $("#accVoto").style.display="none"; $("#accVoto2").style.display="";
-  if(cual==="emperador"){
-    $("#tAguila").textContent="Vivís.";
-    $("#pAguila").innerHTML="Ofreciste el incienso y volvés a casa. A los que hacían eso los "+
-      "llamaron <b><i>lapsi</i></b>, «los caídos», y la Iglesia discutió años si podían volver.";
-  }else{
-    $("#tAguila").textContent="No vivís.";
-    $("#pAguila").innerHTML="Perdías el trabajo, la casa y a veces la vida. Te llamaron "+
-      "<b>mártir</b>: en griego, «testigo». Así murieron <b>Ignacio de Antioquía</b> (c. 107) "+
-      "e <b>Ireneo de Lión</b> (c. 202). Mientras más mataban, más crecían.";
-  }
-  if(canal) canal.enviar({t:"voto", id:idTelefono, v:cual});
+  S.voto=cual; guardar();
+  $("#dice").textContent = cual==="fe" ? "te llamaron mártir" : "te llamaron lapsi, «caído»";
+  pintaAcciones("voto");
+  if(canal) canal.enviar({t:"voto",id:idTelefono,v:cual});
 }
-$("#bEmperador").onclick=()=>vota("emperador");
-$("#bFe").onclick=()=>vota("fe");
-$("#bMas").onclick=()=>$("#mas").classList.add("on");
-$("#bCerrar").onclick=()=>$("#mas").classList.remove("on");
-$("#tuyo").onclick=()=>$("#tuyo").classList.remove("on");
-$("#bReiniciar").onclick=()=>{
-  sorteo(); pintaDatos();
-  anim={pecado:0,luz:0,luzSala:0,sacra:0,oro313:0,oro380:0,semilla:0,votoHecho:false};
-  ir(0); if(typeof saluda==="function") saluda();
-};
 
-/* ── cargar la luz: tu dedo suma, pero la barra es de la sala ─────
-   Va con requestAnimationFrame y delta de tiempo REAL, no con setInterval:
-   el navegador estrangula los temporizadores cuando la pestaña no está al
-   frente (medido: 3 segundos sosteniendo cargaban 0.09 en vez de 1), y con
-   delta la carga tarda lo mismo pase lo que pase. */
-(function cargaLuz(){
-  const b=$("#bLuz"), relleno=b.querySelector(".relleno"), rotulo=b.querySelector(".rotulo");
-  const SUBE=0.42, BAJA=0.20;         // por segundo
-  let sosteniendo=false, listo=false, ultimoAviso=0, tPrev=performance.now();
-  const on=(e)=>{ if(listo) return; if(e&&e.cancelable) e.preventDefault(); sosteniendo=true; };
-  const off=()=>{ sosteniendo=false; };
-  b.addEventListener("touchstart",on,{passive:false});
-  b.addEventListener("touchend",off); b.addEventListener("touchcancel",off);
-  b.addEventListener("mousedown",on); addEventListener("mouseup",off);
-  b.addEventListener("keydown",(e)=>{ if(e.key===" "||e.key==="Enter") on(e); });
-  b.addEventListener("keyup",off);
-  window.__sostiene=(v)=>{ sosteniendo=!!v; };     // para las pruebas
+/* ── la sala ────────────────────────────────────────────────────── */
+let canal=null, ultimaSalaLuz=0, ultimaEscena=-1, huboCaida=false;
+const idTelefono=(function(){
+  let v=null; try{ v=localStorage.getItem("imperio-id"); }catch(e){}
+  if(!v){ v=Math.random().toString(36).slice(2,10); try{ localStorage.setItem("imperio-id",v); }catch(e){} }
+  return v;
+})();
 
+/* ── cargar la luz: por tiempo real, no por temporizadores (el
+      navegador los estrangula cuando la pantalla no está al frente) ── */
+(function carga(){
+  const SUBE=0.42, BAJA=0.20;
+  let tPrev=performance.now(), ultimoAviso=0;
   function tick(dt){
-    if(listo) return;
-    anim.luz=clamp(anim.luz + (sosteniendo?SUBE:-BAJA)*dt, 0, 1);
-    relleno.style.width=(anim.luz*100).toFixed(1)+"%";
-    // Sin canal, la barra de todos sigue a la tuya: una persona sola puede
-    // probar la página sin quedarse trabada esperando a un salón que no existe.
-    // Y si HAY canal pero la computadora no está informando la luz del salón
-    // (se cayó, o nadie más entró), a los 6 segundos se hace lo mismo: en
-    // clase nadie se puede quedar mirando una barra que no avanza.
-    const mudo = !canal || (ultimaSalaLuz===0 || Date.now()-ultimaSalaLuz>6000);
-    if(mudo) anim.luzSala=Math.max(anim.luzSala, anim.luz);
+    if(listoLuz) return;
+    luz=clamp(luz+(sostiene?SUBE:-BAJA)*dt,0,1);
+    const r=document.getElementById("relleno");
+    if(r) r.style.width=(luz*100).toFixed(1)+"%";
+    // sin canal (o si la computadora no informa en 6 s) la barra sigue a la
+    // tuya: nadie se queda trabado esperando a un salón que no contesta
+    const mudo=!canal||(ultimaSalaLuz===0||Date.now()-ultimaSalaLuz>6000);
+    if(mudo) luzSala=Math.max(luzSala,luz);
+    $("#barraLlena").style.width=(luzSala*100).toFixed(1)+"%";
+    $("#barraTxt").textContent="la luz de la sala · "+Math.round(luzSala*100)+"%";
     const ms=Date.now();
-    if(canal && ms-ultimoAviso>700){
-      ultimoAviso=ms;
-      canal.enviar({t:"luz", id:idTelefono, p:+anim.luz.toFixed(2)});
-    }
-    if(anim.luz>=1 && anim.luzSala>=0.6){
-      listo=true; cielo("luz"); destello(800);
-      $("#tLuz").textContent="Limpio.";
-      $("#pLuz").innerHTML="Eso que acabás de hacer es, en la práctica, el gesto más antiguo "+
-        "de esta religión: así se entraba a la comunidad, y así se entra todavía.";
-      $("#dLuz").style.display="";
-      rotulo.textContent="SEGUIR ›"; b.onclick=()=>ir(4);
-    }else if(anim.luz>=1){
-      rotulo.textContent="ESPERANDO AL RESTO DEL SALÓN…";
+    if(canal&&ms-ultimoAviso>700){ ultimoAviso=ms; canal.enviar({t:"luz",id:idTelefono,p:+luz.toFixed(2)}); }
+    if(luz>=1&&luzSala>=0.6){
+      listoLuz=true; negrura=0;
+      $("#dice").textContent="limpio";
+      if(window.Escenas) Escenas.destello(800);
+      pintaAcciones(null);
+    }else if(luz>=1){
+      $("#dice").textContent="esperando al resto del salón…";
     }
   }
-  window.__paso=tick;                 // las pruebas avanzan sin depender del reloj
+  window.__paso=tick;
+  window.__sostiene=(v)=>{ sostiene=!!v; };
   (function marco(ahora){
     requestAnimationFrame(marco);
     const dt=Math.min(0.25,(ahora-tPrev)/1000); tPrev=ahora;
@@ -1181,18 +340,11 @@ $("#bReiniciar").onclick=()=>{
   })(performance.now());
 })();
 
-/* ── la sala ────────────────────────────────────────────────────── */
-const idTelefono=(function(){
-  let v=null; try{ v=localStorage.getItem("imperio-id"); }catch(e){}
-  if(!v){ v=Math.random().toString(36).slice(2,10); try{ localStorage.setItem("imperio-id",v); }catch(e){} }
-  return v;
-})();
-function codigoSala(){
+function codigoDelEnlace(){
   const m=(location.hash+location.search).match(/[?#&]s=([a-zA-Z0-9_-]{1,24})/);
   if(m){ try{ localStorage.setItem("imperio-sala",m[1]); }catch(e){} return m[1]; }
-  try{ return localStorage.getItem("imperio-sala"); }catch(e){ return null; }
+  return null;
 }
-let ultimaEscena=-1;
 function saluda(){ if(canal) canal.enviar({t:"hola",id:idTelefono,p:S.persona,f:S.pedazo}); }
 function avisaPedazo(i){
   if(i!==S.pedazo) return;
@@ -1204,16 +356,17 @@ function avisaPedazo(i){
   clearTimeout(avisaPedazo.t);
   avisaPedazo.t=setTimeout(()=>$("#tuyo").classList.remove("on"),14000);
 }
+$("#tuyo").onclick=()=>$("#tuyo").classList.remove("on");
+
 function abreCanal(cod){
   if(!cod||!window.Sala) return;
-  const luz=$("#luzSala");
+  const luzEl=$("#luzSala");
   canal=Sala.conectar({
     sala:cod,
     alEstado(e){
-      luz.className="luzSala "+(e==="conectado"?"ok":(e==="sin-red"?"":"busca"));
-      // si el canal se cayó y volvió (por ejemplo porque el wifi de la compu se
-      // reinició), hay que volver a presentarse: la computadora contesta con la
-      // escena en la que va, y este teléfono se pone al día solo
+      luzEl.className="luzSala "+(e==="conectado"?"ok":(e==="sin-red"?"":"busca"));
+      // si el canal se cayó y volvió, hay que presentarse otra vez: la
+      // computadora contesta con la escena en la que va la clase
       if(e==="conectado"){ if(huboCaida){ huboCaida=false; setTimeout(saluda,400); } }
       else if(e==="buscando") huboCaida=true;
     },
@@ -1223,7 +376,7 @@ function abreCanal(cod){
       }
       if(m.t==="quien") saluda();
       if(m.t==="credo"&&typeof m.i==="number") avisaPedazo(m.i);
-      if(m.t==="salaLuz"&&typeof m.p==="number"){ anim.luzSala=m.p; ultimaSalaLuz=Date.now(); }
+      if(m.t==="salaLuz"&&typeof m.p==="number"){ luzSala=m.p; ultimaSalaLuz=Date.now(); }
     }
   });
   saluda();
@@ -1236,31 +389,39 @@ function abreCanal(cod){
     }
   });
 }
-/* Si el enlace no trae código (por ejemplo si alguien entra a la raíz), se le
-   pregunta al servidor cuál es la sala. Así el enlace de los teléfonos puede
-   ser simplemente la dirección de la computadora, sin nada más. */
+/* Si el enlace no trae código, se le pregunta la sala al servidor: así lo que
+   se reparte es la dirección pelada de la computadora, sin nada pegado. */
 (function conecta(){
-  const delEnlace=codigoSala();
+  const guardado=()=>{ try{ return localStorage.getItem("imperio-sala"); }catch(e){ return null; } };
+  const delEnlace=codigoDelEnlace();
   if(delEnlace){ abreCanal(delEnlace); return; }
-  if(location.protocol==="file:"){ return; }
+  if(location.protocol==="file:") return;
   let listo=false;
-  const corta=setTimeout(()=>{ if(!listo){ listo=true; abreCanal(null); } }, 2000);
+  const corta=setTimeout(()=>{ if(!listo){ listo=true; abreCanal(guardado()); } },2000);
   fetch(location.origin+"/sala/ping",{cache:"no-store"})
     .then(r=>r.ok?r.json():null)
     .then(j=>{
       if(listo) return; listo=true; clearTimeout(corta);
       if(j&&j.codigo){ try{ localStorage.setItem("imperio-sala",j.codigo); }catch(e){} }
-      abreCanal((j&&j.codigo)||null);
+      abreCanal((j&&j.codigo)||guardado());
     })
-    .catch(()=>{ if(!listo){ listo=true; clearTimeout(corta); abreCanal(null); } });
+    .catch(()=>{ if(!listo){ listo=true; clearTimeout(corta); abreCanal(guardado()); } });
 })();
 
-addEventListener("keydown",(e)=>{
+/* ── arranque ───────────────────────────────────────────────────── */
+addEventListener("keydown",e=>{
   if(e.key==="ArrowRight") ir(S.escena+1);
   if(e.key==="ArrowLeft") ir(S.escena-1);
 });
-
-alCargar(()=>{ pintaDatos(); ir(S.escena||0); });
+Escenas.cargar(()=>{
+  const p=Escenas.sprites().catalogo[S.persona];
+  $("#perNombre").textContent=p.nombre;
+  $("#perLugar").textContent=p.lugar+" · "+p.ano;
+  $("#pedN").textContent="Pedazo "+(S.pedazo+1)+" de "+CREDO.length;
+  $("#pedTxt").textContent=CREDO[S.pedazo];
+  ir(S.escena||0);
+});
+requestAnimationFrame(pintaLatido);
 </script>
 </body>
 </html>

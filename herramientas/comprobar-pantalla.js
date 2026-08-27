@@ -39,10 +39,10 @@ const TAMANOS = [
 function medidor() {
   window.__medir = function () {
     const vp = { w: innerWidth, h: innerHeight };
-    const sec = document.querySelector(".escena.on") || document;
-    const nodos = Array.prototype.slice.call(
-      document.querySelectorAll("header .marca, header .pasos, footer button"))
-      .concat(Array.prototype.slice.call(sec.querySelectorAll(":scope > *")));
+    // el teléfono ya no tiene "escenas": es una sola pantalla que cambia
+    const sec = document.querySelector("main") || document;
+    const nodos = Array.prototype.slice.call(document.querySelectorAll(
+      "header .marca, header .pasos, footer > *, main > *"));
     const items = nodos.map(function (n) {
       return { n: n, r: n.getBoundingClientRect(),
                id: (n.id || String(n.className).split(" ")[0] || n.tagName) };
@@ -65,7 +65,7 @@ function medidor() {
 
     // y ahora lo de adentro del lienzo
     const dibujo = [];
-    const cv = sec.querySelector ? sec.querySelector("canvas.arte") : null;
+    const cv = document.getElementById("latido");
     if (cv && window.__cajas) {
       const cajas = window.__cajas();
       for (let i = 0; i < cajas.length; i++) {
@@ -80,7 +80,7 @@ function medidor() {
         }
       }
     }
-    return { escena: sec.dataset ? +sec.dataset.e : -1, solapes: solapes, fuera: fuera, dibujo: dibujo };
+    return { solapes: solapes, fuera: fuera, dibujo: dibujo };
   };
 }
 
@@ -104,7 +104,7 @@ function medidor() {
     await pag.evaluateOnNewDocument(medidor);
     await pag.goto(BASE + "/index.html", { waitUntil: "domcontentloaded" });
     await pag.waitForFunction("typeof window.__ir === 'function'", { timeout: 8000 });
-    const cuantas = await pag.evaluate("document.querySelectorAll('.escena').length");
+    const cuantas = 13;
     console.log("\n── " + t.nombre + " · " + cuantas + " escenas ──");
     for (let e = 0; e < cuantas; e++) {
       await pag.evaluate("window.__ir(" + e + ")");
