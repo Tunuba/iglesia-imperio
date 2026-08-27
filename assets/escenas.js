@@ -181,7 +181,12 @@ let ultimaSalaLuz=0;      // cuándo informó la computadora por última vez
       el interior del lienzo: que nada se salga y que nada pise a nada.
       Ver herramientas/pruebas/comprobar-pantalla.js ── */
 let CAJAS=[];
-function caja(id,x,y,w,h){ CAJAS.push({id:id,x:x,y:y,w:w,h:h}); return CAJAS[CAJAS.length-1]; }
+const DESPLAZ={x:0,y:0,k:1};   // el encuadre, para que las cajas se reporten en pantalla
+function caja(id,x,y,w,h){
+  const k=DESPLAZ.k;
+  CAJAS.push({id:id,x:x*k+DESPLAZ.x,y:y*k+DESPLAZ.y,w:w*k,h:h*k});
+  return CAJAS[CAJAS.length-1];
+}
 window.__cajas=()=>CAJAS.slice();
 window.__anim=()=>anim;   // para poder probar estados intermedios
 
@@ -227,8 +232,9 @@ const DIBUJOS={
       (p,prof)=> p.ciudad ? (prof>0.55?"#F5DE93":"#8A7A3A") : (prof>0.5?"#4E7FC4":"#25406E"), u*1.25);
     ctx.restore();
     suelo(ctx,W,H,u,hy);
-    // la figura, chiquita y a un lado: da escala al planeta sin taparlo
-    figura(ctx,W,H,u,hy,EST.persona,0,0.80,0.72);
+    // la figura da escala al planeta, pero en la pantalla grande estorba: ahí
+    // abajo están los códigos para entrar y la gente conectada de verdad
+    if(!EST.sinFigurantes) figura(ctx,W,H,u,hy,EST.persona,0,0.80,0.72);
   },
 
   /* 1 · la semilla cae, y de ahí crece gente */
@@ -352,7 +358,7 @@ const DIBUJOS={
       }
       ctx.globalAlpha=1;
     }
-    const lado=Math.round(Math.min(alto*0.62, W*0.52));
+    const lado=Math.round(Math.min(alto*0.82, W*0.62));
     const cx=Math.round(W/2-lado/2), cy=Math.round(alto*0.50-lado/2);
     const img=corazonMezcla(Math.floor((t*(10+8*p))%SP.corazon.n),"negro","oro",easeOut(p));
     // un resplandor detrás SIEMPRE: si no, el corazón negro sobre fondo
@@ -368,15 +374,6 @@ const DIBUJOS={
     ctx.drawImage(img,cx,cy,lado,lado);
     caja("corazon",cx,cy,lado,lado);
     ctx.restore();
-    // LA BARRA DE LA SALA: lo que llevan cargado entre todos
-    caja("barra",0,by,W,bh);
-    ctx.fillStyle="#12151F"; ctx.fillRect(0,by,W,bh);
-    ctx.fillStyle="#E8C44A"; ctx.fillRect(0,by,W*clamp(sala,0,1),bh);
-    ctx.globalAlpha=.30; ctx.fillStyle="#FFF4C8";
-    ctx.fillRect(0,by,W*clamp(p,0,1),Math.max(2,u*0.8)); ctx.globalAlpha=1;
-    ctx.fillStyle= sala>0.55?"#17140E":"#8A8674";
-    ctx.font=fuente(bh*0.55,"700"); ctx.textAlign="left";
-    ctx.fillText("LA LUZ DE LA SALA  "+Math.round(sala*100)+"%", u, by+bh*0.72);
   },
 
   /* 4 · problema / respuesta / meta */
@@ -652,7 +649,7 @@ raiz.Escenas={
                     semilla:0, votoHecho:false } };
   },
   /* Dibuja una escena. El lienzo ya tiene que venir del tamaño correcto. */
-  dibujar(nombre, ctx, W, H, t, estado){
+  dibujar(nombre, ctx, W, H, t, estado, opciones){
     if(cargadas<2) return;
     EST = estado || EST;
     CAJAS.length=0;
@@ -660,8 +657,26 @@ raiz.Escenas={
     ctx.clearRect(0,0,W,H);
     const fn = DIBUJOS[nombre];
     if(!fn) return;
-    const u = Math.max(1, Math.round(H/56));
-    try{ fn({ctx:ctx, W:W, H:H, u:u}, t); }catch(e){}
+    const op = opciones || {};
+    const arriba = Math.round(H * (op.margenArriba || 0));   // sitio para el título
+    const abajo  = Math.round(H * (op.margenAbajo || 0));    // sitio para la barra
+    const alto   = Math.max(40, H - arriba - abajo);
+    // el ancho se limita para que en pantalla ancha no quede todo diminuto y
+    // a los lados; el cielo del fondo rellena lo que sobra
+    const ancho  = Math.min(W, Math.round(alto * (op.proporcion || 1.45)));
+    const dx = Math.round((W - ancho) / 2);
+    // La escala agranda el dibujo entero: en un proyector, el mismo diseño
+    // pensado para un teléfono se ve diminuto y con la pantalla medio vacía.
+    const k = op.escala || 1;
+    const anchoV = ancho / k, altoV = alto / k;
+    const u = Math.max(1, Math.round(altoV/56));
+    ctx.save();
+    ctx.translate(dx, arriba);
+    ctx.scale(k, k);
+    DESPLAZ.x = dx; DESPLAZ.y = arriba; DESPLAZ.k = k;
+    try{ fn({ctx:ctx, W:anchoV, H:altoV, u:u}, t); }catch(e){}
+    ctx.restore();
+    DESPLAZ.x = 0; DESPLAZ.y = 0; DESPLAZ.k = 1;
   },
   cajas: ()=>CAJAS.slice(),
   sprites: ()=>SP,

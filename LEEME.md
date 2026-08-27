@@ -157,7 +157,14 @@ es un lujo, nunca un requisito.
 **La presentación es la pantalla de la computadora.** Ahí van los trece momentos, a
 pantalla completa, con el visual grande y **sin párrafos**: el texto son ustedes
 hablando. Con `T` se quitan hasta los títulos y queda sólo la imagen; con `H` se
-esconde la barra de control; con `F`, pantalla completa.
+esconde la barra de control; con `F`, pantalla completa. Para avanzar hay tres
+formas: las flechas del teclado, los botones de la barra, o **hacer clic en la
+mitad derecha o izquierda de la pantalla** (asoman unas flechas al mover el mouse
+y se apagan solas para que no salgan en la proyección).
+
+> El dibujo nació para una pantalla de teléfono, vertical. En un proyector
+> apaisado se veía diminuto y pegado abajo, así que ahora se encuadra: se dibuja
+> en un área centrada, se reserva el espacio del título y se agranda un 45 %.
 
 **El teléfono acompaña.** Cada quien tiene tres cosas suyas y nada más:
 

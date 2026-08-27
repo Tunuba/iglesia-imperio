@@ -4,14 +4,14 @@
    Levanta N teléfonos falsos contra el servidor, hace que sólo algunos
    "sostengan el dedo", y escucha lo que la computadora reparte de vuelta.
 
-   Uso:  node herramientas/prueba-cooperativa.js http://127.0.0.1:8081 sala4 4 2
+   Uso:  node herramientas/prueba-cooperativa.js http://127.0.0.1:8123 sala4 4 2
          (servidor, código de sala, cuántos teléfonos, cuántos sostienen)
    La página del presentador tiene que estar abierta en esa misma sala y en
    la escena 4 (la de la luz), que es la única en la que reparte el dato.   */
 "use strict";
 const http=require("http"), https=require("https");
 const NL=String.fromCharCode(10), SEP=NL+NL;
-const BASE=process.argv[2]||"http://127.0.0.1:8081";
+const BASE=process.argv[2]||"http://127.0.0.1:8123";
 const SALA=process.argv[3]||"prueba";
 const N=parseInt(process.argv[4],10)||4;
 const SOSTIENEN=parseInt(process.argv[5],10)||2;

@@ -13,7 +13,7 @@
    derecha y parecía correcto en la captura.
 
    Uso:  node herramientas/comprobar-pantalla.js [url] [--fotos]
-         node herramientas/comprobar-pantalla.js http://127.0.0.1:8081
+         node herramientas/comprobar-pantalla.js http://127.0.0.1:8123
    ═══════════════════════════════════════════════════════════════════════ */
 "use strict";
 const fs = require("fs");
@@ -27,7 +27,7 @@ const CHROMES = [
   process.env.LOCALAPPDATA + "/Google/Chrome/Application/chrome.exe"
 ];
 
-const BASE = (process.argv[2] && process.argv[2].startsWith("http")) ? process.argv[2] : "http://127.0.0.1:8081";
+const BASE = (process.argv[2] && process.argv[2].startsWith("http")) ? process.argv[2] : "http://127.0.0.1:8123";
 const FOTOS = process.argv.includes("--fotos");
 const SALIDA = path.join(__dirname, "pruebas", "capturas");
 const TAMANOS = [

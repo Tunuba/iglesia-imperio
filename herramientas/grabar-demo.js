@@ -9,7 +9,7 @@
    ver en silencio y se entiende igual.
 
    Uso:  node herramientas/grabar-demo.js [url] [fps]
-         node herramientas/grabar-demo.js http://127.0.0.1:8081 12
+         node herramientas/grabar-demo.js http://127.0.0.1:8123 12
 
    Sale en:  demostracion.mp4  (en la carpeta del proyecto)
    ═══════════════════════════════════════════════════════════════════════ */
@@ -25,7 +25,7 @@ const CHROMES = [
   "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
   process.env.LOCALAPPDATA + "/Google/Chrome/Application/chrome.exe"
 ];
-const BASE = (process.argv[2] && process.argv[2].startsWith("http")) ? process.argv[2] : "http://127.0.0.1:8081";
+const BASE = (process.argv[2] && process.argv[2].startsWith("http")) ? process.argv[2] : "http://127.0.0.1:8123";
 const FPS = parseInt(process.argv[3], 10) || 12;
 const RAIZ = path.resolve(__dirname, "..");
 const CUADROS = path.join(process.env.TEMP || __dirname, "demo-imperio-cuadros");
@@ -64,9 +64,9 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   const E = (js) => pag.evaluate(js);
 
   // ── 1 · la pantalla que se proyecta ──
-  await E(`Estudio.paso(1, ${TOTAL_PASOS}, "Esto es lo que se proyecta", "La computadora arma la sala y muestra los dos códigos.")`);
+  await E(`Estudio.paso(1, ${TOTAL_PASOS}, "La presentación es la computadora", "Los trece momentos van acá, a pantalla completa. Los teléfonos acompañan.")`);
   await E(`Estudio.destacar("cajaPC")`);
-  await E(`Estudio.nota("<b>Un solo comando:</b><br>arrancar.ps1<br><br>Enciende la red de la laptop, levanta el servidor y abre esta pantalla.")`);
+  await E(`Estudio.nota("<b>Un solo comando:</b><br>arrancar.ps1<br><br>Enciende la red de la laptop, levanta el servidor y abre esta pantalla.<br><br>Con <b>H</b> se esconde la barra de abajo y queda sólo el visual.")`);
   await capturar(5);
 
   // ── 2 · los dos códigos ──
@@ -75,7 +75,7 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   await capturar(5);
 
   // ── 3 · entran los teléfonos ──
-  await E(`Estudio.paso(3, ${TOTAL_PASOS}, "Escanean y entran", "A cada quien le toca un personaje del siglo I y un pedazo del Credo.")`);
+  await E(`Estudio.paso(3, ${TOTAL_PASOS}, "Escanean y entran", "En el teléfono: su personaje, su corazón y su pedazo del Credo. Nada más.")`);
   await E(`Estudio.nota(null); Estudio.destacar("cajaT1")`);
   await E(`Estudio.tel(1).location.href = "${BASE}/index.html"`);
   await espera(2600);
@@ -87,11 +87,11 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   await E(`Estudio.nombres()`);
   await capturar(2.5);
   await E(`Estudio.destacar("cajaPC")`);
-  await E(`Estudio.nota("En la pantalla aparecen ellos mismos: así se sabe quién entró, sin preguntar.")`);
+  await E(`Estudio.nota("En la pantalla grande aparecen ellos mismos: así se ve quién entró, sin preguntar.")`);
   await capturar(4);
 
   // ── 4 · la compu manda ──
-  await E(`Estudio.paso(4, ${TOTAL_PASOS}, "La computadora manda", "Un toque en SIGUIENTE y las trece escenas avanzan en todos los teléfonos.")`);
+  await E(`Estudio.paso(4, ${TOTAL_PASOS}, "La computadora manda", "Un toque en SIGUIENTE mueve la presentación y los teléfonos a la vez.")`);
   await E(`Estudio.nota(null); Estudio.destacar(null)`);
   for (let k = 0; k < 3; k++) {
     await E(`Estudio.pc().document.getElementById("bAdelante").click()`);
@@ -104,7 +104,7 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   await E(`Estudio.destacar("cajaT1")`);
   await E(`Estudio.tel(1).__sostiene(true)`);
   await capturar(6);
-  await E(`Estudio.nota("La barra es el <b>promedio</b> de la sala.<br>Con la mitad sosteniendo, se queda en 50 %.")`);
+  await E(`Estudio.nota("La barra es el <b>promedio</b> de la sala.<br>Con la mitad sosteniendo se queda en 50 % y no se abre.")`);
   await capturar(4);
 
   // ── 6 · ahora los dos ──
@@ -128,7 +128,7 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   // ── 8 · el pedazo del Credo ──
   await E(`(function(){var p=Estudio.pc();for(var i=0;i<4;i++) p.document.getElementById("bAdelante").click();})()`);
   await espera(2000);
-  await E(`Estudio.paso(8, ${TOTAL_PASOS}, "Cada quien tiene un pedazo", "El presentador lee uno y ese teléfono se pone dorado y vibra.")`);
+  await E(`Estudio.paso(8, ${TOTAL_PASOS}, "Cada quien tiene un pedazo", "El presentador lo lee en grande y ese teléfono se pone dorado y vibra.")`);
   await E(`Estudio.nombres()`);
   const pedazo = await pag.evaluate(`(function(){
     var t = Estudio.tel(1).document.getElementById("pedN").textContent;
@@ -138,7 +138,7 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   await espera(1800);
   await E(`Estudio.destacar("cajaT1")`);
   await capturar(6);
-  await E(`Estudio.pc().document.getElementById("leyendo").classList.remove("on")`);
+  await E(`Estudio.pc().document.getElementById("credo").classList.remove("on")`);
 
   // ── 9 · lo que no se ve pero importa ──
   await E(`Estudio.paso(9, ${TOTAL_PASOS}, "Y si algo se cae, se levanta solo", "El punto de acceso se revisa cada 5 segundos, y una tarea de Windows cada minuto.")`);
