@@ -549,7 +549,30 @@ const DIBUJOS={
       ctx.font=fuente(u*1.7,"700"); ctx.textAlign="center";
       rotulo(ctx,c.toUpperCase(),x,base+u*2.8); ctx.globalAlpha=1;
     });
-    const y=H*0.18;
+    // Lo que quedó en pie, con nombre y año: van saliendo de a una y se
+    // quedan. No son fotos: el mismo lenguaje de píxeles de todo lo demás.
+    if(self.Motivos&&Motivos.LEGADO){
+      const L=Motivos.LEGADO, n=L.length, hueco=W/n, lado=Math.min(u*8,hueco*0.46);
+      const yIco=H*0.40;
+      for(let i=0;i<n;i++){
+        const x=hueco*(i+0.5), on=(t*0.85)>=i+0.4;
+        Motivos.legado(ctx,i,x,yIco,lado,t,on);
+        ctx.globalAlpha=on?0.85:0.20; ctx.fillStyle="#C8C4B6";
+        // el rótulo se encoge hasta caber en su hueco: con el tipo fijo, dos
+        // nombres vecinos se montaban uno sobre otro
+        let tam=u*1.35;
+        ctx.font=fuente(tam,"700"); ctx.textAlign="center";
+        while(tam>u*0.8 && ctx.measureText(L[i].nombre).width>hueco*0.92){
+          tam-=u*0.06; ctx.font=fuente(tam,"700");
+        }
+        rotulo(ctx,L[i].nombre,x,yIco+lado*0.5+u*2.3);
+        ctx.globalAlpha=on?0.65:0.15; ctx.fillStyle="#F0D67A";
+        rotulo(ctx,L[i].ano,x,yIco+lado*0.5+u*4.3);
+        ctx.globalAlpha=1;
+        caja("legado"+i,x-hueco*0.46,yIco-lado*0.5,hueco*0.92,lado+u*5);
+      }
+    }
+    const y=H*0.14;
     ctx.strokeStyle="rgba(240,214,122,.7)"; ctx.lineWidth=Math.max(1,u*0.6);
     ctx.setLineDash([u*1.5,u*1.5]); ctx.lineDashOffset=-t*u*6;
     ctx.beginPath(); ctx.moveTo(W*0.84,y);

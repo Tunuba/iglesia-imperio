@@ -303,9 +303,24 @@ function ciudad(g, t, e) {
   edificio(g, 22, suelo, 7, 15, n > 2, "catedral", t);
   px(g, 1, suelo + 1, 30, 1, "#4A5268", .85);
   if (n >= 3) {
-    // levantadas las tres, la calle se llena: gente yendo y viniendo entre
-    // la escuela, el hospital y la catedral. (Antes había una fila de puntos
-    // amarillos cruzando la pantalla que no quería decir nada.)
+    // levantadas las tres, arriba van pasando las obras que quedaron: la
+    // universidad, la escuela de acá, el hospital, el rosetón, la Sixtina,
+    // la música escrita. Una cada dos segundos y medio, con su nombre.
+    const cual = Math.floor(t / 2.5) % LEGADO.length;
+    const dentro = (t / 2.5) % 1;
+    const fundido = Math.min(1, dentro * 6) * Math.min(1, (1 - dentro) * 6);
+    const c = g.ctx;
+    c.save(); c.globalAlpha = fundido;
+    legado(c, cual, 16 * g.u, 8.5 * g.u, 11 * g.u, t, true);
+    c.globalAlpha = fundido * 0.9;
+    c.font = Math.round(g.u * 1.5) + "px 'Cascadia Mono', Consolas, monospace";
+    c.textAlign = "center"; c.fillStyle = CLARO;
+    c.fillText(LEGADO[cual].nombre, 16 * g.u, 15.6 * g.u);
+    c.fillStyle = ORO;
+    c.fillText(LEGADO[cual].ano, 16 * g.u, 17.6 * g.u);
+    c.restore();
+    // y la calle se llena: gente yendo y viniendo entre los tres edificios.
+    // (Antes había una fila de puntos amarillos cruzando que no decía nada.)
     for (let i = 0; i < 5; i++) {
       const v = 0.16 + (i % 3) * 0.05;
       const x = 2 + ((t * v * 30 + i * 6.3) % 28);
@@ -443,6 +458,104 @@ function absorbe(ctx, lado, t) {
   }
 }
 
+
+/* ── EL LEGADO ─────────────────────────────────────────────────────
+   «De ahí salieron las primeras escuelas, hospitales y universidades, y
+    buena parte de su arte y arquitectura.» Seis piezas concretas, con
+   su año, dibujadas en píxeles. Nada de fotos: el video y la clase se
+   ven en el mismo lenguaje que todo lo demás, y no se le pide permiso
+   a nadie por una imagen.
+
+   Los datos son comprobables:
+     Bolonia 1088 · la universidad más antigua que sigue abierta
+     San Carlos de Guatemala 1676 · la nuestra, la cuarta de América
+     Hospitales s. IV · el de Basilio en Cesarea, abierto a cualquiera
+     Catedrales góticas s. XII · el rosetón y la piedra que sube
+     Capilla Sixtina 1512 · Miguel Ángel
+     El pentagrama s. XI · Guido d'Arezzo, y por eso hay música escrita
+*/
+/* los nombres van CORTOS: con el nombre entero, los rótulos de dos piezas
+   vecinas se pisaban en el proyector */
+const LEGADO = [
+  { icono: "universidad", nombre: "U. DE BOLONIA",   ano: "1088" },
+  { icono: "libro",       nombre: "SAN CARLOS",      ano: "1676" },
+  { icono: "hospital",    nombre: "HOSPITALES",      ano: "SIGLO IV" },
+  { icono: "roseton",     nombre: "CATEDRALES",      ano: "SIGLO XII" },
+  { icono: "manos2",      nombre: "CAPILLA SIXTINA", ano: "1512" },
+  { icono: "pentagrama",  nombre: "MÚSICA ESCRITA",  ano: "SIGLO XI" }
+];
+/* cada pieza en su cuadrícula de 16×16, para que se pueda dibujar grande
+   en el proyector y chiquita en el teléfono sin rehacer nada */
+function legado(ctx, i, x, y, lado, t, encendido) {
+  const p = LEGADO[i % LEGADO.length];
+  const g = { ctx: ctx, lado: lado, u: lado / 16 };
+  const a = encendido === false ? 0.22 : 1;
+  const c = encendido === false ? APAGADO : ORO2;
+  ctx.save(); ctx.translate(Math.round(x - lado / 2), Math.round(y - lado / 2));
+  ctx.imageSmoothingEnabled = false;
+  if (p.icono === "universidad") {           // el frontón y sus columnas
+    px(g, 1, 5, 14, 1, c, a);
+    for (let k = 0; k < 7; k++) px(g, 2 + k, 4 - Math.min(k, 6 - k), 1, 1, c, a);
+    for (let k = 0; k < 7; k++) px(g, 14 - k, 4 - Math.min(k, 6 - k), 1, 1, c, a);
+    for (const cx of [2, 5, 8, 11, 13]) px(g, cx, 6, 1, 7, c, a);
+    px(g, 0, 13, 16, 2, c, a);
+  } else if (p.icono === "libro") {          // el libro abierto
+    px(g, 1, 4, 6, 9, c, a); px(g, 9, 4, 6, 9, c, a);
+    px(g, 7, 3, 2, 11, c, a * .8);
+    for (let k = 0; k < 3; k++) {
+      px(g, 2, 6 + k * 2, 4, 1, "#232B3E", a);
+      px(g, 10, 6 + k * 2, 4, 1, "#232B3E", a);
+    }
+  } else if (p.icono === "hospital") {       // la cama y la cruz
+    px(g, 6, 1, 4, 2, "#FFF6E2", a); px(g, 5, 2, 6, 1, "#FFF6E2", a);
+    px(g, 7, 0, 2, 4, "#FFF6E2", a);
+    px(g, 1, 8, 14, 2, c, a);                // el colchón
+    px(g, 1, 6, 3, 2, c, a);                 // la almohada
+    px(g, 1, 10, 1, 4, c, a); px(g, 14, 10, 1, 4, c, a);
+    px(g, 1, 10, 14, 1, c, a * .7);
+  } else if (p.icono === "roseton") {        // el rosetón, redondo
+    // con el aro cuadrado parecía una ventana cualquiera; el rosetón de una
+    // catedral es redondo y radiado, y así se reconoce de lejos
+    const u = g.u;
+    ctx.save(); ctx.lineWidth = Math.max(1, u); ctx.strokeStyle = c;
+    ctx.globalAlpha = a;
+    ctx.beginPath(); ctx.arc(8 * u, 8 * u, 6.5 * u, 0, 6.2832); ctx.stroke();
+    ctx.beginPath(); ctx.arc(8 * u, 8 * u, 3 * u, 0, 6.2832); ctx.stroke();
+    for (let k = 0; k < 8; k++) {                    // los radios de piedra
+      const ang = k * Math.PI / 4;
+      ctx.beginPath();
+      ctx.moveTo((8 + Math.cos(ang) * 3) * u, (8 + Math.sin(ang) * 3) * u);
+      ctx.lineTo((8 + Math.cos(ang) * 6.5) * u, (8 + Math.sin(ang) * 6.5) * u);
+      ctx.stroke();
+    }
+    ctx.restore();
+    for (let k = 0; k < 8; k++) {                    // los vidrios encendidos
+      const ang = k * Math.PI / 4 + Math.PI / 8;
+      px(g, 8 + Math.cos(ang) * 4.6, 8 + Math.sin(ang) * 4.6, 1, 1, CLARO,
+         a * (0.35 + 0.5 * pulso(t, 2, k)));
+    }
+    px(g, 7.5, 7.5, 1, 1, CLARO, a);
+  } else if (p.icono === "manos2") {         // las dos manos que casi se tocan
+    // el brazo, la palma y el índice estirado, de cada lado; en medio, el
+    // hueco. Con las manos chiquitas no se entendía qué era.
+    px(g, 0, 7.5, 2.5, 3, c, a);              // brazo izquierdo
+    px(g, 2.5, 4.5, 4, 6, c, a);              // palma
+    px(g, 6.5, 6.8, 1.2, 1.4, c, a);          // índice estirado
+    px(g, 2.5, 4.5, 4, 1, ORO, a);            // el dorso, más claro
+    px(g, 13.5, 7.5, 2.5, 3, c, a);           // brazo derecho
+    px(g, 9.5, 4.5, 4, 6, c, a);              // palma
+    px(g, 8.3, 6.8, 1.2, 1.4, c, a);          // índice estirado
+    px(g, 9.5, 4.5, 4, 1, ORO, a);
+    px(g, 7.6, 6.9, 0.9, 1.4, CLARO, a * (0.35 + 0.5 * pulso(t, 2.4)))   // la chispa
+  } else {                                   // el pentagrama y sus notas
+    for (let k = 0; k < 5; k++) px(g, 1, 4 + k * 2, 14, 1, c, a * .8);
+    px(g, 4, 6, 2, 2, CLARO, a); px(g, 5, 3, 1, 4, CLARO, a);
+    px(g, 9, 10, 2, 2, CLARO, a); px(g, 10, 7, 1, 4, CLARO, a);
+    px(g, 11, 6, 2, 1, CLARO, a);
+  }
+  ctx.restore();
+}
+
 const MOTIVOS = { mirar, trinidad, siete, dos, corona, ciudad, incienso, fe };
 
 function pinta(ctx, clave, lado, t, extra) {
@@ -464,5 +577,6 @@ function simbolo7(ctx, i, x, y, lado, t, encendido) {
 }
 raiz.Motivos = { pinta: pinta, pregunta: pregunta, icono: icono, absorbe: absorbe,
                  simbolo7: simbolo7, SIMBOLOS: SIMBOLOS, NOMBRES7: NOMBRES7,
+                 legado: legado, LEGADO: LEGADO,
                  claves: Object.keys(MOTIVOS) };
 })(window);
