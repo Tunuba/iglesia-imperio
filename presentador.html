@@ -23,8 +23,11 @@ body.limpia{cursor:none}
 #lienzo{position:fixed;inset:0;z-index:1;width:100%;height:100%;display:block}
 #sala{position:fixed;left:0;right:0;bottom:0;z-index:3;width:100%;height:24vh;
   pointer-events:none;display:none}
+/* de transparente a negro de un salto se veía el canto del óvalo sobre el
+   dibujo; las paradas intermedias lo funden */
 #vineta{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(ellipse 92% 76% at 50% 46%,transparent 48%,rgba(0,0,0,.72) 100%)}
+  background:radial-gradient(ellipse 106% 90% at 50% 46%,transparent 32%,
+    rgba(0,0,0,.20) 60%,rgba(0,0,0,.46) 80%,rgba(0,0,0,.74) 100%)}
 #destello{position:fixed;inset:0;z-index:6;pointer-events:none;background:#FFF6E2;opacity:0}
 
 /* rótulo mínimo, y se apaga con T: nada de párrafos, la voz son ustedes */
@@ -314,6 +317,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 <script src="assets/sprites.js?v=6"></script>
 <script src="assets/escenas.js?v=6"></script>
 <script src="assets/qr.js?v=6"></script>
+<script src="assets/motivos.js?v=1"></script>
 <script src="assets/sala.js?v=6"></script>
 <script>
 "use strict";
@@ -341,16 +345,16 @@ const CREDO=[
 const MOMENTOS=[
   {d:"tierra",     ojo:"el catolicismo, para dummies", t:"¿Qué significa salvarse?",        c:"vacio",  sala:true},
   {d:"semilla",    ojo:"dios crea por amor",           t:"Cae una semilla",                 c:"calido"},
-  {d:"pecado",     ojo:"la libertad tiene precio",     t:"Uno se separa",                   c:"oscuro"},
-  {d:"luz",        ojo:"la respuesta",                 t:"Y entonces baja",                 c:"luz",    barra:true},
+  {d:"pecado",     ojo:"la libertad tiene precio",     t:"Uno se separa",                   c:"oscuro", apaga:true, sala:true},
+  {d:"luz",        ojo:"la respuesta",                 t:"Y entonces baja",                 c:"luz",    barra:true, sala:true},
   {d:"tres",       ojo:"toda la historia",             t:"Problema · respuesta · meta",     c:"oscuro"},
-  {d:"trinidad",   ojo:"1 · lo que creen",             t:"Un solo Dios en tres personas",   c:"templo"},
-  {d:"sacramentos",ojo:"2 · cómo lo celebran",         t:"Siete gestos",                    c:"templo"},
-  {d:"moral",      ojo:"3 · cómo se comportan",        t:"Amar a Dios y al prójimo",        c:"calido"},
+  {d:"trinidad",   ojo:"1 · lo que creen",             t:"Un solo Dios en tres personas",   c:"templo", suma:{meta:3,que:"vieron a los tres",uno:"completó"}, sala:true},
+  {d:"sacramentos",ojo:"2 · cómo lo celebran",         t:"Siete gestos",                    c:"templo", suma:{meta:7,que:"gestos encendidos",cuenta:true}, sala:true},
+  {d:"moral",      ojo:"3 · cómo se comportan",        t:"Amar a Dios y al prójimo",        c:"calido", suma:{meta:3,que:"sacaron las tres palabras"}, sala:true},
   {d:"aguila",     ojo:"4 · cuánto costaba creer",     t:"Elegí vos",                       c:"sangre", votos:true, sala:true},
   {d:"a313",       ojo:"edicto de milán",              t:"De prohibidos a permitidos",      c:"oro"},
   {d:"a380",       ojo:"edicto de tesalónica",         t:"De permitidos a ser el Imperio",  c:"oro"},
-  {d:"hoy",        ojo:"5 · cómo lo vemos hoy",        t:"Escuelas, hospitales, catedrales",c:"calido"},
+  {d:"hoy",        ojo:"5 · cómo lo vemos hoy",        t:"Escuelas, hospitales, catedrales",c:"calido", suma:{meta:3,que:"obras levantadas",cuenta:true}, sala:true},
   {d:"cierre",     ojo:"el credo",                     t:"Ninguno lo tiene entero",         c:"oro",    sala:true}
 ];
 
@@ -408,14 +412,61 @@ function dibujaSala(){
     const salto=g.arriba>0?Math.abs(Math.sin(t*6))*esc*4:0;
     if(g.arriba>0) g.arriba-=1/60;
     const y=H-ph-salto-fila*ph*0.55-Math.round(H*0.06);   // aire bajo los pies
-    if(escena===3&&g.luz>0.02){
-      ctx.globalAlpha=0.10+0.4*g.luz; ctx.fillStyle="#F0D67A";
-      ctx.beginPath(); ctx.arc(g.x+pw/2,y+ph*0.5,pw*0.9,0,7); ctx.fill(); ctx.globalAlpha=1;
+    // sosteniendo la luz: el halo PARPADEA, para que se vea quién está
+    // aportando ahora mismo; el que no sostiene, late en rojo apagado
+    if(escena===3){
+      if(g.luz>0.02){
+        const parp=0.55+0.45*Math.sin(t*7+i);
+        ctx.globalAlpha=(0.10+0.42*g.luz)*parp; ctx.fillStyle="#F0D67A";
+        ctx.beginPath(); ctx.arc(g.x+pw/2,y+ph*0.5,pw*0.9,0,7); ctx.fill(); ctx.globalAlpha=1;
+      }else{
+        ctx.globalAlpha=0.10+0.10*Math.sin(t*2.5+i); ctx.fillStyle="#C0261E";
+        ctx.beginPath(); ctx.arc(g.x+pw/2,y+ph*0.55,pw*0.55,0,7); ctx.fill(); ctx.globalAlpha=1;
+      }
     }
     Escenas.persona(ctx,g.p,frame,g.x,y,esc);
+    // el momento del pecado: cada quien lleva SU corazón encima, y se apaga
+    // cuando lo toca. Así la clase ve el conteo sin leer un número.
+    if(escena===2&&Escenas.listo()){
+      const ch=Math.max(8,Math.round(esc*7));
+      const img=g.apagado?Escenas.corazon(Math.floor(t*8)%SP.corazon.n,"negro")
+                         :Escenas.corazon(Math.floor(t*11)%SP.corazon.n,"vivo");
+      if(!g.apagado){
+        ctx.globalAlpha=0.16+0.10*Math.sin(t*5+i); ctx.fillStyle="#C0261E";
+        ctx.beginPath(); ctx.arc(g.x+pw/2,y-ch*0.35,ch*0.75,0,7); ctx.fill(); ctx.globalAlpha=1;
+      }
+      ctx.drawImage(img,Math.round(g.x+pw/2-ch/2),Math.round(y-ch-esc),ch,ch);
+    }
+    // en los momentos de sumar, cada quien lleva su cuenta encima: puntos
+    // que se encienden. La clase ve QUIÉN va y cuánto falta, sin leer nada.
+    if(MOMENTOS[escena].suma){
+      const meta=MOMENTOS[escena].suma.meta;
+      const a=(g.aporte&&g.aporte.e===escena)?g.aporte.n:0;
+      const paso=Math.max(2,Math.round(esc*1.1));
+      const ancho=meta*paso*2-paso;
+      for(let k=0;k<meta;k++){
+        const on=k<a;
+        ctx.globalAlpha=on?(0.75+0.25*Math.sin(t*6+k)):0.22;
+        ctx.fillStyle=on?"#F0D67A":"#4A5268";
+        ctx.fillRect(Math.round(g.x+pw/2-ancho/2+k*paso*2), y-esc*3, paso, paso);
+      }
+      ctx.globalAlpha=1;
+    }
     if(escena===8&&g.voto){
-      ctx.fillStyle=g.voto==="fe"?"#C0261E":"#5FB8D8";
-      ctx.fillRect(Math.round(g.x+pw/2-esc), y-esc*3, esc*2, esc*2);
+      // cada quien lleva encima lo que eligió: la cruz o el pebetero
+      const lado=Math.max(10,Math.round(esc*8));
+      if(window.Motivos)
+        Motivos.icono(ctx,g.voto==="fe"?"fe":"incienso",
+                      Math.round(g.x+pw/2-lado/2), Math.round(y-lado-esc*0.5), lado, t);
+      else{
+        ctx.fillStyle=g.voto==="fe"?"#C0261E":"#5FB8D8";
+        ctx.fillRect(Math.round(g.x+pw/2-esc), y-esc*3, esc*2, esc*2);
+      }
+    }
+    // todavía sin votar: un punto que late, para saber a quién falta
+    if(escena===8&&!g.voto){
+      ctx.globalAlpha=0.25+0.45*Math.abs(Math.sin(t*3+i)); ctx.fillStyle="#FFF6E2";
+      ctx.fillRect(Math.round(g.x+pw/2-esc*0.5), y-esc*3, esc, esc); ctx.globalAlpha=1;
     }
     if(g.arriba>0){
       ctx.globalAlpha=0.4+0.4*Math.sin(t*7); ctx.fillStyle="#F0D67A";
@@ -426,9 +477,79 @@ function dibujaSala(){
 }
 Escenas.cargar(()=>requestAnimationFrame(pinta));
 
+/* Lo que hizo la sala en el momento en curso: cuántos toques llevan entre
+   todos y cuántos lo terminaron. Es lo que hace que la pantalla grande sea
+   el espejo de los teléfonos y no una animación con temporizador. */
+function sumaSala(){
+  const m=MOMENTOS[escena];
+  if(!m.suma) return null;
+  let toques=0, listos=0;
+  for(const g of gente.values()){
+    const a=g.aporte;
+    if(!a||a.e!==escena) continue;
+    toques+=Math.min(a.n,m.suma.meta);
+    if(a.n>=m.suma.meta) listos++;
+  }
+  const techo=Math.max(1,gente.size*m.suma.meta);
+  return { toques, listos, techo, gente:gente.size, meta:m.suma.meta,
+           frac:Math.min(1,toques/techo) };
+}
+window.__suma=sumaSala;
+
+/* Los siete gestos de la pantalla grande se encienden con los de la sala:
+   si nadie ha tocado, no hay ninguno; con la sala entera, los siete. Y el
+   presentador SIEMPRE puede seguir sin esperar a nadie. */
+function pintaSuma(){
+  const s=sumaSala();
+  if(!s) return;
+  if(escena===6) EST.anim.sacra=EST.anim.sacra+(7*s.frac-EST.anim.sacra)*0.12;
+  if(escena===11) EST.anim.oro380=Math.max(EST.anim.oro380,s.frac);
+}
+setInterval(pintaSuma,120);
+
+/* El corazón de la pantalla se apaga al ritmo de la sala: con ocho conectados
+   hace falta que los ocho lo toquen; con uno, ese uno lo apaga entero. Si no
+   hay nadie conectado, se apaga solo a los tres segundos para no dejar la
+   escena colgada. La computadora SIEMPRE puede seguir con SIGUIENTE. */
+let entroPecado=0;
+function pintaPecado(){
+  if(escena!==2){ entroPecado=0; return; }
+  if(!entroPecado) entroPecado=Date.now();
+  let destino;
+  if(gente.size===0){
+    destino=Math.min(1,(Date.now()-entroPecado)/3000);
+  }else{
+    const apagados=[...gente.values()].filter(g=>g.apagado).length;
+    destino=apagados/gente.size;
+  }
+  // suave, para que se vea apagarse y no dar un salto
+  EST.anim.pecado=EST.anim.pecado+(destino-EST.anim.pecado)*0.12;
+}
+setInterval(pintaPecado,100);
+
 /* ── la franja de abajo: la luz de la sala y los votos ───────────── */
 function pintaFranja(){
   const m=MOMENTOS[escena], f=$("#franja");
+  if(m.apaga){
+    f.className="on";
+    const apagados=[...gente.values()].filter(g=>g.apagado).length;
+    const pct=gente.size?Math.round(apagados/gente.size*100):0;
+    f.innerHTML='<div class="barraGrande"><i style="width:'+pct+'%;background:linear-gradient(90deg,#3A1512,#C0261E)"></i>'+
+      '<span>'+apagados+' de '+gente.size+' ya lo apagaron</span></div>';
+    document.body.classList.toggle("conFranja", true);
+    return;
+  }
+  if(m.suma){
+    const s=sumaSala();
+    f.className="on";
+    const txt = m.suma.cuenta
+      ? (s.toques+' de '+(s.gente*s.meta)+' '+m.suma.que)
+      : (s.listos+' de '+s.gente+' '+m.suma.que);
+    f.innerHTML='<div class="barraGrande"><i style="width:'+Math.round(s.frac*100)+'%"></i>'+
+      '<span>'+txt+'</span></div>';
+    document.body.classList.toggle("conFranja", true);
+    return;
+  }
   if(m.barra){
     f.className="on";
     const cargando=[...gente.values()].filter(g=>(g.luz||0)>0.02).length;
@@ -477,6 +598,18 @@ function conecta(){
         if(escena>0) sala.enviar({t:"escena",n:escena});
       }
       if(m.t==="arriba"){ const g=gente.get(m.id); if(g) g.arriba=6; }
+      // lo que lleva tocado cada quien en el momento en curso
+      if(m.t==="aporte"&&typeof m.n==="number"){
+        let g=gente.get(m.id);
+        if(!g){ g={p:0,f:0,x:-60,arriba:0,luz:0,voto:null}; gente.set(m.id,g); }
+        g.aporte={e:m.e|0,n:m.n|0,m:m.m|0};
+      }
+      // cada quien apaga el suyo: la pantalla grande se apaga al ritmo de la sala
+      if(m.t==="pecado"){
+        let g=gente.get(m.id);
+        if(!g){ g={p:0,f:0,x:-60,arriba:0,luz:0,voto:null}; gente.set(m.id,g); }
+        g.apagado=true;
+      }
       if(m.t==="voto"||m.t==="luz"){
         let g=gente.get(m.id);
         if(!g){ g={p:0,f:0,x:-60,arriba:0,luz:0,voto:null}; gente.set(m.id,g); }
@@ -625,7 +758,7 @@ function vaA(n){
   document.body.classList.toggle("conCredo",ultima);
   Escenas.cielo(m.c);
   if(escena===1&&EST.anim.semilla<1) anima("semilla",1,2600);
-  if(escena===2) EST.anim.pecado=0;
+  if(escena===2){ EST.anim.pecado=0; gente.forEach(g=>{ g.apagado=false; }); }
   if(escena===6) anima("sacra",7,2600);
   if(escena===9){ EST.anim.oro313=0; Escenas.destello(700); anima("oro313",0.6,1500); }
   if(escena===10){ EST.anim.oro380=0; Escenas.destello(900); anima("oro380",1,1700); }

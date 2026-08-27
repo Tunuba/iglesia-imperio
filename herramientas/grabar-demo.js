@@ -77,12 +77,12 @@ const espera = (ms) => new Promise(r => setTimeout(r, ms));
   // ── 3 · entran los teléfonos ──
   await E(`Estudio.paso(3, ${TOTAL_PASOS}, "Escanean y entran", "En el teléfono: su personaje, su corazón y su pedazo del Credo. Nada más.")`);
   await E(`Estudio.nota(null); Estudio.destacar("cajaT1")`);
-  await E(`Estudio.tel(1).location.href = "${BASE}/index.html"`);
+  await E(`Estudio.tel(1).location.href = "${BASE}/index.html?yo=1"`);
   await espera(2600);
   await E(`Estudio.nombres()`);
   await capturar(2.5);
   await E(`Estudio.destacar("cajaT2")`);
-  await E(`Estudio.tel(2).location.href = "${BASE}/index.html"`);
+  await E(`Estudio.tel(2).location.href = "${BASE}/index.html?yo=2"`);
   await espera(2600);
   await E(`Estudio.nombres()`);
   await capturar(2.5);

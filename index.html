@@ -27,8 +27,11 @@ body{background:var(--noche);color:var(--tinta);font-family:var(--sans);
 /* brasas: polvo que sube despacio y toma el color del cielo de cada momento.
    Da vida al fondo sin agregar una sola palabra. */
 #brasas{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* la viñeta pasaba de transparente a negro de golpe y se veía el canto del
+   óvalo; con paradas intermedias el borde desaparece */
 #vineta{position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(ellipse 92% 74% at 50% 44%,transparent 46%,rgba(0,0,0,.7) 100%)}
+  background:radial-gradient(ellipse 104% 88% at 50% 44%,transparent 30%,
+    rgba(0,0,0,.18) 58%,rgba(0,0,0,.44) 78%,rgba(0,0,0,.72) 100%)}
 
 header{position:relative;z-index:10;display:flex;align-items:center;gap:9px;flex:0 0 auto;
   padding:calc(env(safe-area-inset-top) + 10px) 16px 4px}
@@ -109,6 +112,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .btn.grande .k{margin-left:0}
 
 /* el aviso de "es tuyo" */
+/* el voto se ve en la propia pantalla: encendida si ofreciste incienso,
+   apagada si mantuviste la fe (asi lo pide el guion) */
+body.encendida #cielo{background:radial-gradient(ellipse 120% 90% at 50% 40%,#FFF6E2 0%,#C9BE9A 55%,#8A7F63 100%)!important}
+body.encendida{color:#151926}
+body.apagada #cielo{background:#000!important}
+body.apagada main,body.apagada header{opacity:.45;transition:opacity 1.2s}
+
 #tuyo{position:fixed;inset:0;z-index:30;display:none;place-items:center;text-align:center;
   padding:8vw 7vw;background:radial-gradient(ellipse 90% 70% at 50% 42%,#3A2C08 0%,#05060B 78%)}
 #tuyo.on{display:grid;animation:entra .45s var(--ease)}
@@ -168,6 +178,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 <script src="assets/sprites.js?v=6"></script>
 <script src="assets/escenas.js?v=6"></script>
+<script src="assets/motivos.js?v=1"></script>
 <script src="assets/sala.js?v=6"></script>
 <script>
 "use strict";
@@ -197,7 +208,12 @@ const CREDO=[
 const TOTAL=13;
 
 /* ── quién sos ──────────────────────────────────────────────────── */
-const LS="catolicismo-tel-v1";
+/* En clase cada quien tiene SU teléfono. En el estudio de grabación son dos
+   páginas del MISMO Chrome: comparten localStorage y salían con el mismo
+   personaje y el mismo pedazo del Credo, y para la computadora eran un solo
+   aparato. Con ?yo=N cada una guarda por separado. En clase no se usa. */
+const YO=(location.search.match(/[?&]yo=([A-Za-z0-9_-]{1,8})/)||[])[1]||"";
+const LS="catolicismo-tel-v1"+(YO?"-"+YO:"");
 let S={ persona:0, pedazo:0, voto:null, escena:0 };
 try{ const g=JSON.parse(localStorage.getItem(LS)||"null");
      if(g&&typeof g.persona==="number") S=Object.assign(S,g); else sorteo();
@@ -257,6 +273,12 @@ function pintaBrasas(){
   }
 }
 
+/* Lo que lleva tocado este teléfono en el momento en curso. Cada toque
+   se le avisa a la computadora: allá se suman los de toda la sala y se
+   ve en vivo. Ninguno de estos toques detiene la presentación — la
+   computadora siempre puede seguir. */
+let toques=0, entroEn=0;
+
 /* ── el corazón, que es lo que se mira acá ──────────────────────── */
 let negrura=0, luz=0, luzSala=0;
 function pintaLatido(){
@@ -272,18 +294,42 @@ function pintaLatido(){
   ctx.imageSmoothingEnabled=false;
   ctx.clearRect(0,0,lado,lado);
   const t=performance.now()/1000;
+  const M=MOMENTOS[S.escena]||{};
+  // ya votaste: tu pantalla lleva el dibujo de lo que elegiste
+  if(M.accion==="voto" && S.voto && window.Motivos){
+    Motivos.pinta(ctx,S.voto==="fe"?"fe":"incienso",lado,t,{});
+    return;
+  }
+  if(M.motivo && window.Motivos){
+    Motivos.pinta(ctx,M.motivo,lado,t,{persona:S.persona,otra:(S.persona+7)%16,
+      toques:toques, meta:M.meta||0, num:M.num, edad:(performance.now()-entroEn)/1000});
+    return;
+  }
   const SP=Escenas.sprites();
   const fr=Math.floor((t*(11+7*luz))%SP.corazon.n);
   let img;
-  if(luz>0) img=Escenas.corazonMezcla(fr,"negro","oro",luz);
+  // el último momento: el corazón entero de oro, sin que nadie lo sostenga
+  if(M.oro) img=Escenas.corazon(fr,"oro");
+  else if(luz>0) img=Escenas.corazonMezcla(fr,"negro","oro",luz);
   else if(negrura>0) img=Escenas.corazonMezcla(fr,"vivo","negro",negrura);
   else img=Escenas.corazon(fr,"vivo");
   // resplandor detrás: si no, el corazón negro sobre fondo negro no se ve
-  const g=ctx.createRadialGradient(lado/2,lado/2,lado*0.12,lado/2,lado/2,lado*0.52);
-  g.addColorStop(0,"rgba(255,244,200,"+(0.10+0.26*luz+0.05*Math.sin(t*2))+")");
+  // el resplandor pierde fuerza de a poco: con dos paradas se veía el corte
+  // del círculo, como una hoja pegada encima
+  const fuerza=0.10+0.26*(M.oro?1:luz)+0.05*Math.sin(t*2);
+  const g=ctx.createRadialGradient(lado/2,lado/2,lado*0.05,lado/2,lado/2,lado*0.62);
+  g.addColorStop(0,"rgba(255,244,200,"+fuerza.toFixed(3)+")");
+  g.addColorStop(0.35,"rgba(255,244,200,"+(fuerza*0.55).toFixed(3)+")");
+  g.addColorStop(0.65,"rgba(255,244,200,"+(fuerza*0.20).toFixed(3)+")");
   g.addColorStop(1,"rgba(255,244,200,0)");
   ctx.fillStyle=g; ctx.fillRect(0,0,lado,lado);
   ctx.drawImage(img,0,0,lado,lado);
+  // el cierre: los siete gestos giran y caen dentro del corazón de oro
+  if(M.oro && window.Motivos) Motivos.absorbe(ctx,lado,t);
+  // «en los celulares aparece un signo de interrogación» (el guion): está
+  // mientras nadie sostiene, y se borra en cuanto empieza a entrar la luz
+  if(M.accion==="luz" && luz<0.25 && window.Motivos)
+    Motivos.pregunta(ctx,lado,t,1-luz/0.25);
   // el anillo: lo cargado se ve ALREDEDOR del corazón, no en un número
   if(anillo){
     const R=lado*0.365, gr=-Math.PI/2;   // el sprite deja aire: mas afuera, el anillo se despega del corazon
@@ -302,20 +348,24 @@ function pintaLatido(){
 let anillo=false;
 
 /* ── lo que hace el teléfono en cada momento ────────────────────── */
+/* El corazón SÓLO sale donde es de uno: cuando te lo dan, cuando se
+   apaga, cuando se carga, cuando elegís y al final lleno de oro. En los
+   demás momentos hay un dibujo propio (assets/motivos.js): un corazón
+   quieto invita a apretarlo y no pasa nada. */
 const MOMENTOS=[
-  {dice:"mirá la pantalla grande", cielo:"vacio"},
+  {dice:"mirá la pantalla grande", cielo:"vacio",  motivo:"mirar"},
   {dice:"este corazón es el tuyo", cielo:"calido"},
   {dice:"tocá para apagarlo", cielo:"oscuro", accion:"pecado"},
   {dice:"sostené para cargar la luz", cielo:"luz", accion:"luz", barra:true},
-  {dice:"mirá la pantalla grande", cielo:"oscuro"},
-  {dice:"mirá la pantalla grande", cielo:"templo"},
-  {dice:"mirá la pantalla grande", cielo:"templo"},
-  {dice:"mirá la pantalla grande", cielo:"calido"},
+  {dice:"mirá la pantalla grande", cielo:"oscuro", motivo:"mirar"},
+  {dice:"tocá los tres", cielo:"templo", motivo:"trinidad", meta:3},
+  {dice:"encendé los siete gestos", cielo:"templo", motivo:"siete", meta:7},
+  {dice:"tocá el corazón del medio", cielo:"calido", motivo:"dos", meta:3},
   {dice:"elegí", cielo:"sangre", accion:"voto"},
-  {dice:"de prohibidos a permitidos", cielo:"oro"},
-  {dice:"de permitidos a ser el imperio", cielo:"oro"},
-  {dice:"mirá la pantalla grande", cielo:"calido"},
-  {dice:"cuando escuches tu pedazo, levantá el teléfono", cielo:"oro", pedazo:true}
+  {dice:"año 313 · de prohibidos a permitidos", cielo:"oro", motivo:"corona", num:"313", destello:1},
+  {dice:"año 380 · de permitidos a ser el imperio", cielo:"oro", motivo:"corona", num:"380", destello:1},
+  {dice:"tocá para levantarlas", cielo:"calido", motivo:"ciudad", meta:3},
+  {dice:"cuando escuches tu pedazo, levantá el teléfono", cielo:"oro", pedazo:true, oro:true}
 ];
 
 (function pips(){ const c=$("#pasos");
@@ -331,6 +381,12 @@ function ir(n){
   $("#barraSala").className=m.barra?"on":"";
   anillo=(m.accion==="luz");
   tinte=TINTES[m.cielo]||TINTES.vacio;
+  toques=0; entroEn=performance.now();
+  // «todos los celulares se encienden a la vez» (313) · «se ponen del
+  // mismo color» (380): el destello es de toda la sala, no de uno
+  if(m.destello&&window.Escenas) Escenas.destello(900);
+  if(m.destello) vibra([30,60,30]);
+  avisaAporte(true);
   // el personaje se presenta cuando el corazón pasa a ser "tuyo", vuelve
   // cuando te toca elegir y se queda al final. En el resto, estorba.
   $("#quien").className=(n===1||n===8||n===TOTAL-1)?"on":"";
@@ -354,6 +410,13 @@ function ir(n){
     const m=MOMENTOS[S.escena]||{};
     if(m.accion==="pecado"&&negrura<1){ apagaCorazon(); return; }
     if(m.accion==="luz"&&!listoLuz){ dentro=true; sostener(true); return; }
+    if(m.meta&&toques<m.meta){       // los tres, los siete, las tres obras…
+      toques++;
+      chispea(toques>=m.meta?22:9, toques>=m.meta?[245,222,147]:null);
+      vibra(toques>=m.meta?[20,40,140]:12);
+      avisaAporte(true);
+      return;
+    }
     chispea(7); vibra(8);            // en cualquier otro momento: sólo late
   });
   const suelta=()=>{ if(dentro){ dentro=false; sostener(false); } };
@@ -398,10 +461,27 @@ function pintaAcciones(cual){
     c.appendChild(a); c.appendChild(b);
   }
 }
+/* Lo que lleva hecho este teléfono viaja a la computadora: allá se suma
+   con el de todos y la pantalla grande se mueve con la sala. Se manda al
+   tocar y, si no, cada segundo y medio (por si un mensaje se perdió). */
+let ultimoAporte=0;
+function avisaAporte(ya){
+  const m=MOMENTOS[S.escena]||{};
+  if(!m.meta||!canal) return;
+  const ahora=Date.now();
+  if(!ya&&ahora-ultimoAporte<1500) return;
+  ultimoAporte=ahora;
+  canal.enviar({t:"aporte",id:idTelefono,e:S.escena,n:toques,m:m.meta});
+}
+setInterval(()=>avisaAporte(false),1500);
+
 /* apagar el corazón: es el momento del pecado, y tiene que SENTIRSE */
 function apagaCorazon(){
   if(negrura>=1) return;
   animar(v=>negrura=v,1,1500);
+  // la computadora tiene que ver quién ya lo apagó: en la pantalla grande
+  // el corazón se va apagando al ritmo de la sala, no de un temporizador
+  if(canal) canal.enviar({t:"pecado",id:idTelefono});
   chispea(26,[90,80,74]);            // ceniza
   vibra([28,50,120]);
   $("#dice").textContent="se apagó";
@@ -423,6 +503,10 @@ function animar(set,hasta,ms){
 }
 function vota(cual){
   S.voto=cual; guardar();
+  // «quien elige adorar al emperador ve su pantalla encenderse; quien
+  // mantiene la fe, apagarse» — literal del guion
+  document.body.classList.remove("encendida","apagada");
+  document.body.classList.add(cual==="emperador"?"encendida":"apagada");
   chispea(24, cual==="fe"?[245,222,147]:[204,96,84]);
   vibra(cual==="fe"?[30,40,30,40,180]:[120]);
   $("#dice").textContent = cual==="fe" ? "te llamaron mártir" : "te llamaron lapsi, «caído»";
@@ -433,8 +517,9 @@ function vota(cual){
 /* ── la sala ────────────────────────────────────────────────────── */
 let canal=null, ultimaSalaLuz=0, ultimaEscena=-1, huboCaida=false;
 const idTelefono=(function(){
-  let v=null; try{ v=localStorage.getItem("imperio-id"); }catch(e){}
-  if(!v){ v=Math.random().toString(36).slice(2,10); try{ localStorage.setItem("imperio-id",v); }catch(e){} }
+  const clave="imperio-id"+(YO?"-"+YO:"");
+  let v=null; try{ v=localStorage.getItem(clave); }catch(e){}
+  if(!v){ v=Math.random().toString(36).slice(2,10); try{ localStorage.setItem(clave,v); }catch(e){} }
   return v;
 })();
 

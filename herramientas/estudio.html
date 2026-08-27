@@ -21,12 +21,25 @@ body{width:1600px;height:900px;overflow:hidden;background:var(--noche);color:var
   font-family:var(--sans);
   background-image:radial-gradient(ellipse 120% 80% at 50% 0%,#141B33 0%,#05060B 62%)}
 
-#cabecera{height:112px;padding:18px 40px 0;display:flex;flex-direction:column;justify-content:center}
+#cabecera{height:56px;padding:16px 40px 0;display:flex;align-items:center;justify-content:space-between}
 #paso{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--oro);text-transform:uppercase}
-#titulo{font-family:var(--serif);font-size:34px;line-height:1.15;margin-top:6px}
-#sub{font-size:15px;color:var(--apagado);margin-top:5px;min-height:20px}
+#marcaAlto{font-family:var(--mono);font-size:12px;letter-spacing:.24em;color:#4A5268;text-transform:uppercase}
 
-#escena{display:flex;gap:34px;padding:6px 40px 0;height:788px}
+#escena{display:flex;gap:34px;padding:4px 40px 0;height:606px}
+
+/* EL LETRERO: lo que se está haciendo, en grande y centrado abajo. Antes esto
+   era una cajita a la derecha que además tapaba el teléfono 2. */
+#letrero{position:absolute;left:0;right:0;top:672px;bottom:52px;padding:0 90px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:7px}
+#letreroT{font-family:var(--serif);font-size:44px;line-height:1.1}
+#letreroS{font-size:21px;color:var(--apagado);line-height:1.35;max-width:1180px}
+/* una linea corta y nada mas: lo largo lo dice la voz, y si se desborda se
+   come el pie de pagina */
+#letreroN{font-size:20px;line-height:1.4;color:#F5DE93;max-width:1180px;display:none;
+  max-height:56px;overflow:hidden}
+#letreroN.on{display:block}
+#letreroN b{color:var(--oro)}
 
 .rotulo{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--apagado);
   text-transform:uppercase;margin-bottom:8px}
@@ -59,7 +72,9 @@ body{width:1600px;height:900px;overflow:hidden;background:var(--noche);color:var
 #progreso i{display:block;height:100%;width:0%;background:var(--oro)}
 
 .destacar{outline:3px solid var(--oro);outline-offset:4px;border-radius:14px}
-#nota{position:absolute;right:40px;top:118px;max-width:330px;background:rgba(232,196,74,.10);
+/* la nota iba arriba a la derecha y TAPABA el teléfono 2; debajo de los
+   teléfonos el espacio está libre en los nueve pasos */
+#nota{position:absolute;right:40px;top:676px;max-width:600px;background:rgba(232,196,74,.10);
   border:1px solid #4A3C14;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;
   color:#F5DE93;display:none}
 #nota.on{display:block}
@@ -68,8 +83,7 @@ body{width:1600px;height:900px;overflow:hidden;background:var(--noche);color:var
 <body>
   <div id="cabecera">
     <div id="paso">paso 1 de 9</div>
-    <div id="titulo">El catolicismo For Dummies</div>
-    <div id="sub">cómo se usa</div>
+    <div id="marcaAlto">El catolicismo For Dummies</div>
   </div>
 
   <div id="escena">
@@ -84,18 +98,22 @@ body{width:1600px;height:900px;overflow:hidden;background:var(--noche);color:var
     <div id="ladoTel">
       <div class="tel">
         <div class="rotulo">Teléfono <b>1</b></div>
-        <div class="telMarco" id="cajaT1"><div class="telHueco"><iframe id="t1" src="../index.html"></iframe></div></div>
+        <div class="telMarco" id="cajaT1"><div class="telHueco"><iframe id="t1" src="../index.html?yo=1"></iframe></div></div>
         <div class="telNombre" id="n1">—</div>
       </div>
       <div class="tel">
         <div class="rotulo">Teléfono <b>2</b></div>
-        <div class="telMarco" id="cajaT2"><div class="telHueco"><iframe id="t2" src="../index.html"></iframe></div></div>
+        <div class="telMarco" id="cajaT2"><div class="telHueco"><iframe id="t2" src="../index.html?yo=2"></iframe></div></div>
         <div class="telNombre" id="n2">—</div>
       </div>
     </div>
   </div>
 
-  <div id="nota"></div>
+  <div id="letrero">
+    <div id="letreroT">El catolicismo For Dummies</div>
+    <div id="letreroS">cómo se usa</div>
+    <div id="letreroN"></div>
+  </div>
 
   <div id="pie">
     <div id="marcaPie">Claves del Pensamiento 1 · Universidad del Istmo</div>
@@ -110,11 +128,12 @@ const $=(s)=>document.querySelector(s);
 window.Estudio={
   paso(n, total, titulo, sub){
     $("#paso").textContent="paso "+n+" de "+total;
-    $("#titulo").textContent=titulo;
-    $("#sub").textContent=sub||"";
+    $("#letreroT").textContent=titulo;
+    $("#letreroS").textContent=sub||"";
     $("#barra").style.width=Math.round(n/total*100)+"%";
   },
-  nota(t){ const n=$("#nota"); if(!t){ n.classList.remove("on"); return; } n.innerHTML=t; n.classList.add("on"); },
+  nota(t){ const n=$("#letreroN"); if(!t){ n.classList.remove("on"); n.innerHTML=""; return; }
+           n.innerHTML=t; n.classList.add("on"); },
   destacar(cual){
     ["cajaPC","cajaT1","cajaT2"].forEach(id=>document.getElementById(id).classList.remove("destacar"));
     if(cual) document.getElementById(cual).classList.add("destacar");
