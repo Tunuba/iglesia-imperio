@@ -16,9 +16,19 @@ Credo, y va viviendo la historia mientras ustedes la cuentan en voz alta.
 powershell -ExecutionPolicy Bypass -File arrancar.ps1
 ```
 
-Eso hace tres cosas: levanta el servidor en esta computadora (sin ventana), abre
-Chrome en la pantalla del presentador y escribe la dirección para los teléfonos.
-Proyectás esa pantalla y listo: **el QR ya trae la dirección correcta**.
+Eso hace cuatro cosas: **enciende el punto de acceso de esta computadora**
+(red **IMPERIO**, clave **12345678**), levanta el servidor sin ventana, abre
+Chrome en la pantalla del presentador y escribe la dirección de los teléfonos.
+Proyectás esa pantalla y listo: **los QR ya traen todo**.
+
+**Esta computadora ES la red.** Los teléfonos no se conectan al WiFi del salón
+ni al de tu casa: se conectan a la laptop, y ahí ella es la `192.168.137.1`.
+Sin router y sin internet. Si preferís usar una red que ya existe, corré
+`arrancar.ps1 -SinHotspot`.
+
+> Windows apaga el punto de acceso solo a los pocos minutos si nadie se conecta.
+> El script desactiva ese apagado automático (necesita permisos de
+> administrador; si no los tiene, avisa y sigue igual).
 
 Para parar todo: `powershell -ExecutionPolicy Bypass -File arrancar.ps1 -Parar`
 

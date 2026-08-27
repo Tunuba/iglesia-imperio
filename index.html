@@ -847,43 +847,76 @@ const DIBUJOS={
   /* 7 · dos personas y el corazón entre ellas */
   moral(g,t){
     const {ctx,W,H,u}=g, base=H-u*3;
-    const esc=Math.max(2,Math.round(H/50));
-    persona(ctx,S.persona,0,W*0.20-SP.personas.w*esc/2,base-SP.personas.h*esc,esc);
-    persona(ctx,(S.persona+7)%SP.catalogo.length,0,W*0.80-SP.personas.w*esc/2,base-SP.personas.h*esc,esc);
-    const cw=Math.min(SP.corazon.w*esc*0.85,W*0.20);
-    const cy=base-SP.personas.h*esc*0.72;
-    ctx.globalAlpha=0.30+0.18*Math.sin(t*2.4); ctx.fillStyle="#F0D67A";
-    ctx.beginPath(); ctx.arc(W/2,cy,cw*0.85,0,7); ctx.fill(); ctx.globalAlpha=1;
-    ctx.drawImage(corazon(Math.floor((t*11)%SP.corazon.n),"oro"),W/2-cw/2,cy-cw/2,cw,cw);
-    ["PERDÓN","JUSTICIA","AYUDA"].forEach((p,i)=>{
-      const f=((t*0.6+i*0.33)%1);
-      ctx.globalAlpha=Math.sin(f*Math.PI)*0.9;
-      ctx.fillStyle="#F5DE93"; ctx.font=fuente(u*2.2,"700"); ctx.textAlign="center";
-      ctx.fillText(p,W/2,cy-cw*0.75-f*u*7); ctx.globalAlpha=1;
-    });
+    const esc=Math.max(2, Math.min(Math.round(H/52), Math.floor(W*0.22/SP.personas.w)));
+    const pw=SP.personas.w*esc, ph=SP.personas.h*esc;
+    const x1=Math.round(W*0.16-pw/2), x2=Math.round(W*0.84-pw/2);
+    persona(ctx,S.persona,0,x1,base-ph,esc);
+    persona(ctx,(S.persona+7)%SP.catalogo.length,0,x2,base-ph,esc);
+    caja("izquierda",x1,base-ph,pw,ph); caja("derecha",x2,base-ph,pw,ph);
+
+    // el corazón, grande y al centro: es lo que pasa entre los dos
+    const lado=Math.round(Math.min(H*0.34, W*0.30));
+    const cx=Math.round(W/2-lado/2), cy=Math.round(base-ph*0.55-lado/2);
+    const halo=ctx.createRadialGradient(cx+lado/2,cy+lado/2,lado*0.15,cx+lado/2,cy+lado/2,lado*0.8);
+    halo.addColorStop(0,"rgba(240,214,122,"+(0.16+0.08*Math.sin(t*2.4))+")");
+    halo.addColorStop(1,"rgba(240,214,122,0)");
+    ctx.fillStyle=halo; ctx.fillRect(cx-lado*0.4,cy-lado*0.4,lado*1.8,lado*1.8);
+    ctx.drawImage(corazon(Math.floor((t*11)%SP.corazon.n),"oro"),cx,cy,lado,lado);
+    caja("corazon",cx,cy,lado,lado);
+
+    // UNA palabra a la vez: las tres juntas se amontonaban y no se leía ninguna
+    const palabras=["PERDÓN","JUSTICIA","AYUDA"];
+    const cual=Math.floor(t/1.8)%3, f=(t/1.8)%1;
+    ctx.globalAlpha=Math.min(1,Math.sin(f*Math.PI)*1.6);
+    ctx.fillStyle="#F5DE93"; ctx.font=fuente(u*3.4,"700"); ctx.textAlign="center";
+    ctx.fillText(palabras[cual], W/2, cy-u*2);
+    ctx.globalAlpha=1;
   },
 
-  /* 8 · el águila del imperio */
+  /* 8 · el estandarte del imperio: el águila sobre el asta */
   aguila(g,t){
-    const {ctx,W,H,u}=g, base=H-u*3, cx=W/2, cy=H*0.28;
-    ctx.fillStyle=anim.votoHecho?"#6E1A16":"#8E2A2A";
-    ctx.fillRect(cx-u*1.2,cy-u*2,u*2.4,u*6);
-    for(let i=0;i<5;i++){
-      ctx.fillRect(cx-u*(3+i*2.1),cy-u*(1.2-i*0.5),u*2,u*1.2);
-      ctx.fillRect(cx+u*(1+i*2.1),cy-u*(1.2-i*0.5),u*2,u*1.2);
+    const {ctx,W,H,u}=g;
+    // las figuras primero, para saber cuánto sitio queda arriba
+    const cuantos=5, hueco=W/cuantos;
+    const escA=Math.max(2, Math.min(Math.round(H/58), Math.floor(hueco*0.62/SP.personas.w)));
+    const pwA=SP.personas.w*escA, phA=SP.personas.h*escA;
+    const base=H-u;
+    for(let i=0;i<cuantos;i++){
+      const x=Math.round(hueco*(i+0.5)-pwA/2);
+      ctx.globalAlpha=(S.voto&&i===2)?1:0.55;
+      persona(ctx,(S.persona+i*3)%SP.catalogo.length,0, x, base-phA, escA);
+      ctx.globalAlpha=1;
+      caja("gente"+i, x, base-phA, pwA, phA);
     }
-    ctx.fillStyle="#E8C44A";
-    ctx.fillRect(cx-u*0.8,cy-u*4,u*1.6,u*2);
-    ctx.fillRect(cx+u*0.6,cy-u*3.4,u*1.4,u*0.8);
-    ctx.fillStyle="#8A8674"; ctx.font=fuente(u*2,"700"); ctx.textAlign="center";
-    ctx.fillText("S · P · Q · R",cx,cy+u*7.5);
-    const esc=Math.max(2,Math.round(H/56));
-    for(let i=0;i<5;i++){
-      ctx.globalAlpha=(S.voto&&i===2)?1:0.5;
-      persona(ctx,(S.persona+i*3)%SP.catalogo.length,0,
-              W*(0.12+i*0.19)-SP.personas.w*esc/2, base-SP.personas.h*esc, esc);
+
+    const cx=W/2, suelo=base-phA-u*1.5;
+    const alto=Math.max(u*10, suelo-u*2);
+    const oro=anim.votoHecho?"#8E7A2E":"#E8C44A", oro2=anim.votoHecho?"#6E5E22":"#F5DE93";
+    // el asta
+    ctx.fillStyle="#6B4A22"; ctx.fillRect(cx-u*0.6, suelo-alto*0.62, u*1.2, alto*0.62);
+    // la placa SPQR
+    ctx.fillStyle="#8E2A2A"; ctx.fillRect(cx-u*4, suelo-alto*0.46, u*8, u*3.4);
+    ctx.fillStyle=oro2; ctx.font=fuente(u*2.1,"700"); ctx.textAlign="center";
+    ctx.fillText("S·P·Q·R", cx, suelo-alto*0.46+u*2.5);
+    // el águila: cuerpo, alas en escalones hacia arriba, cabeza y pico
+    const ay=suelo-alto*0.62;
+    ctx.fillStyle=oro;
+    ctx.fillRect(cx-u*1.2, ay-u*4, u*2.4, u*4.2);                    // cuerpo
+    for(let k=0;k<4;k++){                                            // alas
+      const dx=u*(1.2+k*1.6), dy=ay-u*(3.4+k*1.5), alt=u*(3.2-k*0.4);
+      ctx.fillRect(cx-dx-u*1.6, dy, u*1.6, alt);
+      ctx.fillRect(cx+dx,       dy, u*1.6, alt);
     }
-    ctx.globalAlpha=1;
+    ctx.fillStyle=oro2;
+    ctx.fillRect(cx-u*1, ay-u*6.4, u*2, u*2.4);                      // cabeza
+    ctx.fillRect(cx+u*0.8, ay-u*5.8, u*1.4, u*0.9);                  // pico
+    ctx.fillStyle="#3A2A10";
+    ctx.fillRect(cx+u*0.1, ay-u*5.9, u*0.6, u*0.6);                  // ojo
+    // la corona de laurel bajo el águila
+    ctx.strokeStyle=anim.votoHecho?"#4E4420":"#3E8E4A";
+    ctx.lineWidth=Math.max(1,u*0.6);
+    ctx.beginPath(); ctx.arc(cx, ay+u*0.4, u*3.2, 0.15*Math.PI, 0.85*Math.PI); ctx.stroke();
+    caja("estandarte", cx-u*8, ay-u*7, u*16, alto*0.7);
   },
 
   a313(g,t){ mapa(g,t,anim.oro313,"313"); },

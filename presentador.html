@@ -43,15 +43,15 @@ main{display:grid;grid-template-columns:minmax(210px,24vw) minmax(0,1fr);gap:cla
 .rotulo{font-family:var(--mono);font-size:clamp(9px,.8vw,11px);letter-spacing:.24em;
   text-transform:uppercase;color:var(--oro);margin-bottom:10px}
 
-.dosQR{display:flex;align-items:stretch;justify-content:center;gap:clamp(6px,1vw,14px);
-  flex:1 1 auto;min-height:0;overflow:hidden}
+.dosQR{display:flex;align-items:flex-start;justify-content:center;gap:clamp(6px,1vw,14px);
+  flex:0 0 auto;min-height:0}
 .unQR{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;min-height:0;flex:1 1 0}
 .flecha{font-size:clamp(18px,2.4vw,34px);color:var(--oro);opacity:.55;flex:0 0 auto}
 .paso{flex:0 0 auto;font-family:var(--mono);font-size:clamp(8.5px,.78vw,11px);letter-spacing:.2em;
   text-transform:uppercase;color:var(--apagado);white-space:nowrap}
-.paso b{color:var(--oro);font-size:1.15em}
+.paso b{color:var(--oro);font-size:1.45em;font-weight:700;margin-right:2px}
 .lienzoQR{background:#FFF6E2;border-radius:10px;padding:7px;line-height:0;width:100%;
-  max-width:min(30vh,260px);flex:1 1 auto;min-height:0;
+  max-width:min(26vh,230px);aspect-ratio:1;flex:0 1 auto;min-height:0;
   display:flex;align-items:center;justify-content:center}
 .lienzoQR svg{max-width:100%;max-height:100%;width:auto;height:auto;display:block}
 .pieQR{flex:0 0 auto;font-family:var(--mono);font-size:clamp(9px,.85vw,12px);color:var(--tinta2);
@@ -144,13 +144,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <div class="rotulo">Escaneá para entrar</div>
       <div class="dosQR">
         <div class="unQR" id="cajaWifi" hidden>
-          <div class="paso"><b>1</b> conectate al wifi</div>
+          <div class="paso"><b>1</b>&nbsp;conectate al wifi</div>
           <div class="lienzoQR" id="qrWifi"></div>
           <div class="pieQR" id="datosWifi">—</div>
         </div>
         <div class="flecha" id="flecha" hidden>›</div>
         <div class="unQR">
-          <div class="paso" id="pasoPagina"><b>2</b> abrí la página</div>
+          <div class="paso" id="pasoPagina"><b>2</b>&nbsp;abrí la página</div>
           <div class="lienzoQR" id="qr"></div>
           <div class="pieQR" id="url">—</div>
         </div>
@@ -318,7 +318,7 @@ function pintaWifi(ssid, clave){
              $("#pasoPagina").hidden = true; return; }
   caja.hidden = false; $("#flecha").hidden = false;
   $("#pasoPagina").hidden = false;
-  $("#pasoPagina").innerHTML = "<b>2</b> abrí la página";
+  $("#pasoPagina").innerHTML = "<b>2</b>&nbsp;abrí la página";
   try{
     $("#qrWifi").innerHTML = QR.svg(textoWifi(ssid, clave),
       {escala:8, borde:2, claro:"#FFF6E2", oscuro:"#14110A"});
@@ -444,6 +444,7 @@ function dibujaSala(){
 
   for(let i=0;i<6;i++){
     const x = W*(0.04+i*0.19);
+    if(Math.abs(x+u*2 - W/2) < arcoR+u*3) continue;   // el vano no se cruza
     ctx.fillStyle="#212739"; ctx.fillRect(x, base-u*26, u*4, u*26);
     ctx.fillStyle="#2B3348"; ctx.fillRect(x, base-u*26, u, u*26);
     ctx.fillStyle="#333C55"; ctx.fillRect(x-u, base-u*28, u*6, u*2);

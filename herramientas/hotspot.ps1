@@ -20,10 +20,25 @@ param(
   [switch]$Encender,
   [switch]$Apagar,
   [string]$Nombre,          # cambia el SSID (ej: -Nombre "IMPERIO")
-  [string]$Clave            # cambia la clave (Windows EXIGE 8 caracteres o mas)
+  [string]$Clave,           # cambia la clave (Windows EXIGE 8 caracteres o mas)
+  [switch]$NoApagar         # que Windows NO lo apague solo cuando nadie se conecta
 )
 
 $ErrorActionPreference = "Stop"
+
+# Windows apaga el punto de acceso solo a los pocos minutos si nadie se conecta,
+# y entonces la pantalla del presentador vuelve a decir "conectate al wifi de tu
+# casa". Este ajuste lo desactiva. Necesita permisos de administrador.
+function Quitar-ApagadoAutomatico {
+  $k = "HKLM:\System\CurrentControlSet\Services\icssvc\Settings"
+  try {
+    if (-not (Test-Path $k)) { New-Item -Path $k -Force | Out-Null }
+    New-ItemProperty -Path $k -Name "PeerlessTimeoutEnabled" -Value 0 -PropertyType DWord -Force -ErrorAction Stop | Out-Null
+    Write-Output "  Apagado automatico desactivado: ya no se cae solo."
+  } catch {
+    Write-Output "  (no se pudo desactivar el apagado automatico: hace falta administrador)"
+  }
+}
 
 function Get-Gestor {
   # WinRT: el mismo motor que usa Configuración → Zona con cobertura inalámbrica
@@ -93,7 +108,10 @@ if ($Nombre -or $Clave) {
   }
 }
 
+if ($NoApagar) { Quitar-ApagadoAutomatico }
+
 if ($Encender) {
+  Quitar-ApagadoAutomatico
   if ($g.TetheringOperationalState -eq "On") {
     Write-Output "  Ya estaba encendido."
   } else {

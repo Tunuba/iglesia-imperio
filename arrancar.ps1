@@ -39,6 +39,17 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
   exit 1
 }
 
+# ESTA COMPUTADORA ES LA RED. Se enciende su punto de acceso para que los
+# telefonos se conecten a ella y no a un router: asi la sala funciona sin
+# internet y sin depender del wifi del salon. Con -SinHotspot no se toca.
+if (-not $SinHotspot) {
+  $hs = Join-Path $Aqui "herramientas\hotspot.ps1"
+  if (Test-Path $hs) {
+    try { & $hs -Nombre "IMPERIO" -Clave "12345678" -Encender | Out-Null }
+    catch { Write-Output "  (no se pudo encender el punto de acceso; se sigue igual)" }
+  }
+}
+
 Parar-Servidor | Out-Null
 
 # Sin ventana: el servidor corre de fondo y no molesta durante la presentacion
@@ -78,6 +89,11 @@ Write-Output "  --------------------"
 Write-Output "  Proyecta esto      : $urlPresentador"
 Write-Output "  Los telefonos van a: http://$preferida`:$Puerto/index.html"
 Write-Output ""
+if (-not $SinHotspot) {
+  Write-Output "  ESTA COMPUTADORA ES LA RED: que se conecten al wifi IMPERIO (clave 12345678)."
+  Write-Output "  En esa red, esta compu es la 192.168.137.1"
+  Write-Output ""
+}
 Write-Output "  El QR de la pantalla ya lleva esa direccion; nadie tiene que escribirla."
 Write-Output "  Si Windows pregunta por el firewall: permitir REDES PRIVADAS."
 Write-Output "  Para parar todo:  powershell -ExecutionPolicy Bypass -File arrancar.ps1 -Parar"
